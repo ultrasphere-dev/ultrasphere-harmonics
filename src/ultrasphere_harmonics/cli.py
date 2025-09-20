@@ -240,10 +240,7 @@ def plot_4d(
         ax.set_xlabel("x")
         ax.set_ylabel("y")
         ax.set_zlabel("z")
-        if xp.isnan(n_end):
-            ax.set_title("Original")
-        else:
-            ax.set_title(f"Degree: {n_end}")
+        ax.set_title(data["label"])
         return
 
     anim = FuncAnimation(fig, animate, frames=data, repeat=False, interval=200)
