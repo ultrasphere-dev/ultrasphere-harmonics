@@ -132,31 +132,6 @@ def test_type_b(xp: ArrayNamespaceFull) -> None:
         )
 
 
-# @pytest.mark.parametrize("shape", [(1,), (2, 3), (4, 5, 6)])
-# def test_type_b(shape: tuple[int, ...]) -> None:
-#     # we refer to 3d spherical harmonics table where s_beta = 0
-#     # https://en.wikipedia.org/wiki/Table_of_spherical_harmonics
-#     theta = xp.random.random_uniform(low=0, high=xp.pi, shape=shape)
-#     expected = {
-#         (0, 0, 0): np.sqrt(1 / 2),
-#         (0, 1, 1): np.sqrt(3) / 2 * xp.sin(theta),
-#         (1, 0, 1): np.sqrt(3 / 2) * xp.cos(theta),
-#     }
-#     s_beta, l_beta, l = xp.asarray(list(expected.keys())).T
-#     s_beta_ = xp.reshape(s_beta,s_beta.shape + (1,) * theta.ndim)
-#     l_beta_ = xp.reshape(l_beta,l_beta.shape + (1,) * theta.ndim)
-#     l_ = xp.reshape(l,l.shape + (1,) * theta.ndim)
-#     theta_ = xp.reshape(theta,(1,) * s_beta.ndim + theta.shape)
-#     actual = type_b(theta=theta, s_beta=s_beta_, l_beta_, l_)
-#     expected = xp.asarray(list(expected.values()), dtype=theta.dtype)
-#     assert xp.all(xpx.isclose(
-#         actual,
-#         expected,
-#         rtol=1e-3,
-#         atol=1e-3,
-#     )
-
-
 @pytest.mark.parametrize("index_with_surrogate_quantum_number", [True, False])
 def test_type_c(
     index_with_surrogate_quantum_number: bool,

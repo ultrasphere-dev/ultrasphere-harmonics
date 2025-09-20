@@ -98,10 +98,9 @@ def type_a(
 
     """
     xp = array_namespace(theta)
-    m = xp.reshape(
-        xp.arange(0, n_end, dtype=theta.dtype, device=theta.device),
-        [1] * (theta.ndim) + [-1],
-    )
+    m = xp.arange(0, n_end, dtype=theta.dtype, device=theta.device)[
+        (None,) * (theta.ndim) + (slice(None),)
+    ]
     if include_negative_m:
         m = to_symmetric(m, axis=-1, asymmetric=True, conjugate=False)
     res = xp.exp(
@@ -169,14 +168,12 @@ def type_b(
     if isinstance(s_beta, int):
         s_beta = xp.asarray(s_beta, dtype=theta.dtype, device=theta.device)
     # using broadcasting may cause problems, we have to be very careful here
-    l_beta = xp.reshape(
-        xp.arange(0, n_end, dtype=theta.dtype, device=theta.device),
-        [1] * (theta.ndim) + [-1],
-    )
-    n = xp.reshape(
-        xp.arange(0, n_end, dtype=theta.dtype, device=theta.device),
-        [1] * (theta.ndim) + [1, -1],
-    )
+    l_beta = xp.arange(0, n_end, dtype=theta.dtype, device=theta.device)[
+        (None,) * (theta.ndim) + (slice(None),)
+    ]
+    n = xp.arange(0, n_end, dtype=theta.dtype, device=theta.device)[
+        (None,) * (theta.ndim) + (None, slice(None))
+    ]
     alpha = l_beta + s_beta[..., None] / 2
     res = (
         jacobi_normalization_constant(
@@ -238,14 +235,12 @@ def type_bdash(
     xp = array_namespace(theta)
     if isinstance(s_alpha, int):
         s_alpha = xp.asarray(s_alpha, dtype=theta.dtype, device=theta.device)
-    l_alpha = xp.reshape(
-        xp.arange(0, n_end, dtype=theta.dtype, device=theta.device),
-        [1] * (theta.ndim) + [-1],
-    )
-    n = xp.reshape(
-        xp.arange(0, n_end, dtype=theta.dtype, device=theta.device),
-        [1] * (theta.ndim) + [1, -1],
-    )
+    l_alpha = xp.arange(0, n_end, dtype=theta.dtype, device=theta.device)[
+        (None,) * (theta.ndim) + (slice(None),)
+    ]
+    n = xp.arange(0, n_end, dtype=theta.dtype, device=theta.device)[
+        (None,) * (theta.ndim) + (None, slice(None))
+    ]
     beta = l_alpha + s_alpha[..., None] / 2
     res = (
         jacobi_normalization_constant(alpha=beta[..., None], beta=beta[..., None], n=n)
@@ -312,18 +307,15 @@ def type_c(
         s_alpha = xp.asarray(s_alpha, dtype=theta.dtype, device=theta.device)
     if isinstance(s_beta, int):
         s_beta = xp.asarray(s_beta, dtype=theta.dtype, device=theta.device)
-    l_alpha = xp.reshape(
-        xp.arange(0, n_end, dtype=theta.dtype, device=theta.device),
-        [1] * (theta.ndim) + [-1, 1],
-    )  # 2d
-    l_beta = xp.reshape(
-        xp.arange(0, n_end, dtype=theta.dtype, device=theta.device),
-        [1] * (theta.ndim) + [1, -1],
-    )  # 2d
-    n = xp.reshape(
-        xp.arange(0, (n_end + 1) // 2, dtype=theta.dtype, device=theta.device),
-        [1] * (theta.ndim) + [1, 1, -1],
-    )  # 3d
+    l_alpha = xp.arange(0, n_end, dtype=theta.dtype, device=theta.device)[
+        (None,) * (theta.ndim) + (slice(None), None)
+    ]  # 2d
+    l_beta = xp.arange(0, n_end, dtype=theta.dtype, device=theta.device)[
+        (None,) * (theta.ndim) + (None, slice(None))
+    ]  # 2d
+    n = xp.arange(0, (n_end + 1) // 2, dtype=theta.dtype, device=theta.device)[
+        (None,) * (theta.ndim) + (None, None, slice(None))
+    ]  # 3d
     alpha = l_alpha + s_alpha[..., None, None] / 2  # 2d
     beta = l_beta + s_beta[..., None, None] / 2  # 2d
     res = (
