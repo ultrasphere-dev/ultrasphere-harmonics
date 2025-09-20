@@ -162,14 +162,14 @@ def plot_4d(
         xp = array_namespace(*spherical.values())
         euclidean = c.to_euclidean(spherical)
         # stereographic projection
-        denom = 1 - euclidean[0, ...]
+        denom = 1 - euclidean[0]
         direction = xp.stack(
-            (
+            xp.broadcast_arrays(
                 euclidean[1] / denom,
                 euclidean[2] / denom,
                 euclidean[3] / denom,
             ),
-            axis=0,
+            axis=-1,
         )
         return bunny_mesh_isin(direction)
 
@@ -184,9 +184,8 @@ def plot_4d(
     )
 
     # plot coordinates
-    spherical = random_ball(c, shape=(n_plot,), xp=xp, surface=False)
-    euclidean = c.to_euclidean(spherical)
-    r = spherical["r"]
+    euclidean = random_ball(c, shape=(n_plot,), xp=xp, surface=False)
+    r = xp.linalg.vector_norm(euclidean, axis=0)
     denom = r**2 + 1
     euclidean_proj = [
         2 * euclidean[1] / denom,
@@ -198,18 +197,18 @@ def plot_4d(
     del spherical_proj["r"]
 
     # compute the expansion
-    keys = ("ground_truth", *tuple(range(1, n_end)))
+    keys = ("ground_truth",)  # *tuple(range(1, n_end)))
     data = []
     for key in tqdm(keys, desc="Evaluating the cut expansion"):
         if key == "ground_truth":
-            w = f(spherical)
+            w = f(spherical_proj)
             label = "Ground Truth"
         else:
             w = xp.real(
                 expand_evaluate(
                     c,
                     expand_cut(c, expansion, key),
-                    spherical,
+                    spherical_proj,
                     phase=phase,
                 )
             )
