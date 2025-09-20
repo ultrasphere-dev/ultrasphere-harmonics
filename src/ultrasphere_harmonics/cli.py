@@ -10,7 +10,7 @@ from array_api_compat import array_namespace
 from array_api_compat import numpy as np
 from matplotlib.animation import FuncAnimation
 from tqdm import tqdm
-from ultrasphere import create_standard, roots
+from ultrasphere import create_standard, random_ball
 
 from ultrasphere_harmonics._core._eigenfunction import Phase
 from ultrasphere_harmonics._cut import expand_cut
@@ -46,6 +46,7 @@ def bunny_mesh_dist(direction: Array, /, *, max_radius: float = 100) -> Array:
         rays = xp.concat([direction, xp.zeros_like(direction)], axis=-1)
     else:
         rays = xp.concat([direction * max_radius, -direction], axis=-1)
+    print(direction, rays.shape)
     rays_ = o3d.core.Tensor(np.asarray(rays), dtype=o3d.core.Dtype.Float32)
     answer = scene.cast_rays(rays_)
     t_hit = xp.asarray(answer["t_hit"].numpy())
@@ -81,7 +82,7 @@ def bunny_mesh_isin(x: Array, /) -> Array:
 @app.command()
 def _plot_3d(
     *,
-    n_plot: int = 100,
+    n_plot: int = 10000,
     n_end: int = 40,
     r: float = 100,
     phase: Phase = Phase(0),  # noqa
@@ -92,12 +93,17 @@ def _plot_3d(
 
     def f(spherical: Mapping[Any, Array]) -> Array:
         """Get the distance to the surface."""
+        xp = array_namespace(*spherical.values())
         euclidean = c.to_euclidean(spherical)
-        return bunny_mesh_dist(euclidean)
+        return bunny_mesh_dist(
+            xp.stack(xp.broadcast_arrays(*[euclidean[i] for i in c.e_nodes]), axis=-1)
+        )
 
     expansion = expand(c, f, False, n_end, 2 * n_end, phase=phase, xp=xp)
-    spherical, _ = roots(c, n_plot, expand_dims_x=True, xp=xp)
-    keys = ("ground_truth", *tuple(range(n_end)))
+    euclidean = random_ball(c, shape=(n_plot,), xp=xp, surface=True)
+    spherical = c.from_euclidean(euclidean)
+    del spherical["r"]
+    keys = ("ground_truth", *tuple(range(1, n_end)))
     xs = []
     rmax = 0
     for key in tqdm(keys, desc="Evaluating the cut expansion"):
