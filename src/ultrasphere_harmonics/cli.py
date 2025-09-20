@@ -184,20 +184,20 @@ def plot_4d(
     )
 
     # plot coordinates
-    euclidean = random_ball(c, shape=(n_plot,), xp=xp, surface=False)
+    euclidean = random_ball(create_standard(2), shape=(n_plot,), xp=xp, surface=False)
     r = xp.linalg.vector_norm(euclidean, axis=0)
     denom = r**2 + 1
     euclidean_proj = [
+        (r**2 - 1) / denom,
+        2 * euclidean[0] / denom,
         2 * euclidean[1] / denom,
         2 * euclidean[2] / denom,
-        2 * euclidean[3] / denom,
-        (r**2 - 1) / denom,
     ]
     spherical_proj = c.from_euclidean(euclidean_proj)
     del spherical_proj["r"]
 
     # compute the expansion
-    keys = ("ground_truth",)  # *tuple(range(1, n_end)))
+    keys = ("ground_truth", *tuple(range(1, n_end)))
     data = []
     for key in tqdm(keys, desc="Evaluating the cut expansion"):
         if key == "ground_truth":
