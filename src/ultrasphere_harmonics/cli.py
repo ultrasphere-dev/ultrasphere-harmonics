@@ -46,7 +46,6 @@ def bunny_mesh_dist(direction: Array, /, *, max_radius: float = 100) -> Array:
         rays = xp.concat([direction, xp.zeros_like(direction)], axis=-1)
     else:
         rays = xp.concat([direction * max_radius, -direction], axis=-1)
-    print(direction, rays.shape)
     rays_ = o3d.core.Tensor(np.asarray(rays), dtype=o3d.core.Dtype.Float32)
     answer = scene.cast_rays(rays_)
     t_hit = xp.asarray(answer["t_hit"].numpy())
@@ -54,7 +53,7 @@ def bunny_mesh_dist(direction: Array, /, *, max_radius: float = 100) -> Array:
         t_hit = max_radius - t_hit
     t_hit = xp.clip(t_hit, 0, max_radius)
     t_hit = xpx.nan_to_num(t_hit)
-    return t_hit
+    return t_hit * 10
 
 
 def bunny_mesh_isin(x: Array, /) -> Array:
@@ -84,7 +83,6 @@ def _plot_3d(
     *,
     n_plot: int = 10000,
     n_end: int = 40,
-    r: float = 100,
     phase: Phase = Phase(0),  # noqa
     xp: ArrayNamespaceFull = np,
 ) -> None:
@@ -104,7 +102,7 @@ def _plot_3d(
     spherical = c.from_euclidean(euclidean)
     del spherical["r"]
     keys = ("ground_truth", *tuple(range(1, n_end)))
-    xs = []
+    data = []
     rmax = 0
     for key in tqdm(keys, desc="Evaluating the cut expansion"):
         if key == "ground_truth":
@@ -119,7 +117,7 @@ def _plot_3d(
                 )
             )
             label = f"Degree: {key}"
-        xs.append(
+        data.append(
             {
                 "x": c.to_euclidean(spherical | {"r": r}),
                 "label": label,
@@ -143,135 +141,112 @@ def _plot_3d(
         ax.set_zlabel("z")
         ax.set_title(data["label"])
 
-    anim = FuncAnimation(fig, animate, frames=xs, repeat=False, interval=200)
-    anim.save("spherical_harmonics_expanation.gif", writer="pillow")
-    anim.save("spherical_harmonics_expanation.mp4", writer="ffmpeg")
+    anim = FuncAnimation(fig, animate, frames=data, repeat=False, interval=200)
+    anim.save("spherical_harmonics_expanation_3d.gif", writer="pillow")
+    anim.save("spherical_harmonics_expanation_3d.mp4", writer="ffmpeg")
 
 
-# @app.command()
-# def plot_4d(
-#     *,
-#     n_plot: int = 100,
-#     n_end: int = 40,
-#     r: float = 100,
-#     phase: Phase = Phase(0),
-#     xp: ArrayNamespaceFull = np,
-#     frontend: Literal["matplotlib", "plotly"] = "plotly",
-# ) -> None:
-#     """Visualize the spherical harmonics expansion."""
-#     if n_integrate < n_end:
-#         raise ValueError(
-#             f"n_integrate({n_integrate}) must be greater than n_end({n_end}), "
-#             "otherwise the result will not converge."
-#         )
-#     if n_plot < n_end:
-#         raise ValueError(
-#             f"n_plot({n_plot}) must be greater than n_end({n_end}), "
-#             "otherwise you may not see the result."
-#         )
+@app.command()
+def plot_4d(
+    *,
+    n_plot: int = 10000,
+    n_end: int = 10,
+    phase: Phase = Phase(0),  # noqa
+    xp: ArrayNamespaceFull = np,
+) -> None:
+    """Visualize the spherical harmonics expansion."""
+    c = create_standard(3)
 
-#     if type == "3d":
-#         c = create_standard(2)
-#     else:
-#         c = create_standard(3)
+    def f(spherical: Mapping[Any, Array]) -> Array:
+        """Get the distance to the surface."""
+        xp = array_namespace(*spherical.values())
+        euclidean = c.to_euclidean(spherical)
+        # stereographic projection
+        denom = 1 - euclidean[0, ...]
+        direction = xp.stack(
+            (
+                euclidean[1] / denom,
+                euclidean[2] / denom,
+                euclidean[3] / denom,
+            ),
+            axis=0,
+        )
+        return bunny_mesh_isin(direction)
 
+    expansion = expand(
+        c,
+        f,
+        False,
+        n_end,
+        2 * n_end,
+        phase=phase,
+        xp=xp,
+    )
 
-#     def f(spherical: Mapping[Any, Array]) -> Array:
-#         """Get the distance to the surface."""
-#         xp = array_namespace(*spherical.values())
-#         euclidean = c.to_euclidean(spherical)
-#         if type == "3d":
-#             return bunny_mesh_dist(euclidean)
-#         else:
-#             # stereographic projection
-#             denom = 1 - euclidean[0, ...]
-#             direction = xp.stack((
-#                 euclidean[1] / denom,
-#                 euclidean[2] / denom,
-#                 euclidean[3] / denom,
-#             ), axis=0)
-#             return bunny_mesh_isin(direction)
+    # plot coordinates
+    spherical = random_ball(c, shape=(n_plot,), xp=xp, surface=False)
+    euclidean = c.to_euclidean(spherical)
+    r = spherical["r"]
+    denom = r**2 + 1
+    euclidean_proj = [
+        2 * euclidean[1] / denom,
+        2 * euclidean[2] / denom,
+        2 * euclidean[3] / denom,
+        (r**2 - 1) / denom,
+    ]
+    spherical_proj = c.from_euclidean(euclidean_proj)
+    del spherical_proj["r"]
 
-#     expansion = expand(
-#         c,
-#         f,
-#         n_end=n_end,
-#         n=n_integrate,
-#         does_f_support_separation_of_variables=False,
-#         condon_shortley_phase=False,
-#     )
+    # compute the expansion
+    keys = ("ground_truth", *tuple(range(1, n_end)))
+    data = []
+    for key in tqdm(keys, desc="Evaluating the cut expansion"):
+        if key == "ground_truth":
+            w = f(spherical)
+            label = "Ground Truth"
+        else:
+            w = xp.real(
+                expand_evaluate(
+                    c,
+                    expand_cut(c, expansion, key),
+                    spherical,
+                    phase=phase,
+                )
+            )
+            label = f"Degree: {key}"
+        data.append(
+            {
+                "w": w,
+                "key": key,
+                "label": label,
+            }
+        )
 
-#     # plot coordinates
-#     if type == "3d":
-#         spherical, _ = roots(c, n_plot, expand_dims_x=True, xp=xp)
-#     else:
-#         euclidean = xp.meshgrid(
-#             (xp.linspace(-1, 1, n_plot),) * 3, indexing="ij"
-#         )
-#         spherical = c.from_euclidean(euclidean)
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 
-#     # compute the expansion
-#     keys = ("ground_truth",) + tuple(range(n_end))
-#     xs = {}
-#     ws = {}
-#     for key in tqdm(keys, desc="Evaluating the cut expansion"):
-#         if type == "3d":
-#             if key == "ground_truth":
-#                 r = f(spherical)
-#             else:
-#                 key = int(key)
-#                 r = expand_evaluate(
-#                     c,
-#                     expand_cut(expansion, key),
-#                     spherical,
-#                 ).real
-#             xs[key] = c.to_euclidean(spherical | {"r": r})
-#         else:
+    def animate(data: dict[str, Any]) -> None:
+        ax.clear()
+        ax.view_init(elev=45, azim=45, roll=120)
+        ax.scatter3D(
+            euclidean[0],
+            euclidean[1],
+            euclidean[2],
+            s=data["w"] * 10,
+            c=euclidean[2],
+            cmap="viridis",
+        )
+        ax.set_xlim(-1, 1)
+        ax.set_ylim(-1, 1)
+        ax.set_zlim(-1, 1)
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+        ax.set_zlabel("z")
+        if xp.isnan(n_end):
+            ax.set_title("Original")
+        else:
+            ax.set_title(f"Degree: {n_end}")
+        return
 
-#             if key == "ground_truth":
-#                 w = f(spherical)
-#             else:
-#                 w = expand_evaluate(
-#                     c,
-#                     expand_cut(expansion, key),
-#                     spherical,
-#                 ).real
-
-
-#     if frontend == "matplotlib":
-#         fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-
-#         def animate(coordinates: dict[str, Array]) -> None:
-#             n, x, y, z = (
-#                 coordinates["n"],
-#                 coordinates["x"],
-#                 coordinates["y"],
-#                 coordinates["z"],
-#             )
-#             n, x, y, z = (
-#                 xp.to_numpy(n),
-#                 xp.to_numpy(x),
-#                 xp.to_numpy(y),
-#                 xp.to_numpy(z),
-#             )
-#             n_end = n.flatten()[0]
-#             ax.clear()
-#             ax.view_init(elev=45, azim=45, roll=120)
-#             ax.scatter3D(x, y, z, c=z, cmap="viridis")
-#             ax.set_xlim(lims["x"])
-#             ax.set_ylim(lims["y"])
-#             ax.set_zlim(lims["z"])
-#             ax.set_xlabel("x")
-#             ax.set_ylabel("y")
-#             ax.set_zlabel("z")
-#             if xp.isnan(n_end):
-#                 ax.set_title("Original")
-#             else:
-#                 ax.set_title(f"Degree: {n_end}")
-#             return
-
-#         anim = FuncAnimation(
-#             fig, animate, frames=coordinates, repeat=False, interval=200
-#         )
-#         anim.save("spherical_harmonics_expanation.gif", writer="pillow")
-#         anim.save("spherical_harmonics_expanation.mp4", writer="ffmpeg")
+    anim = FuncAnimation(fig, animate, frames=data, repeat=False, interval=200)
+    anim.save("spherical_harmonics_expanation_4d.gif", writer="pillow")
+    anim.save("spherical_harmonics_expanation_4d.mp4", writer="ffmpeg")
