@@ -19,7 +19,6 @@ from ._ndim import (
     homogeneous_ndim_le,
 )
 from ._translation import harmonics_translation_coef, harmonics_twins_expansion
-from ._wave_expansion import plane_wave_expansion_coef
 
 __all__ = [
     "Phase",
@@ -41,5 +40,4 @@ __all__ = [
     "homogeneous_ndim_le",
     "index_array_harmonics",
     "index_array_harmonics_all",
-    "plane_wave_expansion_coef",
 ]
