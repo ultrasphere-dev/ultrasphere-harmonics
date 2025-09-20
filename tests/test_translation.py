@@ -87,7 +87,7 @@ def test_harmonics_translation_coef_gumerov_table(xp: ArrayNamespaceFull) -> Non
     ],
 )
 @pytest.mark.parametrize("n_end, n_end_add", [(4, 6)])
-@pytest.mark.parametrize("phase", [False, True])
+@pytest.mark.parametrize("phase", Phase.all())
 @pytest.mark.parametrize(
     "from_,to_",
     [("regular", "regular"), ("singular", "singular"), ("regular", "singular")],

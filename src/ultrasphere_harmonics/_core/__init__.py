@@ -1,6 +1,6 @@
 from ._assume import assume_n_end_and_include_negative_m_from_harmonics
 from ._concat import concat_harmonics
-from ._eigenfunction import Phase
+from ._eigenfunction import Phase, minus_1_power
 from ._expand_dim import expand_dims_harmonics
 from ._flatten import (
     flatten_harmonics,
@@ -18,4 +18,5 @@ __all__ = [
     "harmonics",
     "index_array_harmonics",
     "index_array_harmonics_all",
+    "minus_1_power",
 ]

@@ -6,7 +6,7 @@ from array_api_compat import array_namespace
 from gumerov_expansion_coefficients import translational_coefficients
 from ultrasphere import SphericalCoordinates, get_child
 
-from ultrasphere_harmonics._core._eigenfunction import Phase
+from ultrasphere_harmonics._core._eigenfunction import Phase, minus_1_power
 
 from ._core import concat_harmonics, expand_dims_harmonics
 from ._core._flatten import (
@@ -379,6 +379,7 @@ def harmonics_translation_coef[TEuclidean, TSpherical](
         which quantum number is [-2*c.s_ndim,-c.s_ndim-1] indices.
 
     """
+    phase = Phase(phase)
     if method is None:
         if c.branching_types_expression_str == "ba":
             method = "gumerov"
@@ -388,13 +389,33 @@ def harmonics_translation_coef[TEuclidean, TSpherical](
             method = "triplet"
     if method == "gumerov":
         if c.branching_types_expression_str == "ba":
-            return translational_coefficients(
+            result = translational_coefficients(
                 k * spherical["r"],
                 spherical[c.root],
                 spherical[get_child(c.G, c.root, "sin")],
                 n_end=max(n_end, n_end_add),
                 same=is_type_same,
-            )[: n_end**2, : n_end_add**2]
+            ).T[: n_end**2, : n_end_add**2]
+            if phase == Phase.CONDON_SHORTLEY:
+                return result
+            xp = array_namespace(result)
+            m = index_array_harmonics(
+                c, get_child(c.G, c.root, "sin"), n_end=n_end, xp=xp, flatten=True
+            )[:, None]
+            m_add = index_array_harmonics(
+                c, get_child(c.G, c.root, "sin"), n_end=n_end_add, xp=xp, flatten=True
+            )[None, :]
+            if phase == Phase(0):
+                result *= minus_1_power(m + m_add)
+            elif phase == Phase.NEGATIVE_LEGENDRE:
+                result *= minus_1_power(
+                    (xp.abs(m) + m) // 2 + (xp.abs(m_add) + m_add) // 2
+                )
+            elif phase == (Phase.NEGATIVE_LEGENDRE | Phase.CONDON_SHORTLEY):  # type: ignore[unreachable]
+                result *= minus_1_power(
+                    (xp.abs(m) - m) // 2 + (xp.abs(m_add) - m_add) // 2
+                )
+            return result
         else:
             raise NotImplementedError()
     elif method == "plane_wave":
