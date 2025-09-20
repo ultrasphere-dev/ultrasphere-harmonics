@@ -1,25 +1,3 @@
-r"""
-Core eigenfunctions for spherical harmonics.
-
-For all types of eigenfunctions,
-the maximum value of the absolute value of
-the quantum number of the child nodes will be
-the same as that of the parent,
-and the converse does not hold.
-
-Therefore, the argument takes
-the maximum value of the quantum number of the most parent node.
-
-We do not consider negative m for type a nodes because
-$$
-type_a(\theta, m) = type_a(\theta, -m)^* * (-1)^m
-$$
-
-Reference
----------
-DOI:10.3842/SIGMA.2013.042 p.17-18
-"""
-
 from enum import STRICT, Flag, auto
 
 from array_api._2024_12 import Array
@@ -74,8 +52,12 @@ def type_a(
     phase: Phase,
     include_negative_m: bool = True,
 ) -> Array:
-    """
+    r"""
     Eigenfunction for type a node.
+
+    $$
+    \psi_n (\theta) := \frac{1}{\sqrt{2\pi}} e^{i m \theta}
+    $$
 
     Parameters
     ----------
@@ -95,6 +77,14 @@ def type_a(
     -------
     Array
         The result of the eigenfunction.
+
+    Reference
+    ---------
+    Cohl, H. S. (2013).
+    Fourier, Gegenbauer and Jacobi Expansions for a Power-Law Fundamental Solution
+    of the Polyharmonic Equation and Polyspherical Addition Theorems.
+    Symmetry, Integrability and Geometry: Methods and Applications.
+    https://doi.org/10.3842/SIGMA.2013.042
 
     """
     xp = array_namespace(theta)
@@ -137,8 +127,15 @@ def type_b(
     is_beta_type_a_and_include_negative_m: bool = False,
     fill_value: float = 0,
 ) -> Array:
-    """
+    r"""
     Eigenfunction for type b node.
+
+    $$
+    \alpha := l_\beta + \frac{s_\beta}{2} \\
+    \psi_{n,l_\beta}^{s_\beta}(\theta) :=
+    N^{(\alpha,\alpha)}_n
+    \sin^{l_\beta} theta P_n^{(\alpha,\alpha)}(\cos \theta)
+    $$
 
     Parameters
     ----------
@@ -162,6 +159,14 @@ def type_b(
         [..., l_beta, n] of size (..., n_end, n_end)
         Otherwise,
         [..., l_beta, l] of size (..., n_end, n_end), if l < l_beta value is 0.
+
+    Reference
+    ---------
+    Cohl, H. S. (2013).
+    Fourier, Gegenbauer and Jacobi Expansions for a Power-Law Fundamental Solution
+    of the Polyharmonic Equation and Polyspherical Addition Theorems.
+    Symmetry, Integrability and Geometry: Methods and Applications.
+    https://doi.org/10.3842/SIGMA.2013.042
 
     """
     xp = array_namespace(theta)
@@ -205,8 +210,15 @@ def type_bdash(
     is_alpha_type_a_and_include_negative_m: bool = False,
     fill_value: float = 0,
 ) -> Array:
-    """
+    r"""
     Eigenfunction for type b node.
+
+    $$
+    \beta := l_\alpha + \frac{s_\alpha}{2} \\
+    \psi_{n,l_\alpha}^{s_\alpha}(\theta) :=
+    N^{(\beta,\beta)}_n
+    \cos^{l_\alpha} \theta P_n^{(\beta,\beta)}(\sin \theta)
+    $$
 
     Parameters
     ----------
@@ -230,6 +242,14 @@ def type_bdash(
         [..., l_alpha, n] of size (..., n_end, n_end)
         Otherwise,
         [..., l_alpha, l] of size (..., n_end, n_end), if l < l_alpha value is 0.
+
+    Reference
+    ---------
+    Cohl, H. S. (2013).
+    Fourier, Gegenbauer and Jacobi Expansions for a Power-Law Fundamental Solution
+    of the Polyharmonic Equation and Polyspherical Addition Theorems.
+    Symmetry, Integrability and Geometry: Methods and Applications.
+    https://doi.org/10.3842/SIGMA.2013.042
 
     """
     xp = array_namespace(theta)
@@ -272,8 +292,17 @@ def type_c(
     is_beta_type_a_and_include_negative_m: bool = False,
     fill_value: float = 0,
 ) -> Array:
-    """
+    r"""
     Eigenfunction for type c node.
+
+    $$
+    \alpha := l_\beta + \frac{s_\beta}{2} \\
+    \beta := l_\alpha + \frac{s_\alpha}{2} \\
+    \psi_{n,l_\alpha,l_\beta}^{s_\alpha,s_\beta}(\theta) :=
+    2^{\frac{\alpha+\beta}{2}+1}
+    N_n^{(\alpha,\beta)}
+    (\sin \theta)^{l_\beta} (\cos \theta)^{l_\alpha} P_n^{(\alpha,\beta)}(\cos 2\theta)
+    $$
 
     Parameters
     ----------
@@ -300,6 +329,14 @@ def type_c(
     Array
         [..., l_alpha, l_beta, l] of size (..., n_end, n_end),
         if l < l_alpha + l_beta value is 0.
+
+    Reference
+    ---------
+    Cohl, H. S. (2013).
+    Fourier, Gegenbauer and Jacobi Expansions for a Power-Law Fundamental Solution
+    of the Polyharmonic Equation and Polyspherical Addition Theorems.
+    Symmetry, Integrability and Geometry: Methods and Applications.
+    https://doi.org/10.3842/SIGMA.2013.042
 
     """
     xp = array_namespace(theta)
@@ -371,8 +408,16 @@ def ndim_harmonics[TSpherical, TEuclidean](
     c: SphericalCoordinates[TSpherical, TEuclidean],
     node: TSpherical,
 ) -> int:
-    """
+    r"""
     The number of dimensions of the eigenfunction corresponding to the node.
+
+    $$
+    \begin{cases}
+    1 & \text{if branching type is A} \\
+    2 & \text{if branching type is B or B'} \\
+    3 & \text{if branching type is C} \\
+    \end{cases}
+    $$
 
     Parameters
     ----------
