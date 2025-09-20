@@ -268,7 +268,6 @@ def expand_evaluate[TEuclidean, TSpherical](
         Adjust phase (±) of the spherical harmonics, mainly to match conventions.
         See `Phase` for details.
 
-
     Returns
     -------
     Array | Mapping[TSpherical, Array]
