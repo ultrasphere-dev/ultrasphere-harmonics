@@ -281,6 +281,8 @@ def expand_evaluate[TEuclidean, TSpherical](
         else array_namespace(expansion)
     )
     n_end, _ = assume_n_end_and_include_negative_m_from_harmonics(c, expansion)
+    if "r" in spherical:
+        raise ValueError("Passing points not on the sphere is not supported.")
     Y = harmonics(  # type: ignore[call-overload]
         c,
         spherical,
