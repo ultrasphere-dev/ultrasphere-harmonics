@@ -6,8 +6,12 @@ from jacobi_poly import binom
 
 
 def homogeneous_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
-    """
+    r"""
     The dimension of the homogeneous polynomials of degree equals to n.
+
+    $$
+    M(n, d) = \text{dim}(\mathcal{P}_n (\mathbb{R}^{d})) = \binom{n + d - 1}{d - 1}
+    $$
 
     Parameters
     ----------
@@ -34,8 +38,25 @@ def homogeneous_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
 
 
 def homogeneous_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Array:
-    """
+    r"""
     The dimension of the homogeneous polynomials of degree below n_end.
+
+    $$
+    \text{dim}(\mathcal{P}_{< n} (\mathbb{R}^{d}))
+    = \sum_{k=0}^{n-1} \math{dim}(\mathcal{P}_k (\mathbb{R}^{d}))
+    = \begin{cases}
+    0 & (n < 1) \\
+    M(n, 0) & (n = 1) \\
+    M(n - 1, d + 1) &(\text{otherwise}) \\
+    \end{cases}
+    $$
+
+    where
+
+    $$
+    M(n, d) = \text{dim}(\mathcal{P}_n (\mathbb{R}^{d}))
+    = \binom{n + d - 1}{d - 1}
+    $$
 
     Parameters
     ----------
@@ -73,8 +94,24 @@ def homogeneous_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Arr
 
 
 def harm_n_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
-    """
+    r"""
     The dimension of the spherical harmonics of degree below n_end.
+
+    $$
+    N(n, d) = \text{dim}(\mathcal{H}_n (\mathbb{R}^{d}))
+    =
+    \begin{cases}
+    \begin{cases}
+    1 & (n = 0) \\
+    0 & (n \geq 1) \\
+    \end{cases} & (d = 1) \\
+    \begin{cases}
+    1 & (n = 0) \\
+    2 & (n \geq 1) \\
+    \end{cases} & (d = 2) \\
+    \frac{2 n + d - 2}{d - 2} \binom{n + d - 3}{d - 3} & (d \geq 3) \\
+    \end{cases}
+    $$
 
     Parameters
     ----------
@@ -119,8 +156,18 @@ def harm_n_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
 
 
 def harm_n_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Array:
-    """
+    r"""
     The dimension of the spherical harmonics of degree below n_end.
+
+    $$
+    \text{dim}(\mathcal{H}_{< n} (\mathbb{R}^{d}))
+    = \sum_{k=0}^{n-1} \math{dim}(\mathcal{H}_k (\mathbb{R}^{d}))
+    = \begin{cases
+    0 & (n < 1) \\
+    N(0, d) & (n = 1) \\
+    N(n - 1, d + 1) &(\text{otherwise}) \\
+    \end{cases}
+    $$
 
     Parameters
     ----------
