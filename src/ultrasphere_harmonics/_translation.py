@@ -136,8 +136,6 @@ def harmonics_twins_expansion[TEuclidean, TSpherical](
     """
     Expansion coefficients of the twins of the harmonics.
 
-    .. math:: Y_{n_1} Y_{n_2}
-
     Parameters
     ----------
     c : SphericalCoordinates[TSpherical, TEuclidean]
