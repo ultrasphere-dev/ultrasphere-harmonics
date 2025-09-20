@@ -452,10 +452,10 @@ def index_array_harmonics_all[TSpherical, TEuclidean](
     -------
     Array | Mapping[TSpherical, Array]
         If as_array is True, the indices of shape
-        [c.s_ndim,
+        `[c.s_ndim,
         len(index_array_harmonics(c, node1)),
         ...,
-        len(index_array_harmonics(c, node(c.s_ndim)))].
+        len(index_array_harmonics(c, node(c.s_ndim)))]`.
         If as_array is False, the dictionary of indices.
 
     Notes

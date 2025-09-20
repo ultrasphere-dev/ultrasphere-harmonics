@@ -167,8 +167,8 @@ def harmonics(
         are commomly indexed by the same s_nodes, by default False
 
         For example, if spherical coordinates,
-        if True, the result will be indexed {"phi": [m], "theta": [m, n]}
-        if False, the result will be indexed {"phi": [m, n], "theta": [m, n]}
+        - if True, the result will be indexed {"phi": [m], "theta": [m, n]}
+        - if False, the result will be indexed {"phi": [m, n], "theta": [m, n]}
 
         Note that the values will not be repeated
         therefore the computational cost will be the same
