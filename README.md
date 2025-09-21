@@ -115,6 +115,8 @@ $$
 | `Phase(2)` | $Y_n^{(2),m} = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$ | $(-1)^m$                     |
 | `Phase(3)` | $Y_n^{(3),m} = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$               | $(-1)^{\frac{\|m\| + m}{2}}$ |
 
+Note that $\forall m \in \mathbb{Z}. (-1)^m = (-1)^{-m}$ holds.
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
