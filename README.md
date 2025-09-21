@@ -40,6 +40,8 @@
 
 Hyperspherical harmonics in NumPy / PyTorch / JAX
 
+![Spherical Harmonics Expansion of Stanford Bunny](https://raw.githubusercontent.com/ultrasphere-dev/ultrasphere-harmonics/main/expand_bunny.gif)
+
 ## Installation
 
 Install this via pip (or your favourite package manager):

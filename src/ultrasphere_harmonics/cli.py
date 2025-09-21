@@ -82,7 +82,7 @@ def bunny_mesh_isin(x: Array, /) -> Array:
 
 
 @app.command()
-def _plot_3d(
+def expand_bunny(
     *,
     n_plot: int = 10000,
     n_end: int = 20,
@@ -90,7 +90,7 @@ def _plot_3d(
     xp: ArrayNamespaceFull = np,
     frontend: Literal["matplotlib", "plotly"] = "matplotlib",
 ) -> None:
-    """Visualize the spherical harmonics expansion."""
+    """Visualize the spherical harmonics expansion of Stanford Bunny."""
     c = create_standard(2)
 
     def f(spherical: Mapping[Any, Array]) -> Array:
@@ -105,12 +105,12 @@ def _plot_3d(
     euclidean = random_ball(c, shape=(n_plot,), xp=xp, surface=True)
     spherical = c.from_euclidean(euclidean)
     del spherical["r"]
-    keys = ("ground_truth", *tuple(range(1, n_end)))
+    keys = ("ground_truth", *tuple(range(1, n_end + 1)))
     data = []
     for key in tqdm(keys, desc="Evaluating the cut expansion"):
         if key == "ground_truth":
             r = f(spherical)
-            label = "Ground Truth"
+            label = "Ground Truth\nBasis Count: ∞"
         else:
             key = int(key)
             r = xp.real(
@@ -162,9 +162,10 @@ def _plot_3d(
             }
         )
         fig.update_traces(marker={"size": 3})
-        fig.write_html("spherical_harmonics_expanation_3d.html")
+        fig.write_html("expand_bunny.html")
         return
 
+    plt.style.use("dark_background")
     fig, ax = plt.subplots(
         subplot_kw={"projection": "3d"}, figsize=(4, 4), layout="constrained"
     )
@@ -182,6 +183,7 @@ def _plot_3d(
         ax.yaxis.pane.set_edgecolor("w")
         ax.zaxis.pane.set_edgecolor("w")
         ax.grid(False)
+        ax.set_axis_off()
         ax.set_xlim(data[0]["x"][0].min(), data[0]["x"][0].max())
         ax.set_ylim(data[0]["x"][1].min(), data[0]["x"][1].max())
         ax.set_zlim(data[0]["x"][2].min(), data[0]["x"][2].max())
@@ -191,8 +193,8 @@ def _plot_3d(
         ax.set_title(data_["label"])
 
     anim = FuncAnimation(fig, animate, frames=data, repeat=False, interval=1000 // 3)
-    anim.save("spherical_harmonics_expanation_3d.gif", writer="pillow")
-    anim.save("spherical_harmonics_expanation_3d.mp4", writer="ffmpeg")
+    anim.save("expand_bunny.gif", writer="pillow")
+    anim.save("expand_bunny.mp4", writer="ffmpeg")
 
 
 # @app.command()
