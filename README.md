@@ -56,9 +56,9 @@ Let
 
 $$
 \begin{aligned}
-P_n (\mathbb{R}^d) &:= \left\{\sum_{|\alpha| = n - 1} c_\alpha x^\alpha | c_\alpha \in \mathbb{C}\right\} \\
-H_n (\mathbb{R}^d) &:= \left\{f \in P_n (\mathbb{R}^d) | \Delta f = 0\right\} \\
-H_n (\mathbb{S}^{d-1}) &:= \left\{f|_{\mathbb{S}^{d-1}} | f \in H_n (\mathbb{R}^d)\right\}
+  P_n (\mathbb{R}^d) &:= \left\{\sum_{|\alpha| = n - 1} c_\alpha x^\alpha | c_\alpha \in \mathbb{C}\right\} \\
+  H_n (\mathbb{R}^d) &:= \left\{f \in P_n (\mathbb{R}^d) | \Delta f = 0\right\} \\
+  H_n (\mathbb{S}^{d-1}) &:= \left\{f|_{\mathbb{S}^{d-1}} | f \in H_n (\mathbb{R}^d)\right\}
 \end{aligned}
 $$
 
@@ -97,23 +97,23 @@ There are 4 different definitions of spherical harmonics in the literature. This
 The associated Legendre polynomial is defined as follows:
 
 $$
-P_n^m (x) = (1 - x^2)^{m/2} \frac{d^m}{dx^m} P_n (x)
+P_n^m (x) = (1 - x^2)^{\frac{m}{2}} \frac{d^m}{dx^m} P_n (x)
 $$
 
 In some literature, the Condon-Shortley phase $(-1)^m$ is included in the definition of $P_n^m$ as follows:
 
 $$
-P'_n^m (x) = (-1)^m (1 - x^2)^{m/2} \frac{d^m}{dx^m} P_n (x)
+{P'}_n^m (x) = (-1)^m (1 - x^2)^{\frac{m}{2}} \frac{d^m}{dx^m} P_n (x)
 $$
 
 ### Spherical Harmonics
 
-| phase      | definition                                                                                                     | difference from `Phase(0)`   |
-| ---------- | -------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| `Phase(0)` | $Y_n^m = \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$        | $1$                          |
-| `Phase(1)` | $Y_n^m = \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$                      | $(-1)^{\frac{\|m\| - m}{2}}$ |
-| `Phase(2)` | $Y_n^m = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$ | $(-1)^m$                     |
-| `Phase(3)` | $Y_n^m = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$               | $(-1)^{\frac{\|m\| + m}{2}}$ |
+| phase      | definition                                                                                                           | difference from `Phase(0)`   |
+| ---------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `Phase(0)` | $Y_n^{(0),m} = \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$        | $1$                          |
+| `Phase(1)` | $Y_n^{(1),m} = \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$                      | $(-1)^{\frac{\|m\| - m}{2}}$ |
+| `Phase(2)` | $Y_n^{(2),m} = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$ | $(-1)^m$                     |
+| `Phase(3)` | $Y_n^{(3),m} = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$               | $(-1)^{\frac{\|m\| + m}{2}}$ |
 
 ## Contributors ✨
 
