@@ -17,7 +17,7 @@ rest_examples = Sybil(
         ReSTDocTestParser(),
         ReSTPythonCodeBlockParser(),
     ],
-    patterns=["*.py"],
+    patterns=["*.py", "*.rst"],
 )
 
 pytest_collect_file = (markdown_examples + rest_examples).pytest()
