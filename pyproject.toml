@@ -50,6 +50,7 @@ cli = [
 dev = [
   "pytest>=8,<9",
   "pytest-cov>=7,<8",
+  "sybil[pytest]>=9.2.0",
 ]
 docs = [
   "furo>=2023.5.20; python_version>='3.11'",
@@ -102,8 +103,9 @@ addopts = """\
     --cov=ultrasphere_harmonics
     --cov-report=term
     --cov-report=xml
+    -p no:doctest
     """
-pythonpath = [ "src" ]
+# pythonpath = [ "src" ]
 
 [tool.coverage.run]
 branch = true

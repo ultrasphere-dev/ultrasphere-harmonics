@@ -102,17 +102,18 @@ def expand[TEuclidean, TSpherical](
         does not use adaptive integration. For example,
         consider expanding $f(θ) = e^(2Nθ)$ with $n=N$.
 
-        >>> from ultrasphere import SphericalCoordinates
-        >>> from ultrasphere.coordinates import SphericalCoordinates
-        >>> import numpy as np
+        >>> from ultrasphere import create_standard
+        >>> from array_api_compat import numpy as np
         >>> n = 5
-        >>> expansion = SphericalCoordinates.create_create_create_standard(1).expand(
-        >>>     lambda x: np.exp(1j * (2 * n) * x["theta0"]) / np.sqrt(2 * np.pi),
-        >>>     does_f_support_separation_of_variables=False,
-        >>>     n=n,
-        >>>     n_end=n,
-        >>>     phase=False
-        >>> )
+        >>> expansion = expand(
+        ...     create_standard(1),
+        ...     lambda x: np.exp(1j * (2 * n) * x["theta0"]) / np.sqrt(2 * np.pi),
+        ...     does_f_support_separation_of_variables=False,
+        ...     n=n,
+        ...     n_end=n,
+        ...     phase=False,
+        ...     xp=np,
+        ... )
         >>> print(np.round(expansion, 2).real.tolist())
         [1.0, 0.0, 0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0]
 
