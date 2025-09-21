@@ -1,5 +1,5 @@
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Literal
 
 import array_api_extra as xpx
 import cyclopts
@@ -37,7 +37,7 @@ def bunny_mesh_dist(direction: Array, /, *, max_radius: float = 100) -> Array:
 
     """
     data = o3d.data.BunnyMesh()
-    mesh = o3d.io.read_triangle_mesh(data.path).translate([0.03, -0.08, 0])
+    mesh = o3d.io.read_triangle_mesh(data.path).translate([0.06, -0.12, -0.03])
     scene = o3d.t.geometry.RaycastingScene()
     scene.add_triangles(o3d.t.geometry.TriangleMesh.from_legacy(mesh))
     outgoing = False
@@ -82,9 +82,10 @@ def bunny_mesh_isin(x: Array, /) -> Array:
 def _plot_3d(
     *,
     n_plot: int = 10000,
-    n_end: int = 40,
+    n_end: int = 20,
     phase: Phase = Phase(0),  # noqa
     xp: ArrayNamespaceFull = np,
+    frontend: Literal["matplotlib", "plotly"] = "matplotlib",
 ) -> None:
     """Visualize the spherical harmonics expansion."""
     c = create_standard(2)
@@ -125,7 +126,32 @@ def _plot_3d(
             }
         )
 
-    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+    if frontend == "plotly":
+        import pandas as pd
+        import plotly.express as px
+
+        # [t, x, y, z]
+        df = pd.concat(
+            [
+                pd.DataFrame(
+                    {"x": d["x"][0], "y": d["x"][1], "z": d["x"][2], "n": d["label"]}
+                )
+                for d in data
+            ]
+        )
+        fig = px.scatter_3d(df, x="x", y="y", z="z", color="z", animation_frame="n")
+        fig.update_layout(
+            scene={
+                "xaxis": {"range": [-rmax, rmax]},
+                "yaxis": {"range": [-rmax, rmax]},
+                "zaxis": {"range": [-rmax, rmax]},
+            }
+        )
+        fig.update_traces(marker={"size": 2})
+        fig.write_html("spherical_harmonics_expanation_3d.html")
+        return
+
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(6, 6))
 
     def animate(data: dict[str, Any]) -> None:
         ax.clear()
@@ -146,103 +172,103 @@ def _plot_3d(
     anim.save("spherical_harmonics_expanation_3d.mp4", writer="ffmpeg")
 
 
-@app.command()
-def plot_4d(
-    *,
-    n_plot: int = 10000,
-    n_end: int = 10,
-    phase: Phase = Phase(0),  # noqa
-    xp: ArrayNamespaceFull = np,
-) -> None:
-    """Visualize the spherical harmonics expansion."""
-    c = create_standard(3)
+# @app.command()
+# def plot_4d(
+#     *,
+#     n_plot: int = 10000,
+#     n_end: int = 10,
+#     phase: Phase = Phase(0),
+#     xp: ArrayNamespaceFull = np,
+# ) -> None:
+#     """Visualize the spherical harmonics expansion."""
+#     c = create_standard(3)
 
-    def f(spherical: Mapping[Any, Array]) -> Array:
-        """Get the distance to the surface."""
-        xp = array_namespace(*spherical.values())
-        euclidean = c.to_euclidean(spherical)
-        # stereographic projection
-        denom = 1 - euclidean[0]
-        direction = xp.stack(
-            xp.broadcast_arrays(
-                euclidean[1] / denom,
-                euclidean[2] / denom,
-                euclidean[3] / denom,
-            ),
-            axis=-1,
-        )
-        return bunny_mesh_isin(direction)
+#     def f(spherical: Mapping[Any, Array]) -> Array:
+#         """Get the distance to the surface."""
+#         xp = array_namespace(*spherical.values())
+#         euclidean = c.to_euclidean(spherical)
+#         # stereographic projection
+#         denom = 1 - euclidean[0]
+#         direction = xp.stack(
+#             xp.broadcast_arrays(
+#                 euclidean[1] / denom,
+#                 euclidean[2] / denom,
+#                 euclidean[3] / denom,
+#             ),
+#             axis=-1,
+#         )
+#         return bunny_mesh_isin(direction)
 
-    expansion = expand(
-        c,
-        f,
-        False,
-        n_end,
-        2 * n_end,
-        phase=phase,
-        xp=xp,
-    )
+#     expansion = expand(
+#         c,
+#         f,
+#         False,
+#         n_end,
+#         2 * n_end,
+#         phase=phase,
+#         xp=xp,
+#     )
 
-    # plot coordinates
-    euclidean = random_ball(create_standard(2), shape=(n_plot,), xp=xp, surface=False)
-    r = xp.linalg.vector_norm(euclidean, axis=0)
-    denom = r**2 + 1
-    euclidean_proj = [
-        (r**2 - 1) / denom,
-        2 * euclidean[0] / denom,
-        2 * euclidean[1] / denom,
-        2 * euclidean[2] / denom,
-    ]
-    spherical_proj = c.from_euclidean(euclidean_proj)
-    del spherical_proj["r"]
+#     # plot coordinates
+#     euclidean = random_ball(create_standard(2), shape=(n_plot,), xp=xp, surface=False)
+#     r = xp.linalg.vector_norm(euclidean, axis=0)
+#     denom = r**2 + 1
+#     euclidean_proj = [
+#         (r**2 - 1) / denom,
+#         2 * euclidean[0] / denom,
+#         2 * euclidean[1] / denom,
+#         2 * euclidean[2] / denom,
+#     ]
+#     spherical_proj = c.from_euclidean(euclidean_proj)
+#     del spherical_proj["r"]
 
-    # compute the expansion
-    keys = ("ground_truth", *tuple(range(1, n_end)))
-    data = []
-    for key in tqdm(keys, desc="Evaluating the cut expansion"):
-        if key == "ground_truth":
-            w = f(spherical_proj)
-            label = "Ground Truth"
-        else:
-            w = xp.real(
-                expand_evaluate(
-                    c,
-                    expand_cut(c, expansion, key),
-                    spherical_proj,
-                    phase=phase,
-                )
-            )
-            label = f"Degree: {key}"
-        data.append(
-            {
-                "w": w,
-                "key": key,
-                "label": label,
-            }
-        )
+#     # compute the expansion
+#     keys = ("ground_truth", *tuple(range(1, n_end)))
+#     data = []
+#     for key in tqdm(keys, desc="Evaluating the cut expansion"):
+#         if key == "ground_truth":
+#             w = f(spherical_proj)
+#             label = "Ground Truth"
+#         else:
+#             w = xp.real(
+#                 expand_evaluate(
+#                     c,
+#                     expand_cut(c, expansion, key),
+#                     spherical_proj,
+#                     phase=phase,
+#                 )
+#             )
+#             label = f"Degree: {key}"
+#         data.append(
+#             {
+#                 "w": w,
+#                 "key": key,
+#                 "label": label,
+#             }
+#         )
 
-    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+#     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 
-    def animate(data: dict[str, Any]) -> None:
-        ax.clear()
-        ax.view_init(elev=45, azim=45, roll=120)
-        ax.scatter3D(
-            euclidean[0],
-            euclidean[1],
-            euclidean[2],
-            s=data["w"] * 10,
-            c=euclidean[2],
-            cmap="viridis",
-        )
-        ax.set_xlim(-1, 1)
-        ax.set_ylim(-1, 1)
-        ax.set_zlim(-1, 1)
-        ax.set_xlabel("x")
-        ax.set_ylabel("y")
-        ax.set_zlabel("z")
-        ax.set_title(data["label"])
-        return
+#     def animate(data: dict[str, Any]) -> None:
+#         ax.clear()
+#         ax.view_init(elev=45, azim=45, roll=120)
+#         ax.scatter3D(
+#             euclidean[0],
+#             euclidean[1],
+#             euclidean[2],
+#             s=data["w"] * 10,
+#             c=euclidean[2],
+#             cmap="viridis",
+#         )
+#         ax.set_xlim(-1, 1)
+#         ax.set_ylim(-1, 1)
+#         ax.set_zlim(-1, 1)
+#         ax.set_xlabel("x")
+#         ax.set_ylabel("y")
+#         ax.set_zlabel("z")
+#         ax.set_title(data["label"])
+#         return
 
-    anim = FuncAnimation(fig, animate, frames=data, repeat=False, interval=200)
-    anim.save("spherical_harmonics_expanation_4d.gif", writer="pillow")
-    anim.save("spherical_harmonics_expanation_4d.mp4", writer="ffmpeg")
+#     anim = FuncAnimation(fig, animate, frames=data, repeat=False, interval=200)
+#     anim.save("spherical_harmonics_expanation_4d.gif", writer="pillow")
+#     anim.save("spherical_harmonics_expanation_4d.mp4", writer="ffmpeg")
