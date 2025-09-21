@@ -88,6 +88,33 @@ Example for Type **ba** coordinates, the well-known spherical harmonics:
 
 Note that this package supports **any** spherical coordinates.
 
+## 4 different definitions of spherical harmonics for type **ba** coordinates
+
+There are 4 different definitions of spherical harmonics in the literature. This package supports all of them by changing `phase` parameter.
+
+### Associated Legendre Polynomial
+
+The associated Legendre polynomial is defined as follows:
+
+$$
+P_n^m (x) = (1 - x^2)^{m/2} \frac{d^m}{dx^m} P_n (x)
+$$
+
+In some literature, the Condon-Shortley phase $(-1)^m$ is included in the definition of $P_n^m$ as follows:
+
+$$
+P'_n^m (x) = (-1)^m (1 - x^2)^{m/2} \frac{d^m}{dx^m} P_n (x)
+$$
+
+### Spherical Harmonics
+
+| phase      | definition                                                                                                     | difference from `Phase(0)`   |
+| ---------- | -------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `Phase(0)` | $Y_n^m = \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$        | $1$                          |
+| `Phase(1)` | $Y_n^m = \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$                      | $(-1)^{\frac{\|m\| - m}{2}}$ |
+| `Phase(2)` | $Y_n^m = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$ | $(-1)^m$                     |
+| `Phase(3)` | $Y_n^m = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$               | $(-1)^{\frac{\|m\| + m}{2}}$ |
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
