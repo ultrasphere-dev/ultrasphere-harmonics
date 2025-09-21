@@ -5,6 +5,8 @@ import array_api_extra as xpx
 import cyclopts
 import matplotlib.pyplot as plt
 import open3d as o3d
+import pandas as pd
+import plotly.express as px
 from array_api._2024_12 import Array, ArrayNamespaceFull
 from array_api_compat import array_namespace
 from array_api_compat import numpy as np
@@ -15,6 +17,7 @@ from ultrasphere import create_standard, random_ball
 from ultrasphere_harmonics._core._eigenfunction import Phase
 from ultrasphere_harmonics._cut import expand_cut
 from ultrasphere_harmonics._expansion import expand, expand_evaluate
+from ultrasphere_harmonics._ndim import harm_n_ndim_le
 
 app = cyclopts.App(__name__)
 
@@ -104,11 +107,9 @@ def _plot_3d(
     del spherical["r"]
     keys = ("ground_truth", *tuple(range(1, n_end)))
     data = []
-    rmax = 0
     for key in tqdm(keys, desc="Evaluating the cut expansion"):
         if key == "ground_truth":
             r = f(spherical)
-            rmax = xp.max(r)
             label = "Ground Truth"
         else:
             key = int(key)
@@ -117,7 +118,10 @@ def _plot_3d(
                     c, expand_cut(c, expansion, key), spherical, phase=phase
                 )
             )
-            label = f"Degree: {key}"
+            label = (
+                f"Max Degree: {key - 1:02d}\n"
+                f"Basis Count: {harm_n_ndim_le(key - 1, e_ndim=c.e_ndim):03d}"
+            )
         data.append(
             {
                 "x": c.to_euclidean(spherical | {"r": r}),
@@ -127,9 +131,6 @@ def _plot_3d(
         )
 
     if frontend == "plotly":
-        import pandas as pd
-        import plotly.express as px
-
         # [t, x, y, z]
         df = pd.concat(
             [
@@ -151,9 +152,9 @@ def _plot_3d(
             z="z",
             color="z",
             animation_frame="label",
-            range_x=[-rmax, rmax],
-            range_y=[-rmax, rmax],
-            range_z=[-rmax, rmax],
+            range_x=[data[0]["x"][0].min(), data[0]["x"][0].max()],
+            range_y=[data[0]["x"][1].min(), data[0]["x"][1].max()],
+            range_z=[data[0]["x"][2].min(), data[0]["x"][2].max()],
         )
         fig.update_layout(
             scene={
@@ -164,23 +165,32 @@ def _plot_3d(
         fig.write_html("spherical_harmonics_expanation_3d.html")
         return
 
-    fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(6, 6))
+    fig, ax = plt.subplots(
+        subplot_kw={"projection": "3d"}, figsize=(4, 4), layout="constrained"
+    )
 
-    def animate(data: dict[str, Any]) -> None:
+    def animate(data_: dict[str, Any]) -> None:
         ax.clear()
         ax.view_init(elev=45, azim=45, roll=120)
         ax.scatter3D(
-            data["x"][0], data["x"][1], data["x"][2], c=data["x"][2], cmap="viridis"
+            data_["x"][0], data_["x"][1], data_["x"][2], c=data_["x"][2], cmap="viridis"
         )
-        ax.set_xlim(-rmax, rmax)
-        ax.set_ylim(-rmax, rmax)
-        ax.set_zlim(-rmax, rmax)
+        ax.xaxis.pane.fill = False
+        ax.yaxis.pane.fill = False
+        ax.zaxis.pane.fill = False
+        ax.xaxis.pane.set_edgecolor("w")
+        ax.yaxis.pane.set_edgecolor("w")
+        ax.zaxis.pane.set_edgecolor("w")
+        ax.grid(False)
+        ax.set_xlim(data[0]["x"][0].min(), data[0]["x"][0].max())
+        ax.set_ylim(data[0]["x"][1].min(), data[0]["x"][1].max())
+        ax.set_zlim(data[0]["x"][2].min(), data[0]["x"][2].max())
         ax.set_xlabel("x")
         ax.set_ylabel("y")
         ax.set_zlabel("z")
-        ax.set_title(data["label"])
+        ax.set_title(data_["label"])
 
-    anim = FuncAnimation(fig, animate, frames=data, repeat=False, interval=200)
+    anim = FuncAnimation(fig, animate, frames=data, repeat=False, interval=1000 // 3)
     anim.save("spherical_harmonics_expanation_3d.gif", writer="pillow")
     anim.save("spherical_harmonics_expanation_3d.mp4", writer="ffmpeg")
 
