@@ -37,7 +37,7 @@ def bunny_mesh_dist(direction: Array, /, *, max_radius: float = 100) -> Array:
 
     """
     data = o3d.data.BunnyMesh()
-    mesh = o3d.io.read_triangle_mesh(data.path).translate([0.06, -0.12, -0.03])
+    mesh = o3d.io.read_triangle_mesh(data.path).translate([0.06, -0.12, -0.02])
     scene = o3d.t.geometry.RaycastingScene()
     scene.add_triangles(o3d.t.geometry.TriangleMesh.from_legacy(mesh))
     outgoing = False
@@ -134,20 +134,33 @@ def _plot_3d(
         df = pd.concat(
             [
                 pd.DataFrame(
-                    {"x": d["x"][0], "y": d["x"][1], "z": d["x"][2], "n": d["label"]}
+                    {
+                        "x": d["x"][0],
+                        "y": d["x"][1],
+                        "z": d["x"][2],
+                        "label": d["label"],
+                    }
                 )
                 for d in data
             ]
         )
-        fig = px.scatter_3d(df, x="x", y="y", z="z", color="z", animation_frame="n")
+        fig = px.scatter_3d(
+            df,
+            x="x",
+            y="y",
+            z="z",
+            color="z",
+            animation_frame="label",
+            range_x=[-rmax, rmax],
+            range_y=[-rmax, rmax],
+            range_z=[-rmax, rmax],
+        )
         fig.update_layout(
             scene={
-                "xaxis": {"range": [-rmax, rmax]},
-                "yaxis": {"range": [-rmax, rmax]},
-                "zaxis": {"range": [-rmax, rmax]},
+                "aspectmode": "cube",
             }
         )
-        fig.update_traces(marker={"size": 2})
+        fig.update_traces(marker={"size": 3})
         fig.write_html("spherical_harmonics_expanation_3d.html")
         return
 
