@@ -86,7 +86,7 @@ def expand_bunny(
     *,
     n_plot: int = 10000,
     n_end: int = 20,
-    phase: Phase = Phase(0),  # noqa
+    phase: Phase = 0,  # type: ignore
     xp: ArrayNamespaceFull = np,
     frontend: Literal["matplotlib", "plotly"] = "matplotlib",
 ) -> None:
@@ -197,103 +197,120 @@ def expand_bunny(
     anim.save("expand_bunny.mp4", writer="ffmpeg")
 
 
-# @app.command()
-# def plot_4d(
-#     *,
-#     n_plot: int = 10000,
-#     n_end: int = 10,
-#     phase: Phase = Phase(0),
-#     xp: ArrayNamespaceFull = np,
-# ) -> None:
-#     """Visualize the spherical harmonics expansion."""
-#     c = create_standard(3)
+@app.command()
+def expand_bunny_4d(
+    *,
+    n_plot: int = 10000,
+    n_end: int = 14,
+    phase: Phase = 0,  # type: ignore
+    xp: ArrayNamespaceFull = np,
+    threshold: float | None = 0.5,
+) -> None:
+    """Visualize the spherical harmonics expansion of Stanford Bunny."""
+    c = create_standard(3)
 
-#     def f(spherical: Mapping[Any, Array]) -> Array:
-#         """Get the distance to the surface."""
-#         xp = array_namespace(*spherical.values())
-#         euclidean = c.to_euclidean(spherical)
-#         # stereographic projection
-#         denom = 1 - euclidean[0]
-#         direction = xp.stack(
-#             xp.broadcast_arrays(
-#                 euclidean[1] / denom,
-#                 euclidean[2] / denom,
-#                 euclidean[3] / denom,
-#             ),
-#             axis=-1,
-#         )
-#         return bunny_mesh_isin(direction)
+    def f(spherical: Mapping[Any, Array]) -> Array:
+        """Get the distance to the surface."""
+        xp = array_namespace(*spherical.values())
+        euclidean = c.to_euclidean(spherical)
+        # stereographic projection
+        denom = 1 - euclidean[0]
+        direction = xp.stack(
+            xp.broadcast_arrays(
+                euclidean[1] / denom,
+                euclidean[2] / denom,
+                euclidean[3] / denom,
+            ),
+            axis=-1,
+        )
+        return bunny_mesh_isin(direction)
 
-#     expansion = expand(
-#         c,
-#         f,
-#         False,
-#         n_end,
-#         2 * n_end,
-#         phase=phase,
-#         xp=xp,
-#     )
+    expansion = expand(
+        c,
+        f,
+        False,
+        n_end,
+        2 * n_end,
+        phase=phase,
+        xp=xp,
+    )
 
-#     # plot coordinates
-#     euclidean = random_ball(create_standard(2), shape=(n_plot,), xp=xp, surface=False)
-#     r = xp.linalg.vector_norm(euclidean, axis=0)
-#     denom = r**2 + 1
-#     euclidean_proj = [
-#         (r**2 - 1) / denom,
-#         2 * euclidean[0] / denom,
-#         2 * euclidean[1] / denom,
-#         2 * euclidean[2] / denom,
-#     ]
-#     spherical_proj = c.from_euclidean(euclidean_proj)
-#     del spherical_proj["r"]
+    # plot coordinates
+    euclidean = random_ball(create_standard(2), shape=(n_plot,), xp=xp, surface=False)
+    r = xp.linalg.vector_norm(euclidean, axis=0)
+    denom = r**2 + 1
+    euclidean_proj = [
+        (r**2 - 1) / denom,
+        2 * euclidean[0] / denom,
+        2 * euclidean[1] / denom,
+        2 * euclidean[2] / denom,
+    ]
+    spherical_proj = c.from_euclidean(euclidean_proj)
+    del spherical_proj["r"]
 
-#     # compute the expansion
-#     keys = ("ground_truth", *tuple(range(1, n_end)))
-#     data = []
-#     for key in tqdm(keys, desc="Evaluating the cut expansion"):
-#         if key == "ground_truth":
-#             w = f(spherical_proj)
-#             label = "Ground Truth"
-#         else:
-#             w = xp.real(
-#                 expand_evaluate(
-#                     c,
-#                     expand_cut(c, expansion, key),
-#                     spherical_proj,
-#                     phase=phase,
-#                 )
-#             )
-#             label = f"Degree: {key}"
-#         data.append(
-#             {
-#                 "w": w,
-#                 "key": key,
-#                 "label": label,
-#             }
-#         )
+    # compute the expansion
+    keys = ("ground_truth", *tuple(range(1, n_end + 1)))
+    data = []
+    for key in tqdm(keys, desc="Evaluating the cut expansion"):
+        if key == "ground_truth":
+            w = f(spherical_proj)
+            label = "Ground Truth\nBasis Count: ∞"
+        else:
+            w = xp.real(
+                expand_evaluate(
+                    c,
+                    expand_cut(c, expansion, key),
+                    spherical_proj,
+                    phase=phase,
+                )
+            )
+            label = (
+                f"Max Degree: {key - 1:02d}\n"
+                f"Basis Count: {harm_n_ndim_le(key - 1, e_ndim=c.e_ndim):04d}"
+            )
+        if threshold is not None:
+            w = (w > threshold).astype(w.dtype)
+        data.append(
+            {
+                "w": w,
+                "key": key,
+                "label": label,
+            }
+        )
 
-#     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+    plt.style.use("dark_background")
+    fig, ax = plt.subplots(
+        subplot_kw={"projection": "3d"}, figsize=(4, 4), layout="constrained"
+    )
 
-#     def animate(data: dict[str, Any]) -> None:
-#         ax.clear()
-#         ax.view_init(elev=45, azim=45, roll=120)
-#         ax.scatter3D(
-#             euclidean[0],
-#             euclidean[1],
-#             euclidean[2],
-#             s=data["w"] * 10,
-#             c=euclidean[2],
-#             cmap="viridis",
-#         )
-#         ax.set_xlim(-1, 1)
-#         ax.set_ylim(-1, 1)
-#         ax.set_zlim(-1, 1)
-#         ax.set_xlabel("x")
-#         ax.set_ylabel("y")
-#         ax.set_zlabel("z")
-#         ax.set_title(data["label"])
-#         return
+    def animate(data: dict[str, Any]) -> None:
+        ax.clear()
+        ax.view_init(elev=45, azim=45, roll=120)
+        ax.scatter3D(
+            euclidean[0],
+            euclidean[1],
+            euclidean[2],
+            s=data["w"] * 10,
+            c=euclidean[2],
+            cmap="viridis",
+        )
+        ax.xaxis.pane.fill = False
+        ax.yaxis.pane.fill = False
+        ax.zaxis.pane.fill = False
+        ax.xaxis.pane.set_edgecolor("w")
+        ax.yaxis.pane.set_edgecolor("w")
+        ax.zaxis.pane.set_edgecolor("w")
+        ax.grid(False)
+        ax.set_axis_off()
+        ax.set_xlim(-1, 1)
+        ax.set_ylim(-1, 1)
+        ax.set_zlim(-1, 1)
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+        ax.set_zlabel("z")
+        ax.set_title(data["label"])
+        return
 
-#     anim = FuncAnimation(fig, animate, frames=data, repeat=False, interval=200)
-#     anim.save("spherical_harmonics_expanation_4d.gif", writer="pillow")
-#     anim.save("spherical_harmonics_expanation_4d.mp4", writer="ffmpeg")
+    anim = FuncAnimation(fig, animate, frames=data, repeat=False, interval=1000 // 3)
+    anim.save("expand_bunny_4d.gif", writer="pillow")
+    anim.save("expand_bunny_4d.mp4", writer="ffmpeg")
