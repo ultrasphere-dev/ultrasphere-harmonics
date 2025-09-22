@@ -52,11 +52,126 @@ pip install ultrasphere-harmonics
 
 ## Usage
 
+All functions support batch calculation.
+
+Following [Generalized universal function API (NumPy)](https://numpy.org/doc/stable/reference/c-api/generalized-ufuncs.html),
+**Batch** dimensions are mapped to the **first** dimensions of arrays and **Core** dimensions are mapped to the **last** dimensions of arrays.
+
+### Spherical Harmonics
+
 ```python
+>>> from array_api_compat import numpy as np
+>>> from ultrasphere import create_spherical
 >>> from ultrasphere_harmonics import harmonics
->>> harmonics(1)
-2
+>>> harm = harmonics( # flattened output
+...     create_spherical(), # structure for spherical coordinates
+...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)}, # spherical coordinates
+...     n_end=2, # maximum degree - 1
+...     phase=0 # the phase convention (see below for details)
+... )
+>>> np.round(harm, 2)
+array([0.28+0.j  , 0.43+0.j  , 0.09+0.14j, 0.09-0.14j])
 ```
+
+#### Batch calculation
+
+```python
+>>> harm = harmonics( # flattened output
+...     create_spherical(), # structure for spherical coordinates
+...     {"theta": np.asarray([0.5, 0.6]), "phi": np.asarray([1.0])}, # spherical coordinates
+...     n_end=2, # maximum degree - 1
+...     phase=0 # the phase convention (see below for details)
+... )
+>>> np.round(harm, 2)
+array([[0.28+0.j  , 0.43+0.j  , 0.09+0.14j, 0.09-0.14j],
+       [0.28+0.j  , 0.4 +0.j  , 0.11+0.16j, 0.11-0.16j]])
+```
+
+### Hyperspherical Harmonics
+
+Spherical harmonics for higher dimensions or lower dimensions can be calculated by changing the structure of spherical coordinates.
+
+```python
+>>> from ultrasphere import create_standard
+>>> harm = harmonics( # flattened output
+...     create_standard(4), # structure for spherical coordinates
+...     {"theta0": np.asarray(0.5), "theta1": np.asarray(0.75), "theta2": np.asarray(1.0), "theta3": np.asarray(1.25)}, # spherical coordinates
+...     n_end=2, # maximum degree - 1
+...     phase=0 # the phase convention (see below for details)
+... )
+>>> np.round(harm, 2)
+array([0.19+0.j  , 0.38+0.j  , 0.15+0.j  , 0.08+0.j  , 0.03+0.08j,
+       0.03-0.08j])
+```
+
+### Expansion and Evaluation
+
+#### Expansion
+
+```python
+>>> from ultrasphere_harmonics import expand, expand_evaluate
+>>> def my_function(spherical):
+...     return np.sin(spherical["theta"]) + np.cos(spherical["phi"])
+>>> expansion_coef = expand(
+...     create_spherical(),
+...     my_function,
+...     n_end=6, # maximum degree - 1
+...     n=12, # number of points for numerical integration
+...     does_f_support_separation_of_variables=False,
+...     phase=0,
+...     xp=np
+... )
+>>> np.round(expansion_coef, 2)
+array([ 2.78+0.j, -0.  +0.j,  1.71+0.j,  1.71-0.j, -0.78+0.j, -0.  +0.j,
+       -0.  +0.j, -0.  -0.j, -0.  -0.j, -0.  +0.j,  0.4 +0.j,  0.  +0.j,
+       -0.  +0.j, -0.  -0.j,  0.  -0.j,  0.4 -0.j, -0.13+0.j, -0.  -0.j,
+       -0.  +0.j,  0.  +0.j, -0.  +0.j, -0.  -0.j,  0.  -0.j, -0.  -0.j,
+       -0.  +0.j,  0.  +0.j,  0.2 +0.j, -0.  -0.j, -0.  +0.j, -0.  +0.j,
+       -0.  -0.j, -0.  +0.j, -0.  -0.j, -0.  -0.j, -0.  +0.j,  0.2 -0.j])
+```
+
+#### Evaluation
+
+```python
+>>> spherical = {
+...     "theta": np.asarray(0.5),
+...     "phi": np.asarray(0.75),
+... }
+>>> my_function_expected = my_function(spherical)
+>>> np.round(my_function_expected, 6)
+np.float64(1.211114)
+>>> my_function_approx = expand_evaluate(
+...     create_spherical(),
+...     expansion_coef,
+...     spherical,
+...     phase=0
+... )
+>>> np.round(my_function_approx, 6)
+np.complex128(1.248959+0j)
+```
+
+See [API Reference](https://ultrasphere-harmonics.readthedocs.io/en/latest/ultrasphere_harmonics.html) for further details and examples.
+
+## 2 formats for storing spherical harmonics
+
+| Format           | indexing `(n, m)` in type **ba** coordinates   |
+| ---------------- | ---------------------------------------------- | ---------------- |
+| Multidimensional | `array[..., n, m]`                             |
+| Flatten          | `array[..., (n - 1) ** 2 + (m % (2 * n - 1))]` | Memory efficient |
+
+### Advantages of Multidimensional format
+
+- Easy to understand and use
+- Easy to slice
+- Summantion over specific quantum number is easy
+
+### Advantages of Flatten format
+
+- Memory efficient
+- Easy to use linear algebra functions like `np.linalg.solve`, `np.inv` etc.
+- Summation over all quantum numbers is easy
+
+The format can be converted using `flatten_harmonics()` and `unflatten_harmonics()` functions.
 
 ## 4 different definitions of spherical harmonics for type **ba** coordinates
 
