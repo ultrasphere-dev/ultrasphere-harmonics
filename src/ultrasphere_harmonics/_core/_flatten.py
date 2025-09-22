@@ -211,6 +211,16 @@ def flatten_mask_harmonics[TSpherical, TEuclidean](
     Array
         The mask.
 
+    Example
+    -------
+    For spherical coordinates, |m| <= n are the valid combinations.
+    >>> from array_api_compat import numpy as np
+    >>> from ultrasphere import create_spherical
+    >>> c = create_spherical()
+    >>> flatten_mask_harmonics(c, n_end=2, xp=np)
+    array([[ True, False, False],
+           [ True,  True,  True]])
+
     """
     index_arrays: Mapping[TSpherical, Array] = _index_array_harmonics_all(
         c,
@@ -276,6 +286,27 @@ def flatten_harmonics[TSpherical, TEuclidean](
     Array
         The flattened harmonics of shape (..., n_harmonics).
 
+    Example
+    -------
+    >>> from array_api_compat import numpy as np
+    >>> from ultrasphere import create_spherical
+    >>> from ultrasphere_harmonics import harmonics
+    >>> c = create_spherical()
+    >>> harm = harmonics(
+    ...     c,
+    ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
+    ...     n_end=2,
+    ...     phase=0,
+    ...     flatten=False,
+    ... )
+    >>> np.round(harm, 2)
+    array([[0.28+0.j  , 0.  +0.j  , 0.  +0.j  ],
+           [0.43+0.j  , 0.09+0.14j, 0.09-0.14j]])
+
+    >>> harm_flat = flatten_harmonics(c, harm)
+    >>> np.round(harm_flat, 2)
+    array([0.28+0.j  , 0.43+0.j  , 0.09+0.14j, 0.09-0.14j])
+
     """
     if axis_end >= 0:
         raise ValueError("axis_end must be negative.")
@@ -316,6 +347,26 @@ def unflatten_harmonics[TSpherical, TEuclidean](
     -------
     Array
         The unflattened harmonics of shape (..., n_1, n_2, ..., n_(c.s_ndim)).
+
+    Example
+    -------
+    >>> from array_api_compat import numpy as np
+    >>> from ultrasphere import create_spherical
+    >>> from ultrasphere_harmonics import harmonics
+    >>> c = create_spherical()
+    >>> harm_flat = harmonics(
+    ...     c,
+    ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
+    ...     n_end=2,
+    ...     phase=0,
+    ... )
+    >>> np.round(harm_flat, 2)
+    array([0.28+0.j  , 0.43+0.j  , 0.09+0.14j, 0.09-0.14j])
+
+    >>> harm = unflatten_harmonics(c, harm_flat)
+    >>> np.round(harm, 2)
+    array([[0.28+0.j  , 0.  +0.j  , 0.  +0.j  ],
+           [0.43+0.j  , 0.09+0.14j, 0.09-0.14j]])
 
     """
     xp = array_namespace(harmonics)
@@ -368,6 +419,30 @@ def index_array_harmonics[TSpherical, TEuclidean](
     Array
         The index.
 
+    Example
+    -------
+    >>> from array_api_compat import numpy as np
+    >>> from ultrasphere import create_spherical
+    >>> c = create_spherical()
+
+    >>> index_array_harmonics(
+    ...     c,
+    ...     "theta",
+    ...     n_end=3,
+    ...     xp=np,
+    ... )
+    array([[0],
+           [1],
+           [2]])
+
+    >>> index_array_harmonics(
+    ...     c,
+    ...     "phi",
+    ...     n_end=3,
+    ...     xp=np,
+    ... )
+    array([[ 0,  1,  2, -2, -1]])
+
     """
     if flatten and not expand_dims:
         raise ValueError("expand_dims must be True if flatten is True.")
@@ -393,7 +468,7 @@ def index_array_harmonics_all[TSpherical, TEuclidean](
     n_end: int,
     xp: ArrayNamespaceFull,
     include_negative_m: bool = ...,
-    expand_dims: bool,
+    expand_dims: bool = ...,
     as_array: Literal[False],
     mask: Literal[False] = ...,
     flatten: bool | None = ...,
@@ -405,7 +480,7 @@ def index_array_harmonics_all[TSpherical, TEuclidean](
     n_end: int,
     xp: ArrayNamespaceFull,
     include_negative_m: bool = ...,
-    expand_dims: Literal[True],
+    expand_dims: Literal[True] = ...,
     as_array: Literal[True],
     mask: bool = ...,
     flatten: bool | None = ...,
@@ -418,7 +493,7 @@ def index_array_harmonics_all[TSpherical, TEuclidean](
     n_end: int,
     xp: ArrayNamespaceFull,
     include_negative_m: bool = True,
-    expand_dims: bool,
+    expand_dims: bool = True,
     as_array: bool,
     mask: bool = False,
     flatten: bool | None = None,
@@ -469,6 +544,31 @@ def index_array_harmonics_all[TSpherical, TEuclidean](
     ValueError
         If expand_dims is False and as_array is True.
         If mask is True and as_array is False.
+
+    Example
+    -------
+    >>> from array_api_compat import numpy as np
+    >>> from ultrasphere import create_spherical
+    >>> c = create_spherical()
+
+    >>> index_array_harmonics_all(
+    ...     c,
+    ...     n_end=3,
+    ...     xp=np,
+    ...     as_array=True,
+    ... )
+    array([[ 0,  1,  1,  1,  2,  2,  2,  2,  2],
+           [ 0,  0,  1, -1,  0,  1,  2, -2, -1]])
+
+    >>> index_array_harmonics_all(
+    ...     c,
+    ...     n_end=3,
+    ...     xp=np,
+    ...     as_array=False,
+    ... )
+    {'theta': array([[0],
+           [1],
+           [2]]), 'phi': array([[ 0,  1,  2, -2, -1]])}
 
     """
     if flatten is None:
