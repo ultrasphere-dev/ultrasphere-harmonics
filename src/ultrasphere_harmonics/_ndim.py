@@ -30,11 +30,16 @@ def homogeneous_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
     McLean, W. (2000). Strongly Elliptic Systems and
     Boundary Integral Equations. p.250 (8.7)
 
+    Example
+    -------
+    >>> homogeneous_ndim_eq(3, e_ndim=3)
+    array(10)
+
     """
     s_ndim = e_ndim - 1
     result = binom(n + s_ndim, s_ndim)
     xp = array_namespace(result)
-    return xp.astype(xp.round(result), int)
+    return xp.asarray(xp.astype(xp.round(result), int))
 
 
 def homogeneous_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Array:
@@ -75,12 +80,19 @@ def homogeneous_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Arr
     McLean, W. (2000). Strongly Elliptic Systems and
     Boundary Integral Equations. p.250 (8.9)
 
+    Example
+    -------
+    >>> homogeneous_ndim_le(3, e_ndim=3)
+    array(10)
+
     """
     try:
         xp = array_namespace(n_end, e_ndim)
     except TypeError:
         xp = np
-    return xp.apply_where(
+    n_end = xp.asarray(n_end)
+    e_ndim = xp.asarray(e_ndim)
+    return xpx.apply_where(
         n_end < 1,
         (n_end, e_ndim),
         lambda n_end, e_ndim: 0,
@@ -95,7 +107,7 @@ def homogeneous_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Arr
 
 def harm_n_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
     r"""
-    The dimension of the spherical harmonics of degree below n_end.
+    The dimension of the spherical harmonics of degree equals to n.
 
     $$
     N(n, d) = \dim(\mathcal{H}_n (\mathbb{R}^{d}))
@@ -129,6 +141,11 @@ def harm_n_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
     ----------
     McLean, W. (2000). Strongly Elliptic Systems and
     Boundary Integral Equations. p.251 (8.13)
+
+    Example
+    -------
+    >>> harm_n_ndim_eq(3, e_ndim=3)
+    array(7)
 
     """
     try:
@@ -185,6 +202,11 @@ def harm_n_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Array:
     ----------
     McLean, W. (2000). Strongly Elliptic Systems and
     Boundary Integral Equations. p.251 (8.12)
+
+    Example
+    -------
+    >>> harm_n_ndim_le(3, e_ndim=3)
+    array(9)
 
     """
     try:
