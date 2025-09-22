@@ -34,7 +34,8 @@ def concat_harmonics[TSpherical, TEuclidean](
     ...     c,
     ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
     ...     n_end=2,
-    ...     phase=0
+    ...     phase=0,
+    ...     concat=False,
     ... )
     >>> {k: np.round(harm[k], 2) for k in c.s_nodes}
     {'theta': array([[0.71, 0.  , 0.  ],

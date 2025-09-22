@@ -178,11 +178,70 @@ def harmonics(
     concat : bool, optional
         Whether to concatenate the results, by default True
 
-
     Returns
     -------
     Array
         The spherical harmonics.
+
+    Example
+    -------
+    >>> from array_api_compat import numpy as np
+    >>> from ultrasphere import create_spherical
+    >>> c = create_spherical()
+    >>> harm = harmonics( # flattened output
+    ...     c,
+    ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
+    ...     n_end=2,
+    ...     phase=0
+    ... )
+    >>> np.round(harm, 2)
+    array([0.28+0.j  , 0.43+0.j  , 0.09+0.14j, 0.09-0.14j])
+
+    >>> harm = harmonics( # unflattened output
+    ...     c,
+    ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
+    ...     n_end=2,
+    ...     phase=0,
+    ...     flatten=False,
+    ... )
+    >>> np.round(harm, 2)
+    array([[0.28+0.j  , 0.  +0.j  , 0.  +0.j  ],
+           [0.43+0.j  , 0.09+0.14j, 0.09-0.14j]])
+
+    >>> harm = harmonics( # unflattened mapping output
+    ...     c,
+    ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
+    ...     n_end=2,
+    ...     phase=0,
+    ...     concat=False
+    ... )
+    >>> {k: np.round(harm[k], 2) for k in c.s_nodes}
+    {'theta': array([[0.71, 0.  , 0.  ],
+           [1.07, 0.42, 0.42]]), 'phi': array([[0.4 +0.j  , 0.22+0.34j, 0.22-0.34j]])}
+
+    >>> harm = harmonics(
+    ...     c,
+    ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
+    ...     n_end=2,
+    ...     phase=3 # negative legendre + Condon-Shortley phase
+    ... )
+    >>> np.round(harm, 2)
+    array([ 0.28+0.j  ,  0.43+0.j  , -0.09-0.14j,  0.09-0.14j])
+
+    >>> from scipy.special import sph_harm_y_all
+    >>> harm_scipy = sph_harm_y_all(1, 1, np.asarray(0.5), np.asarray(1.0))
+    >>> np.round(harm_scipy, 2)
+    array([[ 0.28+0.j  ,  0.  +0.j  ,  0.  +0.j  ],
+           [ 0.43+0.j  , -0.09-0.14j,  0.09-0.14j]])
+
+    >>> from ultrasphere_harmonics import flatten_harmonics
+    >>> harm_scipy_flatten = flatten_harmonics(c, harm_scipy)
+    >>> np.round(harm_scipy_flatten, 2)
+    array([ 0.28+0.j  ,  0.43+0.j  , -0.09-0.14j,  0.09-0.14j])
+
+    >>> import array_api_extra as xpx
+    >>> np.all(xpx.isclose(harm, harm_scipy_flatten))
+    np.True_
 
     """
     if flatten is None:
