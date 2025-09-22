@@ -114,7 +114,7 @@ def expand[TEuclidean, TSpherical](
         ...     phase=False,
         ...     xp=np,
         ... )
-        >>> print(np.round(expansion, 2).real.tolist())
+        >>> np.round(expansion, 2).real.tolist()
         [1.0, 0.0, 0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0]
 
         This result claims that f(θ) = 1, which is incorrect.

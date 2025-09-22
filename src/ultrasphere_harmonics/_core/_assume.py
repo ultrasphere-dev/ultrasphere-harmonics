@@ -31,6 +31,21 @@ def assume_n_end_and_include_negative_m_from_harmonics[TEuclidean, TSpherical](
     tuple[int, bool]
         n_end, include_negative_m
 
+    Example
+    -------
+    >>> from array_api_compat import numpy as np
+    >>> from ultrasphere import create_spherical
+    >>> from ultrasphere_harmonics import harmonics
+    >>> c = create_spherical()
+    >>> harm = harmonics(
+    ...     c,
+    ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
+    ...     n_end=3,
+    ...     phase=0
+    ... )
+    >>> assume_n_end_and_include_negative_m_from_harmonics(c, harm)
+    (3, True)
+
     """
     if flatten:
         if isinstance(expansion, Mapping):
@@ -42,7 +57,7 @@ def assume_n_end_and_include_negative_m_from_harmonics[TEuclidean, TSpherical](
         while True:
             size_current = harm_n_ndim_le(n_end, e_ndim=c.e_ndim)
             if size_current == size:
-                return n_end, False
+                return n_end, True
             elif size_current > size:
                 raise ValueError(
                     f"The size of the last axis {size=} "
