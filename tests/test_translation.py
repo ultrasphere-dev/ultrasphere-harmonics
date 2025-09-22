@@ -217,7 +217,7 @@ def test_dataset_coef() -> None:
                 type=type_,
             )
             np.savetxt(
-                f"tests/.cache/{type_}_{phase}.csv",
+                f"tests/.cache/{type_}_{phase}.csv".replace("|", "_"),
                 RS,
                 delimiter=",",
             )
