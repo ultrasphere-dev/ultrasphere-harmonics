@@ -104,6 +104,27 @@ def expand_dims_harmonics[TSpherical, TEuclidean](
         The shapes does not need to be either
         same or broadcastable.
 
+    Example
+    -------
+    >>> from array_api_compat import numpy as np
+    >>> from ultrasphere import create_spherical
+    >>> from ultrasphere_harmonics import harmonics
+    >>> c = create_spherical()
+    >>> harm = harmonics(
+    ...     c,
+    ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
+    ...     n_end=2,
+    ...     phase=0,
+    ...     concat=False,
+    ...     expand_dims=False,
+    ... )
+    >>> {k: harm[k].shape for k in c.s_nodes} # not broadcastable
+    {'theta': (3, 2), 'phi': (3,)}
+
+    >>> harm = expand_dims_harmonics(c, harm)
+    >>> {k: harm[k].shape for k in c.s_nodes} # broadcastable
+    {'theta': (2, 3), 'phi': (1, 3)}
+
     """
     result: dict[TSpherical, Array] = {}
     for node in c.s_nodes:
