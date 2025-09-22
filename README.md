@@ -78,14 +78,17 @@ $$
 
 ### Spherical Harmonics
 
-| phase      | definition                                                                                                           | difference from `Phase(0)`   |
-| ---------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| `Phase(0)` | $Y_n^{(0),m} = \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$        | $1$                          |
-| `Phase(1)` | $Y_n^{(1),m} = \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$                      | $(-1)^{\frac{\|m\| - m}{2}}$ |
-| `Phase(2)` | $Y_n^{(2),m} = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$ | $(-1)^m$                     |
-| `Phase(3)` | $Y_n^{(3),m} = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$               | $(-1)^{\frac{\|m\| + m}{2}}$ |
+| phase      | definition                                                                                                           | difference from `Phase(0)`   | Used in           |
+| ---------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ----------------- |
+| `Phase(0)` | $Y_n^{(0),m} = \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$        | $1$                          | [Kress2014]       |
+| `Phase(1)` | $Y_n^{(1),m} = \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$                      | $(-1)^{\frac{\|m\| - m}{2}}$ | Wolfram MathWorld |
+| `Phase(2)` | $Y_n^{(2),m} = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$ | $(-1)^m$                     | [Gumerov2004]     |
+| `Phase(3)` | $Y_n^{(3),m} = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$               | $(-1)^{\frac{\|m\| + m}{2}}$ | Scipy             |
 
 Note that $\forall m \in \mathbb{Z}. (-1)^m = (-1)^{-m}$ holds.
+
+- [Gumerov2004]: Gumerov, N. A., & Duraiswami, R. (2004). Recursions for the Computation of Multipole Translation and Rotation Coefficients for the 3-D Helmholtz Equation. SIAM Journal on Scientific Computing, 25(4), 1344–1381. https://doi.org/10.1137/S1064827501399705
+- [Kress2014]: Kress, R. (2014). Linear Integral Equations (Vol. 82). Springer New York. https://doi.org/10.1007/978-1-4614-9593-2
 
 ## Contributors ✨
 

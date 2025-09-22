@@ -201,7 +201,9 @@ def test_dataset_coef() -> None:
                 k=1.0,
             )
             np.savetxt(
-                f"tests/.cache/translation_coef_{is_same_type}_{phase}.csv",
+                f"tests/.cache/translation_coef_{is_same_type}_{phase}.csv".replace(
+                    "|", "_"
+                ),
                 coef,
                 delimiter=",",
             )
