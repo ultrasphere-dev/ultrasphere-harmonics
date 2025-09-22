@@ -32,10 +32,10 @@ def _harmonics_translation_coef_plane_wave[TEuclidean, TSpherical](
     r"""
     Translation coefficients between same type of elementary solutions.
 
-    Returns (R|R) = (S|S), where
+    Returns $(R|R) = (S|S)$, where
 
     .. math::
-        R(x + t) = \sum_n (R|R)_n(t) R(x)
+        R(x + t) = \sum_n (R|R)_n(t) R(x) \\
         S(x + t) = \sum_n (S|S)_n(t) S(x)
 
     Parameters
@@ -248,12 +248,12 @@ def _harmonics_translation_coef_triplet[TEuclidean, TSpherical](
     r"""
     Translation coefficients between same or different type of elementary solutions.
 
-    If is_type_same is True, returns (R|R) = (S|S).
-    If is_type_same is False, returns (S|R).
+    If is_type_same is True, returns $(R|R) = (S|S)$.
+    If is_type_same is False, returns $(S|R)$.
 
     .. math::
-        R(x + t) = \sum_n (R|R)_n(t) R(x)
-        S(x + t) = \sum_n (S|S)_n(t) S(x)
+        R(x + t) = \sum_n (R|R)_n(t) R(x) \\
+        S(x + t) = \sum_n (S|S)_n(t) S(x) \\
         S(x + t) = \sum_n (S|R)_n(t) R(x)
 
     Parameters
@@ -338,12 +338,12 @@ def harmonics_translation_coef[TEuclidean, TSpherical](
     r"""
     Translation coefficients between same or different type of elementary solutions.
 
-    If is_type_same is True, returns (R|R) = (S|S).
-    If is_type_same is False, returns (S|R).
+    If is_type_same is True, returns $(R|R) = (S|S)$.
+    If is_type_same is False, returns $(S|R)$.
 
     .. math::
-        R(x + t) = \sum_n (R|R)_n(t) R(x)
-        S(x + t) = \sum_n (S|S)_n(t) S(x)
+        R(x + t) = \sum_n (R|R)_n(t) R(x) \\
+        S(x + t) = \sum_n (S|S)_n(t) S(x) \\
         S(x + t) = \sum_n (S|R)_n(t) R(x)
 
     Parameters

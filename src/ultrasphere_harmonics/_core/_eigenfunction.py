@@ -23,7 +23,7 @@ class Phase(Flag, boundary=STRICT):
     scipy.special.sph_harm_y uses the Condon-Shortley phase."""
 
     NEGATIVE_LEGENDRE = auto()
-    r"""Whether to use $P_l^m$ or $P_l^{|m|}$ for negative m.
+    r"""Whether to use $P_l^m$ or $P_{l}^{\left\|m\right\|}$ for negative m.
 
     If False, $Y^{-m}_{l} = \overline{Y^{m}_{l}}$.
     If True, $Y^{-m}_{l} = (-1)^m \overline{Y^{m}_{l}}$.

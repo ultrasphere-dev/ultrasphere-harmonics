@@ -103,7 +103,7 @@ def expand[TEuclidean, TSpherical](
         consider expanding
 
         $$
-        f(θ) = e^(2Nθ)
+        f(θ) = e^{2Nθ}
         $$
 
         with $n=N$.
@@ -126,7 +126,7 @@ def expand[TEuclidean, TSpherical](
         This result claims that
 
         $$
-        f(\phi) = 1 + \sum_{\|m\|>=3} a_m e^{im\phi}, a_m \in \mathbb{C}
+        f(\phi) = 1 + \sum_{\|m\|\geq3} a_m e^{im\phi}, a_m \in \mathbb{C}
         $$
 
         , which is incorrect.

@@ -10,7 +10,7 @@ def homogeneous_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
     The dimension of the homogeneous polynomials of degree equals to n.
 
     $$
-    M(n, d) = \text{dim}(\mathcal{P}_n (\mathbb{R}^{d})) = \binom{n + d - 1}{d - 1}
+    M(n, d) = \dim(\mathcal{P}_n (\mathbb{R}^{d})) = \binom{n + d - 1}{d - 1}
     $$
 
     Parameters
@@ -42,8 +42,8 @@ def homogeneous_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Arr
     The dimension of the homogeneous polynomials of degree below n_end.
 
     $$
-    \text{dim}(\mathcal{P}_{< n} (\mathbb{R}^{d}))
-    = \sum_{k=0}^{n-1} \math{dim}(\mathcal{P}_k (\mathbb{R}^{d}))
+    \dim(\mathcal{P}_{< n} (\mathbb{R}^{d}))
+    = \sum_{k=0}^{n-1} \dim(\mathcal{P}_k (\mathbb{R}^{d}))
     = \begin{cases}
     0 & (n < 1) \\
     M(n, 0) & (n = 1) \\
@@ -54,7 +54,7 @@ def homogeneous_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Arr
     where
 
     $$
-    M(n, d) = \text{dim}(\mathcal{P}_n (\mathbb{R}^{d}))
+    M(n, d) = \dim(\mathcal{P}_n (\mathbb{R}^{d}))
     = \binom{n + d - 1}{d - 1}
     $$
 
@@ -98,7 +98,7 @@ def harm_n_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
     The dimension of the spherical harmonics of degree below n_end.
 
     $$
-    N(n, d) = \text{dim}(\mathcal{H}_n (\mathbb{R}^{d}))
+    N(n, d) = \dim(\mathcal{H}_n (\mathbb{R}^{d}))
     =
     \begin{cases}
     \begin{cases}
@@ -160,8 +160,8 @@ def harm_n_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Array:
     The dimension of the spherical harmonics of degree below n_end.
 
     $$
-    \text{dim}(\mathcal{H}_{< n} (\mathbb{R}^{d}))
-    = \sum_{k=0}^{n-1} \math{dim}(\mathcal{H}_k (\mathbb{R}^{d}))
+    \dim(\mathcal{H}_{< n} (\mathbb{R}^{d}))
+    = \sum_{k=0}^{n-1} \dim(\mathcal{H}_k (\mathbb{R}^{d}))
     = \begin{cases
     0 & (n < 1) \\
     N(0, d) & (n = 1) \\

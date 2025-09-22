@@ -47,6 +47,7 @@ def expand_cut[TEuclidean, TSpherical](
         The cut expansion coefficients.
 
     Example
+    -------
     >>> from array_api_compat import numpy as np
     >>> from ultrasphere import create_spherical
     >>> from ultrasphere_harmonics import harmonics
