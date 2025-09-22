@@ -114,6 +114,28 @@ def harmonics_regular_singular_component[TEuclidean, TSpherical](  # type: ignor
     ValueError
         If the wavenumber is not positive.
 
+    Example
+    -------
+    >>> from array_api_compat import numpy as np
+    >>> from ultrasphere import create_spherical
+    >>> c = create_spherical()
+    >>> Y = harmonics(
+    ...     c,
+    ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
+    ...     n_end=2,
+    ...     phase=0,
+    ... )
+    >>> j = harmonics_regular_singular_component(
+    ...     c,
+    ...     {"r": np.asarray(1.0)},
+    ...     n_end=2,
+    ...     k=np.asarray(1.0),
+    ...     type="regular",
+    ... )
+    >>> R = j * Y
+    >>> np.round(R, 2)
+    array([0.24+0.j  , 0.13+0.j  , 0.03+0.04j, 0.03-0.04j])
+
     """
     if flatten is None:
         flatten = concat
@@ -121,7 +143,7 @@ def harmonics_regular_singular_component[TEuclidean, TSpherical](  # type: ignor
         raise ValueError("expand_dims must be True if concat is True.")
     if flatten and not expand_dims:
         raise ValueError("expand_dims must be True if flatten is True.")
-    xp = array_namespace(k, *[spherical[k] for k in c.s_nodes])
+    xp = array_namespace(k, spherical["r"])
     extra_dims = spherical["r"].ndim
     n = _index_array_harmonics(
         c, c.root, n_end=n_end, include_negative_m=True, xp=xp, expand_dims=expand_dims
@@ -252,6 +274,22 @@ def harmonics_regular_singular[TEuclidean, TSpherical](
     ------
     ValueError
         If the wavenumber is not positive.
+
+    Example
+    -------
+    >>> from array_api_compat import numpy as np
+    >>> from ultrasphere import create_spherical
+    >>> c = create_spherical()
+    >>> R = harmonics_regular_singular(
+    ...     c,
+    ...     {"r": np.asarray(1.0), "theta": np.asarray(0.5), "phi": np.asarray(1.0)},
+    ...     n_end=2,
+    ...     phase=0,
+    ...     k=np.asarray(1.0),
+    ...     type="regular",
+    ... )
+    >>> np.round(R, 2)
+    array([0.24+0.j  , 0.13+0.j  , 0.03+0.04j, 0.03-0.04j])
 
     """
     return harmonics(  # type: ignore[call-overload]
