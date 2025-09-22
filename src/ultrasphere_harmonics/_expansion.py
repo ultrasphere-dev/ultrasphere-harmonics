@@ -145,14 +145,7 @@ def expand[TEuclidean, TSpherical](
     Returns
     -------
     Array | Mapping[TSpherical, Array]
-        The expanded value.
-        Last `c.s_ndim` axis [-c.s_ndim, -1]
-        corresponds to the quantum numbers.
-
-        The dimensions are not expanded if Mapping is returned.
-        Use `expand_dims_harmonics(c, )`
-        and `concat_harmonics(c, )`
-        to expand the dimensions and to concat values.
+        The expanded value of shape (..., ndim)
 
     Example
     -------
@@ -331,11 +324,11 @@ def expand_evaluate[TEuclidean, TSpherical](
     c : SphericalCoordinates[TSpherical, TEuclidean]
         The spherical coordinates.
     expansion : Mapping[TSpherical, Array] | Array
-        The expansion coefficients.
+        The expansion coefficients of shape (*shape_e, ndim).
         If not mapping, assume that the expansion is flatten.
         If mapping, assume that the expansion is not expanded.
     spherical : Mapping[TSpherical, Array]
-        The spherical coordinates.
+        The spherical coordinates of shape (*shape_s, c.s_ndim).
     phase : Phase
         Adjust phase (±) of the spherical harmonics, mainly to match conventions.
         See `Phase` for details.
@@ -343,7 +336,7 @@ def expand_evaluate[TEuclidean, TSpherical](
     Returns
     -------
     Array | Mapping[TSpherical, Array]
-        The evaluated value.
+        The evaluated value of shape (*shape_s, *shape_e).
 
     """
     is_mapping = isinstance(expansion, Mapping)

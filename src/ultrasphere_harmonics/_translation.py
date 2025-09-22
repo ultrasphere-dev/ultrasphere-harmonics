@@ -277,11 +277,10 @@ def _harmonics_translation_coef_triplet[TEuclidean, TSpherical](
     Returns
     -------
     Array
-        The translation coefficients of `2 * c.s_ndim` dimensions.
-        [-c.s_ndim,-1] dimensions are to be
-        summed over with the elementary solutions
-        to get translated elementary solution
-        which quantum number is [-2*c.s_ndim,-c.s_ndim-1] indices.
+        The translation coefficients of shape (..., ndim, ndim).
+        The last axis are to be summed over with the elementary solutions
+        to get translated elementary solution which quantum number corresponds to
+        the second last axis indices.
 
     """
     xp = array_namespace(*[spherical[k] for k in c.s_nodes])
@@ -372,11 +371,68 @@ def harmonics_translation_coef[TEuclidean, TSpherical](
     Returns
     -------
     Array
-        The translation coefficients of `2 * c.s_ndim` dimensions.
-        [-c.s_ndim,-1] dimensions are to be
-        summed over with the elementary solutions
-        to get translated elementary solution
-        which quantum number is [-2*c.s_ndim,-c.s_ndim-1] indices.
+        The translation coefficients of shape (..., ndim, ndim).
+        The last axis are to be summed over with the elementary solutions
+        to get translated elementary solution which quantum number corresponds to
+        the second last axis indices.
+
+    Example
+    -------
+    >>> from array_api_compat import numpy as np
+    >>> from ultrasphere import create_spherical
+    >>> c = create_spherical()
+    >>> t = np.asarray([2, -7, 1])
+    >>> coef = harmonics_translation_coef(
+    ...     c,
+    ...     c.from_euclidean(t),
+    ...     n_end=2,
+    ...     n_end_add=2,
+    ...     phase=0,
+    ...     k=np.asarray(1.0),
+    ...     is_type_same=True,
+    ... )
+    >>> np.round(coef, 2)
+    array([[ 0.12+0.j  ,  0.01+0.j  ,  0.02+0.06j,  0.02-0.06j],
+           [-0.01+0.j  , -0.01+0.j  ,  0.01+0.04j,  0.01-0.04j],
+           [-0.02+0.06j,  0.01-0.04j,  0.18+0.j  , -0.17-0.11j],
+           [-0.02-0.06j,  0.01+0.04j, -0.17+0.11j,  0.18+0.j  ]])
+
+    >>> x = np.asarray([-1.0, 1.0, 0.0])
+    >>> y = x + t
+    >>> coef = harmonics_translation_coef(
+    ...     c,
+    ...     c.from_euclidean(t),
+    ...     n_end=2,
+    ...     n_end_add=6,
+    ...     phase=0,
+    ...     k=np.asarray(1.0),
+    ...     is_type_same=True,
+    ... )
+    >>> R_x = harmonics_regular_singular(
+    ...     c,
+    ...     c.from_euclidean(x),
+    ...     n_end=6,
+    ...     phase=0,
+    ...     k=np.asarray(1.0),
+    ...     type="regular",
+    ...     concat=True,
+    ... )
+    >>> R_y_approx = np.sum(coef * R_x[..., None, :], axis=-1)
+    >>> R_y = harmonics_regular_singular(
+    ...     c,
+    ...     c.from_euclidean(y),
+    ...     n_end=2,
+    ...     phase=0,
+    ...     k=np.asarray(1.0),
+    ...     type="regular",
+    ...     concat=True,
+    ... )
+    >>> R_y_approx
+    array([-0.00541026-2.27004830e-19j, -0.01301699-4.40457133e-20j,
+           -0.00919779+5.52198139e-02j, -0.00919779-5.52198139e-02j])
+    >>> R_y
+    array([-0.00542242+0.j        , -0.01301453+0.j        ,
+           -0.00920266+0.05521598j, -0.00920266-0.05521598j])
 
     """
     phase = Phase(phase)
