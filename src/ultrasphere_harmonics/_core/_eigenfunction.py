@@ -43,7 +43,7 @@ class Phase(Flag, boundary=STRICT):
 
 def minus_1_power(x: Array, /) -> Array:
     """
-    $ (-1)^x $.
+    $(-1)^x$.
 
     Parameters
     ----------
@@ -53,7 +53,7 @@ def minus_1_power(x: Array, /) -> Array:
     Returns
     -------
     Array
-        $ (-1)^x $
+        $(-1)^x$
 
     """
     return 1 - 2 * (x % 2)

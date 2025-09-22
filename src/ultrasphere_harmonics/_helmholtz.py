@@ -62,11 +62,11 @@ def harmonics_regular_singular_component[TEuclidean, TSpherical](  # type: ignor
     concat: bool = True,
 ) -> Array | Mapping[TSpherical, Array]:
     r"""
-    Regular or singular COMPONENT of harmonics (does not include $ Y_n $).
+    Regular or singular COMPONENT of harmonics (does not include $Y_n$).
 
     $$
-    R_n (x) &:= j_n (\|x\|) Y_n^m (\frac{x}{\|x\|}) \\
-    S_n (x) &:= h_n^{(1)} (\|x\|) Y_n^m (\frac{x}{\|x\|})
+    R_n (x) &:= j_n \left(\|x\|\right) Y_n^m \left(\frac{x}{\|x\|}\right) \\
+    S_n (x) &:= h_n^{(1)} \left(\|x\|\right) Y_n^m \left(\frac{x}{\|x\|}\right)
     $$
 
     Parameters
@@ -223,8 +223,8 @@ def harmonics_regular_singular[TEuclidean, TSpherical](
     Regular or singular harmonics.
 
     $$
-    R_n (x) &:= j_n (\|x\|) Y_n^m (\frac{x}{\|x\|}) \\
-    S_n (x) &:= h_n^{(1)} (\|x\|) Y_n^m (\frac{x}{\|x\|})
+    R_n (x) &:= j_n \left(\|x\|\right) Y_n^m \left(\frac{x}{\|x\|}\right) \\
+    S_n (x) &:= h_n^{(1)} \left(\|x\|\right) Y_n^m \left(\frac{x}{\|x\|}\right)
     $$
 
     Parameters

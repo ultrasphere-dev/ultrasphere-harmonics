@@ -179,7 +179,7 @@ def harm_n_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Array:
     $$
     \dim(\mathcal{H}_{< n} (\mathbb{R}^{d}))
     = \sum_{k=0}^{n-1} \dim(\mathcal{H}_k (\mathbb{R}^{d}))
-    = \begin{cases
+    = \begin{cases}
     0 & (n < 1) \\
     N(0, d) & (n = 1) \\
     N(n - 1, d + 1) &(\text{otherwise}) \\
