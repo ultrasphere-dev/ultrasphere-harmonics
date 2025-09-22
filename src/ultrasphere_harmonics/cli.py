@@ -344,7 +344,8 @@ def scattering(branching_types: str, n_end: int = 6, k: float = 1) -> None:
     phase = Phase(0)
     expansion_coef = expand(c, uin, False, n_end, n_end, phase=phase, xp=xp)
     euclidean = xp.meshgrid(
-        *((xp.linspace(-3, 3, 100),) * 2 + (xp.asarray([0.0]),)), indexing="ij"
+        *((xp.linspace(-3, 3, 100),) * 2 + (xp.asarray([0.0]),) * (c.e_ndim - 2)),
+        indexing="ij",
     )
     euclidean = xp.stack([xp.reshape(xi, (-1,)) for xi in euclidean])
     euclidean = euclidean[:, xp.linalg.vector_norm(euclidean, axis=0) > 1.0]
