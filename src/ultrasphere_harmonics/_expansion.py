@@ -77,7 +77,7 @@ def expand[TEuclidean, TSpherical](
     device: Any | None = None,
     dtype: Any | None = None,
 ) -> Array | Mapping[TSpherical, Array]:
-    """
+    r"""
     Calculate the expansion coefficients of the function over the hypersphere.
 
     Parameters
@@ -98,26 +98,38 @@ def expand[TEuclidean, TSpherical](
 
         Must be equal to or larger than n_end.
 
-        Must be large enough against f, as this method
+        Must be large enough AGAINST f, as this method
         does not use adaptive integration. For example,
-        consider expanding $f(θ) = e^(2Nθ)$ with $n=N$.
+        consider expanding
 
-        >>> from ultrasphere import create_standard
+        $$
+        f(θ) = e^(2Nθ)
+        $$
+
+        with $n=N$.
+
+        >>> from ultrasphere import create_polar
         >>> from array_api_compat import numpy as np
-        >>> n = 5
+        >>> n = 3
         >>> expansion = expand(
-        ...     create_standard(1),
-        ...     lambda x: np.exp(1j * (2 * n) * x["theta0"]) / np.sqrt(2 * np.pi),
+        ...     create_polar(),
+        ...     lambda x: np.exp(1j * (2 * n) * x["phi"]) / np.sqrt(2 * np.pi),
         ...     does_f_support_separation_of_variables=False,
         ...     n=n,
         ...     n_end=n,
         ...     phase=False,
         ...     xp=np,
         ... )
-        >>> np.round(expansion, 2).real.tolist()
-        [1.0, 0.0, 0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0]
+        >>> np.round(expansion, 2)
+        array([ 1.-0.j,  0.+0.j,  0.+0.j,  0.+0.j, -0.+0.j])
 
-        This result claims that f(θ) = 1, which is incorrect.
+        This result claims that
+
+        $$
+        f(\phi) = 1 + \sum_{\|m\|>=3} a_m e^{im\phi}, a_m \in \mathbb{C}
+        $$
+
+        , which is incorrect.
     n_end : int
         The maximum degree of the harmonic.
     phase : Phase
@@ -141,6 +153,65 @@ def expand[TEuclidean, TSpherical](
         Use `expand_dims_harmonics(c, )`
         and `concat_harmonics(c, )`
         to expand the dimensions and to concat values.
+
+    Example
+    -------
+    >>> from array_api_compat import numpy as np
+    >>> from ultrasphere import create_spherical
+    >>> c = create_spherical()
+    >>> coef = expand(
+    ...     c,
+    ...     lambda spherical: np.sin(spherical["theta"]) * np.sin(spherical["phi"]),
+    ...     n_end=2,
+    ...     n=3,
+    ...     does_f_support_separation_of_variables=False,
+    ...     phase=0,
+    ...     xp=np,
+    ... )
+    >>> np.round(coef, 2)
+    array([0.+0.j  , 0.+0.j  , 0.-1.45j, 0.+1.45j])
+
+    >>> coef_fast = expand(
+    ...     c,
+    ...     lambda spherical: {
+    ...         "theta": np.sin(spherical["theta"]),
+    ...         "phi": np.sin(spherical["phi"])
+    ...     },
+    ...     n_end=2,
+    ...     n=3,
+    ...     does_f_support_separation_of_variables=True,
+    ...     phase=0,
+    ...     xp=np,
+    ... )
+    >>> {k: np.round(coef_fast[k], 2) for k in c.s_nodes}
+    {'theta': array([[1.13, 0.  ],
+           [0.  , 1.15],
+           [0.  , 1.15]]), 'phi': array([0.+0.j  , 0.-1.25j, 0.+1.25j])}
+
+    >>> from ultrasphere import create_polar
+    >>> expansion = expand(
+    ...     create_polar(),
+    ...     lambda x: np.exp(1j * (n - 1) * x["phi"]) / np.sqrt(2 * np.pi),
+    ...     does_f_support_separation_of_variables=False,
+    ...     n=n,
+    ...     n_end=n,
+    ...     phase=False,
+    ...     xp=np,
+    ... )
+    >>> np.round(expansion, 2)
+    array([ 0.+0.j,  0.+0.j,  1.+0.j, -0.+0.j,  0.-0.j])
+
+    >>> expansion = expand(
+    ...     create_polar(),
+    ...     lambda x: np.exp(1j * n * x["phi"]) / np.sqrt(2 * np.pi),
+    ...     does_f_support_separation_of_variables=False,
+    ...     n=n,
+    ...     n_end=n,
+    ...     phase=False,
+    ...     xp=np,
+    ... )
+    >>> np.round(expansion, 2)
+    array([ 0.+0.j, -0.+0.j, -0.-0.j,  0.+0.j, -0.+0.j])
 
     """
     if n < n_end:

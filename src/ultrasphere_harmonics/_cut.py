@@ -46,6 +46,24 @@ def expand_cut[TEuclidean, TSpherical](
     Mapping[TSpherical, Array] | Array
         The cut expansion coefficients.
 
+    Example
+    >>> from array_api_compat import numpy as np
+    >>> from ultrasphere import create_spherical
+    >>> from ultrasphere_harmonics import harmonics
+    >>> c = create_spherical()
+    >>> harm = harmonics(
+    ...     c,
+    ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
+    ...     n_end=3,
+    ...     phase=0
+    ... )
+    >>> harm.shape
+    (9,)
+
+    >>> harm_cut = expand_cut(c, harm, n_end=2)
+    >>> harm_cut.shape
+    (4,)
+
     """
     if isinstance(expansion, Mapping):
         return {
