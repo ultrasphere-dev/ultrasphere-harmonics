@@ -9,7 +9,7 @@ from ultrasphere.special import szv
 from ultrasphere_harmonics._core._eigenfunction import Phase
 
 from ._core import harmonics
-from ._core._flatten import _index_array_harmonics, flatten_harmonics
+from ._core._flatten import flatten_harmonics, index_array_harmonics
 
 
 @overload
@@ -145,12 +145,18 @@ def harmonics_regular_singular_component[TEuclidean, TSpherical](  # type: ignor
         raise ValueError("expand_dims must be True if flatten is True.")
     xp = array_namespace(k, spherical["r"])
     extra_dims = spherical["r"].ndim
-    n = _index_array_harmonics(
-        c, c.root, n_end=n_end, include_negative_m=True, xp=xp, expand_dims=expand_dims
-    )[(None,) * extra_dims + (slice(None),)]
+    n = index_array_harmonics(
+        c,
+        c.root,
+        n_end=n_end,
+        include_negative_m=True,
+        xp=xp,
+        expand_dims=expand_dims,
+        flatten=False,
+    )[(None,) * extra_dims + (...,)]
 
     kr = k * spherical["r"]
-    kr = kr[..., None]
+    kr = kr[(...,) + (None,) * c.s_ndim]
 
     if type == "regular":
         type = "j"

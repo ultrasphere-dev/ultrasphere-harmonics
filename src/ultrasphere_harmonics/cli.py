@@ -12,12 +12,15 @@ from array_api_compat import array_namespace
 from array_api_compat import numpy as np
 from matplotlib.animation import FuncAnimation
 from tqdm import tqdm
-from ultrasphere import create_standard, random_ball
+from ultrasphere import create_from_branching_types, create_standard, random_ball, shn1
 
 from ultrasphere_harmonics._core._eigenfunction import Phase
 from ultrasphere_harmonics._cut import expand_cut
 from ultrasphere_harmonics._expansion import expand, expand_evaluate
 from ultrasphere_harmonics._ndim import harm_n_ndim_le
+
+from ._core import index_array_harmonics
+from ._helmholtz import harmonics_regular_singular
 
 app = cyclopts.App(__name__)
 
@@ -314,3 +317,86 @@ def expand_bunny_4d(
     anim = FuncAnimation(fig, animate, frames=data, repeat=False, interval=1000 // 3)
     anim.save("expand_bunny_4d.gif", writer="pillow")
     anim.save("expand_bunny_4d.mp4", writer="ffmpeg")
+
+
+@app.command()
+def scattering(branching_types: str, n_end: int = 6, k: float = 1) -> None:
+    """Visualize scattering from a sound-soft sphere."""
+    c = create_from_branching_types(branching_types)
+
+    def uin(spherical: Mapping[Any, Array]) -> Array:
+        euclidean = c.to_euclidean(spherical, as_array=True)
+        xp = array_namespace(euclidean[0])
+        return shn1(
+            xp.asarray(0),
+            xp.asarray(c.e_ndim),
+            k
+            * xp.linalg.vector_norm(
+                euclidean
+                - xp.asarray([2.0] + [0.0] * (c.e_ndim - 1))[
+                    (...,) + (None,) * (euclidean.ndim - 1)
+                ],
+                axis=0,
+            ),
+        )
+
+    xp = np
+    phase = Phase(0)
+    expansion_coef = expand(c, uin, False, n_end, n_end, phase=phase, xp=xp)
+    euclidean = xp.meshgrid(
+        *((xp.linspace(-3, 3, 100),) * 2 + (xp.asarray([0.0]),)), indexing="ij"
+    )
+    euclidean = xp.stack([xp.reshape(xi, (-1,)) for xi in euclidean])
+    euclidean = euclidean[:, xp.linalg.vector_norm(euclidean, axis=0) > 1.0]
+    spherical = c.from_euclidean(euclidean)
+    uin_v = uin(spherical)
+    n = index_array_harmonics(c, c.root, n_end=n_end, xp=xp, flatten=True)
+    uscat_v = -xp.sum(
+        1
+        / shn1(n, xp.asarray(c.e_ndim), xp.asarray(k))
+        * expansion_coef
+        * harmonics_regular_singular(
+            c, spherical, n_end=n_end, type="singular", k=k, phase=phase
+        ),
+        axis=-1,
+    )
+    utot_v = uin_v + uscat_v
+    vmin = min(
+        xp.min(xp.real(uin_v)), xp.min(xp.real(uscat_v)), xp.min(xp.real(utot_v))
+    )
+    vmax = max(
+        xp.max(xp.real(uin_v)), xp.max(xp.real(uscat_v)), xp.max(xp.real(utot_v))
+    )
+    fig, ax = plt.subplots(1, 3, figsize=(12, 4), layout="constrained")
+    ax[0].scatter(
+        euclidean[0],
+        euclidean[1],
+        c=xp.real(uin_v),
+        s=1,
+        cmap="viridis",
+        vmin=vmin,
+        vmax=vmax,
+    )
+    ax[0].set_title("Incident Wave")
+    ax[1].scatter(
+        euclidean[0],
+        euclidean[1],
+        c=xp.real(uscat_v),
+        s=1,
+        cmap="viridis",
+        vmin=vmin,
+        vmax=vmax,
+    )
+    ax[1].set_title("Scattered Wave")
+    sc = ax[2].scatter(
+        euclidean[0],
+        euclidean[1],
+        c=xp.real(utot_v),
+        s=1,
+        cmap="viridis",
+        vmin=vmin,
+        vmax=vmax,
+    )
+    ax[2].set_title("Total Wave")
+    fig.colorbar(sc, ax=ax.ravel().tolist())
+    fig.savefig(f"scattering_{branching_types}.png")
