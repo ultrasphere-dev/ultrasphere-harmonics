@@ -5,7 +5,7 @@ from array_api_compat import array_namespace
 from jacobi_poly import binom
 
 
-def homogeneous_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
+def homogeneous_ndim_eq(n: int | Array, *, c_ndim: int | Array) -> int | Array:
     r"""
     The dimension of the homogeneous polynomials of degree equals to n.
 
@@ -17,8 +17,8 @@ def homogeneous_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
     ----------
     n : int | Array
         The degree.
-    e_ndim : int | Array
-        The dimension of the Euclidean space.
+    c_ndim : int | Array
+        The dimension of the Cartesian space.
 
     Returns
     -------
@@ -32,17 +32,17 @@ def homogeneous_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
 
     Example
     -------
-    >>> homogeneous_ndim_eq(3, e_ndim=3)
+    >>> homogeneous_ndim_eq(3, c_ndim=3)
     array(10)
 
     """
-    s_ndim = e_ndim - 1
+    s_ndim = c_ndim - 1
     result = binom(n + s_ndim, s_ndim)
     xp = array_namespace(result)
     return xp.asarray(xp.astype(xp.round(result), int))
 
 
-def homogeneous_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Array:
+def homogeneous_ndim_le(n_end: int | Array, *, c_ndim: int | Array) -> int | Array:
     r"""
     The dimension of the homogeneous polynomials of degree below n_end.
 
@@ -67,8 +67,8 @@ def homogeneous_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Arr
     ----------
     n_end : int | Array
         The degree.
-    e_ndim : int | Array
-        The dimension of the Euclidean space.
+    c_ndim : int | Array
+        The dimension of the Cartesian space.
 
     Returns
     -------
@@ -82,30 +82,30 @@ def homogeneous_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Arr
 
     Example
     -------
-    >>> homogeneous_ndim_le(3, e_ndim=3)
+    >>> homogeneous_ndim_le(3, c_ndim=3)
     array(10)
 
     """
     try:
-        xp = array_namespace(n_end, e_ndim)
+        xp = array_namespace(n_end, c_ndim)
     except TypeError:
         xp = np
     n_end = xp.asarray(n_end)
-    e_ndim = xp.asarray(e_ndim)
+    c_ndim = xp.asarray(c_ndim)
     return xpx.apply_where(
         n_end < 1,
-        (n_end, e_ndim),
-        lambda n_end, e_ndim: 0,
-        lambda n_end, e_ndim: xpx.apply_where(
+        (n_end, c_ndim),
+        lambda n_end, c_ndim: 0,
+        lambda n_end, c_ndim: xpx.apply_where(
             n_end == 1,
-            (n_end, e_ndim),
-            lambda n_end, e_ndim: homogeneous_ndim_eq(0, e_ndim=e_ndim),
-            lambda n_end, e_ndim: homogeneous_ndim_eq(n_end - 1, e_ndim=e_ndim + 1),
+            (n_end, c_ndim),
+            lambda n_end, c_ndim: homogeneous_ndim_eq(0, c_ndim=c_ndim),
+            lambda n_end, c_ndim: homogeneous_ndim_eq(n_end - 1, c_ndim=c_ndim + 1),
         ),
     )
 
 
-def harm_n_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
+def harm_n_ndim_eq(n: int | Array, *, c_ndim: int | Array) -> int | Array:
     r"""
     The dimension of the spherical harmonics of degree equals to n.
 
@@ -129,8 +129,8 @@ def harm_n_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
     ----------
     n : int | Array
         The degree.
-    e_ndim : int | Array
-        The dimension of the Euclidean space.
+    c_ndim : int | Array
+        The dimension of the Cartesian space.
 
     Returns
     -------
@@ -144,27 +144,27 @@ def harm_n_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
 
     Example
     -------
-    >>> harm_n_ndim_eq(3, e_ndim=3)
+    >>> harm_n_ndim_eq(3, c_ndim=3)
     array(7)
 
     """
     try:
-        xp = array_namespace(n, e_ndim)
+        xp = array_namespace(n, c_ndim)
     except TypeError:
         xp = np
     n = xp.asarray(n)
-    e_ndim = xp.asarray(e_ndim)
+    c_ndim = xp.asarray(c_ndim)
     return xpx.apply_where(
-        e_ndim > 2,
-        (n, e_ndim),
-        lambda n, e_ndim: xp.astype(
+        c_ndim > 2,
+        (n, c_ndim),
+        lambda n, c_ndim: xp.astype(
             xp.round(
-                (2 * n + e_ndim - 2) / (e_ndim - 2) * binom(n + e_ndim - 3, e_ndim - 3)
+                (2 * n + c_ndim - 2) / (c_ndim - 2) * binom(n + c_ndim - 3, c_ndim - 3)
             ),
             int,
         ),
-        lambda n, e_ndim: xpx.apply_where(
-            e_ndim == 1,
+        lambda n, c_ndim: xpx.apply_where(
+            c_ndim == 1,
             (n,),
             lambda n: xp.where(n <= 1, 1, 0),
             lambda n: xp.where(n == 0, 1, 2),
@@ -172,7 +172,7 @@ def harm_n_ndim_eq(n: int | Array, *, e_ndim: int | Array) -> int | Array:
     )
 
 
-def harm_n_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Array:
+def harm_n_ndim_le(n_end: int | Array, *, c_ndim: int | Array) -> int | Array:
     r"""
     The dimension of the spherical harmonics of degree below n_end.
 
@@ -190,8 +190,8 @@ def harm_n_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Array:
     ----------
     n_end : int | Array
         The degree.
-    e_ndim : int | Array
-        The dimension of the Euclidean space.
+    c_ndim : int | Array
+        The dimension of the Cartesian space.
 
     Returns
     -------
@@ -205,24 +205,24 @@ def harm_n_ndim_le(n_end: int | Array, *, e_ndim: int | Array) -> int | Array:
 
     Example
     -------
-    >>> harm_n_ndim_le(3, e_ndim=3)
+    >>> harm_n_ndim_le(3, c_ndim=3)
     array(9)
 
     """
     try:
-        xp = array_namespace(n_end, e_ndim)
+        xp = array_namespace(n_end, c_ndim)
     except TypeError:
         xp = np
     n_end = xp.asarray(n_end)
-    e_ndim = xp.asarray(e_ndim)
+    c_ndim = xp.asarray(c_ndim)
     return xpx.apply_where(
         n_end < 1,
-        (n_end, e_ndim),
-        lambda n_end, e_ndim: 0,
-        lambda n_end, e_ndim: xpx.apply_where(
+        (n_end, c_ndim),
+        lambda n_end, c_ndim: 0,
+        lambda n_end, c_ndim: xpx.apply_where(
             n_end == 1,
-            (n_end, e_ndim),
-            lambda n_end, e_ndim: harm_n_ndim_eq(0, e_ndim=e_ndim),
-            lambda n_end, e_ndim: harm_n_ndim_eq(n_end - 1, e_ndim=e_ndim + 1),
+            (n_end, c_ndim),
+            lambda n_end, c_ndim: harm_n_ndim_eq(0, c_ndim=c_ndim),
+            lambda n_end, c_ndim: harm_n_ndim_eq(n_end - 1, c_ndim=c_ndim + 1),
         ),
     )

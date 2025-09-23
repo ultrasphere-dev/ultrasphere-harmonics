@@ -20,9 +20,9 @@ from ._expansion import (
 from ._helmholtz import harmonics_regular_singular
 
 
-def _harmonics_translation_coef_plane_wave[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
-    euclidean: Mapping[TEuclidean, Array],
+def _harmonics_translation_coef_plane_wave[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
+    cartesian: Mapping[TCartesian, Array],
     *,
     n_end: int,
     n_end_add: int,
@@ -40,10 +40,10 @@ def _harmonics_translation_coef_plane_wave[TEuclidean, TSpherical](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
-    euclidean : Mapping[TEuclidean, Array]
-        The translation vector in euclidean coordinates.
+    cartesian : Mapping[TCartesian, Array]
+        The translation vector in cartesian coordinates.
         Each array must have the same shape (...,).
     n_end : int
         The maximum degree of the harmonic.
@@ -64,8 +64,8 @@ def _harmonics_translation_coef_plane_wave[TEuclidean, TSpherical](
         which quantum number is axis -2 indices.
 
     """
-    xp = array_namespace(*[euclidean[k] for k in c.e_nodes])
-    _, k = xp.broadcast_arrays(euclidean[c.e_nodes[0]], k)
+    xp = array_namespace(*[cartesian[k] for k in c.c_nodes])
+    _, k = xp.broadcast_arrays(cartesian[c.c_nodes[0]], k)
     n = index_array_harmonics(
         c, c.root, n_end=n_end, xp=xp, expand_dims=True, flatten=True
     )[:, None]
@@ -85,18 +85,18 @@ def _harmonics_translation_coef_plane_wave[TEuclidean, TSpherical](
             concat=True,
             flatten=True,
         )
-        x = c.to_euclidean(spherical)
-        ndim_user = euclidean[c.e_nodes[0]].ndim
+        x = c.to_cartesian(spherical)
+        ndim_user = cartesian[c.c_nodes[0]].ndim
         ndim_spherical = c.s_ndim
         ip = xp.sum(
             xp.stack(
                 xp.broadcast_arrays(
                     *[
-                        euclidean[i][
+                        cartesian[i][
                             (None,) * ndim_spherical + (slice(None),) * ndim_user
                         ]
                         * x[i][(slice(None),) * ndim_spherical + (None,) * ndim_user]
-                        for i in c.e_nodes
+                        for i in c.c_nodes
                     ]
                 ),
                 axis=0,
@@ -123,8 +123,8 @@ def _harmonics_translation_coef_plane_wave[TEuclidean, TSpherical](
     )
 
 
-def harmonics_twins_expansion[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def harmonics_twins_expansion[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     *,
     n_end_1: int,
     n_end_2: int,
@@ -138,7 +138,7 @@ def harmonics_twins_expansion[TEuclidean, TSpherical](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     n_end_1 : int
         The maximum degree of the harmonic
@@ -235,8 +235,8 @@ def harmonics_twins_expansion[TEuclidean, TSpherical](
     return result
 
 
-def _harmonics_translation_coef_triplet[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def _harmonics_translation_coef_triplet[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     spherical: Mapping[TSpherical | Literal["r"], Array],
     *,
     n_end: int,
@@ -258,7 +258,7 @@ def _harmonics_translation_coef_triplet[TEuclidean, TSpherical](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     spherical : Mapping[TSpherical, Array]
         The translation vector in spherical coordinates.
@@ -296,7 +296,7 @@ def _harmonics_translation_coef_triplet[TEuclidean, TSpherical](
     )[None, None, :]
 
     # returns [user1,...,userM,n1,...,nN,np1,...,npN]
-    coef = (2 * xp.pi) ** (c.e_ndim / 2) * xp.sqrt(2 / xp.pi)
+    coef = (2 * xp.pi) ** (c.c_ndim / 2) * xp.sqrt(2 / xp.pi)
     t_RS = harmonics_regular_singular(
         c,
         spherical,
@@ -323,8 +323,8 @@ def _harmonics_translation_coef_triplet[TEuclidean, TSpherical](
     )
 
 
-def harmonics_translation_coef[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def harmonics_translation_coef[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     spherical: Mapping[TSpherical | Literal["r"], Array],
     *,
     n_end: int,
@@ -347,7 +347,7 @@ def harmonics_translation_coef[TEuclidean, TSpherical](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     spherical : Mapping[TSpherical, Array]
         The translation vector in spherical coordinates.
@@ -384,7 +384,7 @@ def harmonics_translation_coef[TEuclidean, TSpherical](
     >>> t = np.asarray([2, -7, 1])
     >>> coef = harmonics_translation_coef(
     ...     c,
-    ...     c.from_euclidean(t),
+    ...     c.from_cartesian(t),
     ...     n_end=2,
     ...     n_end_add=2,
     ...     phase=0,
@@ -401,7 +401,7 @@ def harmonics_translation_coef[TEuclidean, TSpherical](
     >>> y = x + t
     >>> coef = harmonics_translation_coef(
     ...     c,
-    ...     c.from_euclidean(t),
+    ...     c.from_cartesian(t),
     ...     n_end=2,
     ...     n_end_add=6,
     ...     phase=0,
@@ -410,7 +410,7 @@ def harmonics_translation_coef[TEuclidean, TSpherical](
     ... )
     >>> R_x = harmonics_regular_singular(
     ...     c,
-    ...     c.from_euclidean(x),
+    ...     c.from_cartesian(x),
     ...     n_end=6,
     ...     phase=0,
     ...     k=np.asarray(1.0),
@@ -420,7 +420,7 @@ def harmonics_translation_coef[TEuclidean, TSpherical](
     >>> R_y_approx = np.sum(coef * R_x[..., None, :], axis=-1)
     >>> R_y = harmonics_regular_singular(
     ...     c,
-    ...     c.from_euclidean(y),
+    ...     c.from_cartesian(y),
     ...     n_end=2,
     ...     phase=0,
     ...     k=np.asarray(1.0),
@@ -481,7 +481,7 @@ def harmonics_translation_coef[TEuclidean, TSpherical](
             )
         return _harmonics_translation_coef_plane_wave(
             c,
-            euclidean=c.to_euclidean(spherical, as_array=True),
+            cartesian=c.to_cartesian(spherical, as_array=True),
             n_end=n_end,
             n_end_add=n_end_add,
             phase=phase,

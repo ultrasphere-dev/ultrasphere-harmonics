@@ -16,8 +16,8 @@ from ultrasphere_harmonics._helmholtz import harmonics_regular_singular
 def test_match_scipy(n_end: int, xp: ArrayNamespaceFull, k: Array) -> None:
     c = create_spherical()
     shape = ()
-    x = xp.random.random_uniform(low=-1, high=1, shape=(c.e_ndim, *shape))
-    x_spherical = c.from_euclidean(x)
+    x = xp.random.random_uniform(low=-1, high=1, shape=(c.c_ndim, *shape))
+    x_spherical = c.from_cartesian(x)
     expected = sph_harm_y_all(
         n_end - 1,
         n_end - 1,

@@ -99,14 +99,14 @@ def expand_bunny(
     def f(spherical: Mapping[Any, Array]) -> Array:
         """Get the distance to the surface."""
         xp = array_namespace(*spherical.values())
-        euclidean = c.to_euclidean(spherical)
+        cartesian = c.to_cartesian(spherical)
         return bunny_mesh_dist(
-            xp.stack(xp.broadcast_arrays(*[euclidean[i] for i in c.e_nodes]), axis=-1)
+            xp.stack(xp.broadcast_arrays(*[cartesian[i] for i in c.c_nodes]), axis=-1)
         )
 
     expansion = expand(c, f, False, n_end, 2 * n_end, phase=phase, xp=xp)
-    euclidean = random_ball(c, shape=(n_plot,), xp=xp, surface=True)
-    spherical = c.from_euclidean(euclidean)
+    cartesian = random_ball(c, shape=(n_plot,), xp=xp, surface=True)
+    spherical = c.from_cartesian(cartesian)
     del spherical["r"]
     keys = ("ground_truth", *tuple(range(1, n_end + 1)))
     data = []
@@ -123,11 +123,11 @@ def expand_bunny(
             )
             label = (
                 f"Max Degree: {key - 1:02d}\n"
-                f"Basis Count: {harm_n_ndim_le(key - 1, e_ndim=c.e_ndim):03d}"
+                f"Basis Count: {harm_n_ndim_le(key - 1, c_ndim=c.c_ndim):03d}"
             )
         data.append(
             {
-                "x": c.to_euclidean(spherical | {"r": r}),
+                "x": c.to_cartesian(spherical | {"r": r}),
                 "label": label,
                 "key": key,
             }
@@ -215,14 +215,14 @@ def expand_bunny_4d(
     def f(spherical: Mapping[Any, Array]) -> Array:
         """Get the distance to the surface."""
         xp = array_namespace(*spherical.values())
-        euclidean = c.to_euclidean(spherical)
+        cartesian = c.to_cartesian(spherical)
         # stereographic projection
-        denom = 1 - euclidean[0]
+        denom = 1 - cartesian[0]
         direction = xp.stack(
             xp.broadcast_arrays(
-                euclidean[1] / denom,
-                euclidean[2] / denom,
-                euclidean[3] / denom,
+                cartesian[1] / denom,
+                cartesian[2] / denom,
+                cartesian[3] / denom,
             ),
             axis=-1,
         )
@@ -239,16 +239,16 @@ def expand_bunny_4d(
     )
 
     # plot coordinates
-    euclidean = random_ball(create_standard(2), shape=(n_plot,), xp=xp, surface=False)
-    r = xp.linalg.vector_norm(euclidean, axis=0)
+    cartesian = random_ball(create_standard(2), shape=(n_plot,), xp=xp, surface=False)
+    r = xp.linalg.vector_norm(cartesian, axis=0)
     denom = r**2 + 1
-    euclidean_proj = [
+    cartesian_proj = [
         (r**2 - 1) / denom,
-        2 * euclidean[0] / denom,
-        2 * euclidean[1] / denom,
-        2 * euclidean[2] / denom,
+        2 * cartesian[0] / denom,
+        2 * cartesian[1] / denom,
+        2 * cartesian[2] / denom,
     ]
-    spherical_proj = c.from_euclidean(euclidean_proj)
+    spherical_proj = c.from_cartesian(cartesian_proj)
     del spherical_proj["r"]
 
     # compute the expansion
@@ -269,7 +269,7 @@ def expand_bunny_4d(
             )
             label = (
                 f"Max Degree: {key - 1:02d}\n"
-                f"Basis Count: {harm_n_ndim_le(key - 1, e_ndim=c.e_ndim):04d}"
+                f"Basis Count: {harm_n_ndim_le(key - 1, c_ndim=c.c_ndim):04d}"
             )
         if threshold is not None:
             w = (w > threshold).astype(w.dtype)
@@ -290,11 +290,11 @@ def expand_bunny_4d(
         ax.clear()
         ax.view_init(elev=45, azim=45, roll=120)
         ax.scatter3D(
-            euclidean[0],
-            euclidean[1],
-            euclidean[2],
+            cartesian[0],
+            cartesian[1],
+            cartesian[2],
             s=data["w"] * 10,
-            c=euclidean[2],
+            c=cartesian[2],
             cmap="viridis",
         )
         ax.xaxis.pane.fill = False
@@ -325,16 +325,16 @@ def scattering(branching_types: str, n_end: int = 6, k: float = 1) -> None:
     c = create_from_branching_types(branching_types)
 
     def uin(spherical: Mapping[Any, Array]) -> Array:
-        euclidean = c.to_euclidean(spherical, as_array=True)
-        xp = array_namespace(euclidean[0])
+        cartesian = c.to_cartesian(spherical, as_array=True)
+        xp = array_namespace(cartesian[0])
         return shn1(
             xp.asarray(0),
-            xp.asarray(c.e_ndim),
+            xp.asarray(c.c_ndim),
             k
             * xp.linalg.vector_norm(
-                euclidean
-                - xp.asarray([2.0] + [0.0] * (c.e_ndim - 1))[
-                    (...,) + (None,) * (euclidean.ndim - 1)
+                cartesian
+                - xp.asarray([2.0] + [0.0] * (c.c_ndim - 1))[
+                    (...,) + (None,) * (cartesian.ndim - 1)
                 ],
                 axis=0,
             ),
@@ -343,18 +343,18 @@ def scattering(branching_types: str, n_end: int = 6, k: float = 1) -> None:
     xp = np
     phase = Phase(0)
     expansion_coef = expand(c, uin, False, n_end, n_end, phase=phase, xp=xp)
-    euclidean = xp.meshgrid(
-        *((xp.linspace(-3, 3, 100),) * 2 + (xp.asarray([0.0]),) * (c.e_ndim - 2)),
+    cartesian = xp.meshgrid(
+        *((xp.linspace(-3, 3, 100),) * 2 + (xp.asarray([0.0]),) * (c.c_ndim - 2)),
         indexing="ij",
     )
-    euclidean = xp.stack([xp.reshape(xi, (-1,)) for xi in euclidean])
-    euclidean = euclidean[:, xp.linalg.vector_norm(euclidean, axis=0) > 1.0]
-    spherical = c.from_euclidean(euclidean)
+    cartesian = xp.stack([xp.reshape(xi, (-1,)) for xi in cartesian])
+    cartesian = cartesian[:, xp.linalg.vector_norm(cartesian, axis=0) > 1.0]
+    spherical = c.from_cartesian(cartesian)
     uin_v = uin(spherical)
     n = index_array_harmonics(c, c.root, n_end=n_end, xp=xp, flatten=True)
     uscat_v = -xp.sum(
         1
-        / shn1(n, xp.asarray(c.e_ndim), xp.asarray(k))
+        / shn1(n, xp.asarray(c.c_ndim), xp.asarray(k))
         * expansion_coef
         * harmonics_regular_singular(
             c, spherical, n_end=n_end, type="singular", k=k, phase=phase
@@ -370,8 +370,8 @@ def scattering(branching_types: str, n_end: int = 6, k: float = 1) -> None:
     )
     fig, ax = plt.subplots(1, 3, figsize=(12, 4), layout="constrained")
     ax[0].scatter(
-        euclidean[0],
-        euclidean[1],
+        cartesian[0],
+        cartesian[1],
         c=xp.real(uin_v),
         s=1,
         cmap="viridis",
@@ -380,8 +380,8 @@ def scattering(branching_types: str, n_end: int = 6, k: float = 1) -> None:
     )
     ax[0].set_title("Incident Wave")
     ax[1].scatter(
-        euclidean[0],
-        euclidean[1],
+        cartesian[0],
+        cartesian[1],
         c=xp.real(uscat_v),
         s=1,
         cmap="viridis",
@@ -390,8 +390,8 @@ def scattering(branching_types: str, n_end: int = 6, k: float = 1) -> None:
     )
     ax[1].set_title("Scattered Wave")
     sc = ax[2].scatter(
-        euclidean[0],
-        euclidean[1],
+        cartesian[0],
+        cartesian[1],
         c=xp.real(utot_v),
         s=1,
         cmap="viridis",

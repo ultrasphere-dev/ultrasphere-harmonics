@@ -13,8 +13,8 @@ from ._core._flatten import flatten_harmonics, index_array_harmonics
 
 
 @overload
-def harmonics_regular_singular_component[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def harmonics_regular_singular_component[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     spherical: (
         Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]
     ),
@@ -30,8 +30,8 @@ def harmonics_regular_singular_component[TEuclidean, TSpherical](
 
 
 @overload
-def harmonics_regular_singular_component[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def harmonics_regular_singular_component[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     spherical: (
         Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]
     ),
@@ -46,8 +46,8 @@ def harmonics_regular_singular_component[TEuclidean, TSpherical](
 ) -> Array: ...
 
 
-def harmonics_regular_singular_component[TEuclidean, TSpherical](  # type: ignore[misc]
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def harmonics_regular_singular_component[TCartesian, TSpherical](  # type: ignore[misc]
+    c: SphericalCoordinates[TSpherical, TCartesian],
     spherical: (
         Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]
     ),
@@ -71,7 +71,7 @@ def harmonics_regular_singular_component[TEuclidean, TSpherical](  # type: ignor
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     spherical : Mapping[TSpherical | Literal['r'],
         Array] | Mapping[Literal['r'],
@@ -162,7 +162,7 @@ def harmonics_regular_singular_component[TEuclidean, TSpherical](  # type: ignor
         type = "j"
     elif type == "singular":
         type = "h1"
-    val = szv(n, c.e_ndim, kr, type=type, derivative=derivative)
+    val = szv(n, c.c_ndim, kr, type=type, derivative=derivative)
     # val = xp.nan_to_num(val, nan=0)
     if flatten:
         val = flatten_harmonics(c, val, n_end=n_end, include_negative_m=True)
@@ -172,8 +172,8 @@ def harmonics_regular_singular_component[TEuclidean, TSpherical](  # type: ignor
 
 
 @overload
-def harmonics_regular_singular[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def harmonics_regular_singular[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     spherical: (
         Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]
     ),
@@ -191,8 +191,8 @@ def harmonics_regular_singular[TEuclidean, TSpherical](
 
 
 @overload
-def harmonics_regular_singular[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def harmonics_regular_singular[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     spherical: (
         Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]
     ),
@@ -209,8 +209,8 @@ def harmonics_regular_singular[TEuclidean, TSpherical](
 ) -> Array: ...
 
 
-def harmonics_regular_singular[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def harmonics_regular_singular[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     spherical: (
         Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]
     ),
@@ -235,7 +235,7 @@ def harmonics_regular_singular[TEuclidean, TSpherical](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     spherical : Mapping[TSpherical | Literal['r'],
         Array] | Mapping[Literal['r'],

@@ -15,8 +15,8 @@ from ultrasphere import (
 from ._assume import assume_n_end_and_include_negative_m_from_harmonics
 
 
-def _index_array_harmonics[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def _index_array_harmonics[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     node: TSpherical,
     *,
     n_end: int,
@@ -29,7 +29,7 @@ def _index_array_harmonics[TSpherical, TEuclidean](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     node : TSpherical
         The node of the spherical coordinates.
@@ -67,8 +67,8 @@ def _index_array_harmonics[TSpherical, TEuclidean](
 
 
 @overload
-def _index_array_harmonics_all[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def _index_array_harmonics_all[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     /,
     *,
     n_end: int,
@@ -79,8 +79,8 @@ def _index_array_harmonics_all[TSpherical, TEuclidean](
     mask: Literal[False] = ...,
 ) -> Mapping[TSpherical, Array]: ...
 @overload
-def _index_array_harmonics_all[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def _index_array_harmonics_all[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     /,
     *,
     n_end: int,
@@ -92,8 +92,8 @@ def _index_array_harmonics_all[TSpherical, TEuclidean](
 ) -> Array: ...
 
 
-def _index_array_harmonics_all[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def _index_array_harmonics_all[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     /,
     *,
     n_end: int,
@@ -108,7 +108,7 @@ def _index_array_harmonics_all[TSpherical, TEuclidean](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     n_end : int
         The maximum degree of the harmonic.
@@ -179,8 +179,8 @@ def _index_array_harmonics_all[TSpherical, TEuclidean](
     return index_arrays
 
 
-def flatten_mask_harmonics[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def flatten_mask_harmonics[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     /,
     *,
     n_end: int,
@@ -194,7 +194,7 @@ def flatten_mask_harmonics[TSpherical, TEuclidean](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     n_end : int
         The maximum degree of the harmonic.
@@ -255,8 +255,8 @@ def flatten_mask_harmonics[TSpherical, TEuclidean](
     return mask
 
 
-def flatten_harmonics[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def flatten_harmonics[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     harmonics: Array,
     n_end: int | None = None,
     include_negative_m: bool | None = None,
@@ -267,7 +267,7 @@ def flatten_harmonics[TSpherical, TEuclidean](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     harmonics : Array
         The (unflattend) harmonics.
@@ -325,8 +325,8 @@ def flatten_harmonics[TSpherical, TEuclidean](
     return harmonics[(..., mask) + (slice(None),) * (-axis_end - 1)]
 
 
-def unflatten_harmonics[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def unflatten_harmonics[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     harmonics: Array,
     *,
     include_negative_m: bool = True,
@@ -336,7 +336,7 @@ def unflatten_harmonics[TSpherical, TEuclidean](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     harmonics : Array
         The flattened harmonics.
@@ -382,8 +382,8 @@ def unflatten_harmonics[TSpherical, TEuclidean](
     return result
 
 
-def index_array_harmonics[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def index_array_harmonics[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     node: TSpherical,
     /,
     *,
@@ -398,7 +398,7 @@ def index_array_harmonics[TSpherical, TEuclidean](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     node : TSpherical
         The node of the spherical coordinates.
@@ -462,8 +462,8 @@ def index_array_harmonics[TSpherical, TEuclidean](
 
 
 @overload
-def index_array_harmonics_all[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def index_array_harmonics_all[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     *,
     n_end: int,
     xp: ArrayNamespaceFull,
@@ -474,8 +474,8 @@ def index_array_harmonics_all[TSpherical, TEuclidean](
     flatten: bool | None = ...,
 ) -> Mapping[TSpherical, Array]: ...
 @overload
-def index_array_harmonics_all[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def index_array_harmonics_all[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     *,
     n_end: int,
     xp: ArrayNamespaceFull,
@@ -487,8 +487,8 @@ def index_array_harmonics_all[TSpherical, TEuclidean](
 ) -> Array: ...
 
 
-def index_array_harmonics_all[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def index_array_harmonics_all[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     *,
     n_end: int,
     xp: ArrayNamespaceFull,
@@ -503,7 +503,7 @@ def index_array_harmonics_all[TSpherical, TEuclidean](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     n_end : int
         The maximum degree of the harmonic.

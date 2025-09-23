@@ -28,13 +28,13 @@ from ultrasphere_harmonics._ndim import harm_n_ndim_le
 )
 @pytest.mark.parametrize("n_end", [4])
 @pytest.mark.parametrize("phase", Phase.all())
-def test_harmonics_orthogonal[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def test_harmonics_orthogonal[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     n_end: int,
     phase: Phase,
     xp: ArrayNamespaceFull,
 ) -> None:
-    expected = xp.eye(int(harm_n_ndim_le(n_end, e_ndim=c.e_ndim)))
+    expected = xp.eye(int(harm_n_ndim_le(n_end, c_ndim=c.c_ndim)))
 
     def f(s: Mapping[TSpherical, Array]) -> Array:
         Y = harmonics(
@@ -55,8 +55,8 @@ def test_harmonics_orthogonal[TSpherical, TEuclidean](
 def test_match_scipy(n_end: int, xp: ArrayNamespaceFull) -> None:
     c = create_spherical()
     shape = ()
-    x = xp.random.random_uniform(low=-1, high=1, shape=(c.e_ndim, *shape))
-    x_spherical = c.from_euclidean(x)
+    x = xp.random.random_uniform(low=-1, high=1, shape=(c.c_ndim, *shape))
+    x_spherical = c.from_cartesian(x)
     expected = sph_harm_y_all(
         n_end - 1,
         n_end - 1,

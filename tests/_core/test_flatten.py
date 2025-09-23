@@ -30,8 +30,8 @@ from ultrasphere_harmonics._core._flatten import (
     ],
 )
 @pytest.mark.parametrize("n_end", [4, 7])
-def test_index_array_harmonics_all[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean], n_end: int, xp: ArrayNamespaceFull
+def test_index_array_harmonics_all[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian], n_end: int, xp: ArrayNamespaceFull
 ) -> None:
     iall_concat = _index_array_harmonics_all(
         c, n_end=n_end, include_negative_m=False, expand_dims=True, as_array=True, xp=xp
@@ -63,8 +63,8 @@ def test_index_array_harmonics_all[TEuclidean, TSpherical](
     ],
 )
 @pytest.mark.parametrize("phase", Phase.all())
-def test_flatten_unflatten_harmonics[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def test_flatten_unflatten_harmonics[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     xp: ArrayNamespaceFull,
     phase: Phase,
 ) -> None:

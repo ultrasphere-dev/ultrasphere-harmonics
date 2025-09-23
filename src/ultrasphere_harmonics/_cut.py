@@ -8,23 +8,23 @@ from ._ndim import harm_n_ndim_le
 
 
 @overload
-def expand_cut[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def expand_cut[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     expansion: Mapping[TSpherical, Array],
     n_end: int,
 ) -> Mapping[TSpherical, Array]: ...
 
 
 @overload
-def expand_cut[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def expand_cut[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     expansion: Array,
     n_end: int,
 ) -> Array: ...
 
 
-def expand_cut[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def expand_cut[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     expansion: Mapping[TSpherical, Array] | Array,
     n_end: int,
 ) -> Mapping[TSpherical, Array] | Array:
@@ -33,7 +33,7 @@ def expand_cut[TEuclidean, TSpherical](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     expansion : Mapping[TSpherical, Array] | Array
         The expansion coefficients.
@@ -68,7 +68,7 @@ def expand_cut[TEuclidean, TSpherical](
     """
     if isinstance(expansion, Mapping):
         return {
-            k: v[..., : int(harm_n_ndim_le(n_end, e_ndim=c.e_ndim))]
+            k: v[..., : int(harm_n_ndim_le(n_end, c_ndim=c.c_ndim))]
             for k, v in expansion.items()
         }
-    return expansion[..., : int(harm_n_ndim_le(n_end, e_ndim=c.e_ndim))]
+    return expansion[..., : int(harm_n_ndim_le(n_end, c_ndim=c.c_ndim))]

@@ -29,9 +29,9 @@ def test_harmonics_translation_coef_gumerov_table(xp: ArrayNamespaceFull) -> Non
     x = xp.asarray([-1.0, 1.0, 0.0])
     t = xp.asarray([2.0, -7.0, 1.0])
     y = xp.add(x, t)
-    x_spherical = c.from_euclidean(x)
-    y_spherical = c.from_euclidean(y)
-    t_spherical = c.from_euclidean(t)
+    x_spherical = c.from_cartesian(x)
+    y_spherical = c.from_cartesian(y)
+    t_spherical = c.from_cartesian(t)
     k = xp.asarray(1)
 
     n_end = 6
@@ -96,8 +96,8 @@ def test_harmonics_translation_coef_gumerov_table(xp: ArrayNamespaceFull) -> Non
     "method",
     ["gumerov", "plane_wave", "triplet", None],
 )
-def test_harmonics_translation_coef[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def test_harmonics_translation_coef[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     n_end: int,
     n_end_add: int,
     phase: Phase,
@@ -112,8 +112,8 @@ def test_harmonics_translation_coef[TSpherical, TEuclidean](
         pytest.skip("plane_wave method only supports from_=to_")
 
     # get x, t, y := x + t
-    x = xp.arange(c.e_ndim)
-    t = xp.flip(xp.arange(c.e_ndim))
+    x = xp.arange(c.c_ndim)
+    t = xp.flip(xp.arange(c.c_ndim))
     k = 1.0
     if (from_, to_) == ("singular", "singular"):
         # |t| < |x| (if too close, the result would be inaccurate)
@@ -133,9 +133,9 @@ def test_harmonics_translation_coef[TSpherical, TEuclidean](
 
     # t = xp.zeros_like(t)
     y = x + t
-    t_spherical = c.from_euclidean(t)
-    x_spherical = c.from_euclidean(x)
-    y_spherical = c.from_euclidean(y)
+    t_spherical = c.from_cartesian(t)
+    x_spherical = c.from_cartesian(x)
+    y_spherical = c.from_cartesian(y)
 
     y_RS = harmonics_regular_singular(
         c,
@@ -184,9 +184,9 @@ def test_harmonics_translation_coef[TSpherical, TEuclidean](
 def test_dataset_coef() -> None:
     import numpy as np
 
-    euclidean = np.array([2, -7, 1])
+    cartesian = np.array([2, -7, 1])
     c = create_spherical()
-    spherical = c.from_euclidean(euclidean)
+    spherical = c.from_cartesian(cartesian)
     Path("tests/.cache").mkdir(exist_ok=True)
     for phase in Phase.all():
         for is_same_type in [True, False]:

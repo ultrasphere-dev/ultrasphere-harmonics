@@ -6,8 +6,8 @@ from ultrasphere import SphericalCoordinates
 from .._ndim import harm_n_ndim_le
 
 
-def assume_n_end_and_include_negative_m_from_harmonics[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def assume_n_end_and_include_negative_m_from_harmonics[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     expansion: Mapping[TSpherical, Array] | Array | tuple[int, ...],
     /,
     *,
@@ -18,7 +18,7 @@ def assume_n_end_and_include_negative_m_from_harmonics[TEuclidean, TSpherical](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     expansion : Mapping[TSpherical, Array] | Array | tuple[int, ...]
         The expansion coefficients.
@@ -55,7 +55,7 @@ def assume_n_end_and_include_negative_m_from_harmonics[TEuclidean, TSpherical](
         size = expansion.shape[-1]
         n_end = 0
         while True:
-            size_current = harm_n_ndim_le(n_end, e_ndim=c.e_ndim)
+            size_current = harm_n_ndim_le(n_end, c_ndim=c.c_ndim)
             if size_current == size:
                 return n_end, True
             elif size_current > size:

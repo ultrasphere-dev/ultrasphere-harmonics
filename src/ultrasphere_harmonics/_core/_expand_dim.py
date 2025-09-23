@@ -5,8 +5,8 @@ from array_api_compat import array_namespace
 from ultrasphere import BranchingType, SphericalCoordinates, get_child
 
 
-def _expand_dim_harmoncis[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def _expand_dim_harmoncis[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     node: TSpherical,
     harmonics: Array,
 ) -> Array:
@@ -26,7 +26,7 @@ def _expand_dim_harmoncis[TSpherical, TEuclidean](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     node : TSpherical
         The node of the spherical coordinates.
@@ -72,8 +72,8 @@ def _expand_dim_harmoncis[TSpherical, TEuclidean](
     return xp.moveaxis(harmonics, list(moveaxis.keys()), list(moveaxis.values()))
 
 
-def expand_dims_harmonics[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def expand_dims_harmonics[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     harmonics: Mapping[TSpherical, Array],
 ) -> Mapping[TSpherical, Array]:
     """
@@ -92,7 +92,7 @@ def expand_dims_harmonics[TSpherical, TEuclidean](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     harmonics : Mapping[TSpherical, Array]
         The dictionary of harmonics (eigenfunctions).

@@ -38,8 +38,8 @@ Path.mkdir(PATH, exist_ok=True)
 @pytest.mark.parametrize("n_end", [3, 4])
 @pytest.mark.parametrize("phase", Phase.all())
 @pytest.mark.parametrize("concat", [True, False])
-def test_orthogonal_expand[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def test_orthogonal_expand[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     n_end: int,
     phase: Phase,
     concat: bool,
@@ -85,7 +85,7 @@ def test_orthogonal_expand[TSpherical, TEuclidean](
             assert xp.all(l[idx, :] == r[idx, :])
     else:
         expected = xp.eye(
-            int(harm_n_ndim_le(n_end, e_ndim=c.e_ndim)), dtype=xp.complex64
+            int(harm_n_ndim_le(n_end, c_ndim=c.c_ndim)), dtype=xp.complex64
         )
         assert xp.all(xpx.isclose(actual, expected, rtol=1e-6, atol=1e-6))
 
@@ -101,17 +101,17 @@ def test_orthogonal_expand[TSpherical, TEuclidean](
     ],
 )
 @pytest.mark.parametrize("phase", Phase.all())
-def test_approximate[TSpherical, TEuclidean](
+def test_approximate[TSpherical, TCartesian](
     name: str,
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+    c: SphericalCoordinates[TSpherical, TCartesian],
     n_end: int,
     phase: Phase,
     xp: ArrayNamespaceFull,
 ) -> None:
-    k = xp.arange(c.e_ndim) / c.e_ndim
+    k = xp.arange(c.c_ndim) / c.c_ndim
 
     def f(s: Mapping[TSpherical, Array]) -> Array:
-        x = c.to_euclidean(s, as_array=True)
+        x = c.to_cartesian(s, as_array=True)
         # k is complex
         return xp.exp(
             1j

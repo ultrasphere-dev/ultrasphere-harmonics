@@ -21,8 +21,8 @@ from ultrasphere_harmonics._ndim import harm_n_ndim_eq
 )
 @pytest.mark.parametrize("n_end", [5])
 @pytest.mark.parametrize("phase", Phase.all())
-def test_addition_theorem_same_x[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def test_addition_theorem_same_x[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     n_end: int,
     xp: ArrayNamespaceFull,
     phase: Phase,
@@ -37,11 +37,11 @@ def test_addition_theorem_same_x[TSpherical, TEuclidean](
 
     """
     shape = (5,)
-    x = xp.random.random_uniform(low=-1, high=1, shape=(c.e_ndim, *shape))
-    x_spherical = c.from_euclidean(x)
+    x = xp.random.random_uniform(low=-1, high=1, shape=(c.c_ndim, *shape))
+    x_spherical = c.from_cartesian(x)
     n = xp.arange(n_end)[(None,) * len(shape) + (slice(None),)]
     expected = (
-        harm_n_ndim_eq(n, e_ndim=c.e_ndim)
+        harm_n_ndim_eq(n, c_ndim=c.c_ndim)
         / c.surface_area()
         * xp.ones_like(x_spherical["r"])[:, None]
     )
@@ -71,8 +71,8 @@ def test_addition_theorem_same_x[TSpherical, TEuclidean](
 @pytest.mark.parametrize("n_end", [12])
 @pytest.mark.parametrize("type", ["legendre", "gegenbauer", "gegenbauer-cohl"])
 @pytest.mark.parametrize("phase", Phase.all())
-def test_addition_theorem[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def test_addition_theorem[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     n_end: int,
     type: Literal["legendre", "gegenbauer", "gegenbauer-cohl"],
     xp: ArrayNamespaceFull,
@@ -88,18 +88,18 @@ def test_addition_theorem[TSpherical, TEuclidean](
 
     """
     shape = (5,)
-    x = xp.random.random_uniform(low=-1, high=1, shape=(c.e_ndim, *shape))
-    y = xp.random.random_uniform(low=-1, high=1, shape=(c.e_ndim, *shape))
+    x = xp.random.random_uniform(low=-1, high=1, shape=(c.c_ndim, *shape))
+    y = xp.random.random_uniform(low=-1, high=1, shape=(c.c_ndim, *shape))
 
     # [...]
-    x_spherical = c.from_euclidean(x)
-    y_spherical = c.from_euclidean(y)
+    x_spherical = c.from_cartesian(x)
+    y_spherical = c.from_cartesian(y)
 
     ip = xp.sum(x * y, axis=0)
     ip_normalized = ip / x_spherical["r"] / y_spherical["r"]
     # expected [..., n]
     n = xp.arange(n_end)[(None,) * c.s_ndim + (slice(None),)]
-    d = c.e_ndim
+    d = c.c_ndim
     if type == "legendre":
         expected = (
             legendre(
@@ -107,7 +107,7 @@ def test_addition_theorem[TSpherical, TEuclidean](
                 ndim=xp.asarray(d),
                 n_end=n_end,
             )
-            * harm_n_ndim_eq(n, e_ndim=c.e_ndim)
+            * harm_n_ndim_eq(n, c_ndim=c.c_ndim)
             / c.surface_area()
         )
     elif type == "gegenbauer":
@@ -115,7 +115,7 @@ def test_addition_theorem[TSpherical, TEuclidean](
         expected = (
             gegenbauer(ip_normalized, alpha=alpha, n_end=n_end)
             / gegenbauer(xp.ones_like(ip_normalized), alpha=alpha, n_end=n_end)
-            * harm_n_ndim_eq(n, e_ndim=c.e_ndim)
+            * harm_n_ndim_eq(n, c_ndim=c.c_ndim)
             / c.surface_area()
         )
     elif type == "gegenbauer-cohl":

@@ -5,8 +5,8 @@ from array_api_compat import array_namespace
 from ultrasphere import SphericalCoordinates
 
 
-def concat_harmonics[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def concat_harmonics[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     harmonics: Mapping[TSpherical, Array],
 ) -> Array:
     """
@@ -14,7 +14,7 @@ def concat_harmonics[TSpherical, TEuclidean](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     harmonics : Mapping[TSpherical, Array]
         The expanded harmonics.

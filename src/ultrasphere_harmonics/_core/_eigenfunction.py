@@ -418,8 +418,8 @@ def type_c(
     return res
 
 
-def ndim_harmonics[TSpherical, TEuclidean](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def ndim_harmonics[TSpherical, TCartesian](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     node: TSpherical,
 ) -> int:
     r"""
@@ -435,7 +435,7 @@ def ndim_harmonics[TSpherical, TEuclidean](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     node : TSpherical
         The node of the spherical coordinates.

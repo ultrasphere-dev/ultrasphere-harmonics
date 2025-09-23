@@ -17,9 +17,6 @@ classifiers = [
   "Intended Audience :: Developers",
   "Natural Language :: English",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Topic :: Software Development :: Libraries",
@@ -30,7 +27,7 @@ dependencies = [
   "gumerov-expansion-coefficients>=1.2.0",
   "jacobi-poly>=1.0.4",
   "shift-nth-row-n-steps>=1.0.0",
-  "ultrasphere>=1.1.8",
+  "ultrasphere>=2.0.0",
 ]
 urls."Bug Tracker" = "https://github.com/ultrasphere-dev/ultrasphere-harmonics/issues"
 urls.Changelog = "https://github.com/ultrasphere-dev/ultrasphere-harmonics/blob/main/CHANGELOG.md"

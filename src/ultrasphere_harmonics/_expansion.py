@@ -15,8 +15,8 @@ from ._core._eigenfunction import ndim_harmonics as ndim_harmonics_
 
 
 @overload
-def expand[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def expand[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     f: (
         Callable[
             [Mapping[TSpherical, Array]],
@@ -37,8 +37,8 @@ def expand[TEuclidean, TSpherical](
 
 
 @overload
-def expand[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def expand[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     f: (
         Callable[
             [Mapping[TSpherical, Array]],
@@ -58,8 +58,8 @@ def expand[TEuclidean, TSpherical](
 ) -> Array: ...
 
 
-def expand[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def expand[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     f: (
         Callable[
             [Mapping[TSpherical, Array]],
@@ -82,7 +82,7 @@ def expand[TEuclidean, TSpherical](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     f : Callable[ [Mapping[TSpherical, Array]],
         Mapping[TSpherical, Array] | Array, ]
@@ -287,8 +287,8 @@ def expand[TEuclidean, TSpherical](
 
 
 @overload
-def expand_evaluate[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def expand_evaluate[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     expansion: Mapping[TSpherical, Array],
     spherical: Mapping[TSpherical, Array],
     *,
@@ -297,8 +297,8 @@ def expand_evaluate[TEuclidean, TSpherical](
 
 
 @overload
-def expand_evaluate[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def expand_evaluate[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     expansion: Array,
     spherical: Mapping[TSpherical, Array],
     *,
@@ -306,8 +306,8 @@ def expand_evaluate[TEuclidean, TSpherical](
 ) -> Array: ...
 
 
-def expand_evaluate[TEuclidean, TSpherical](
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+def expand_evaluate[TCartesian, TSpherical](
+    c: SphericalCoordinates[TSpherical, TCartesian],
     expansion: Mapping[TSpherical, Array] | Array,
     spherical: Mapping[TSpherical, Array],
     *,
@@ -321,7 +321,7 @@ def expand_evaluate[TEuclidean, TSpherical](
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     expansion : Mapping[TSpherical, Array] | Array
         The expansion coefficients of shape (*shape_e, ndim).

@@ -3,7 +3,7 @@ from typing import Literal, overload
 
 from array_api._2024_12 import Array
 from ultrasphere import BranchingType, SphericalCoordinates, get_child
-from ultrasphere._coordinates import TEuclidean, TSpherical
+from ultrasphere._coordinates import TCartesian, TSpherical
 
 from ._concat import concat_harmonics
 from ._eigenfunction import Phase, type_a, type_b, type_bdash, type_c
@@ -12,7 +12,7 @@ from ._flatten import flatten_harmonics
 
 
 def _harmonics(
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+    c: SphericalCoordinates[TSpherical, TCartesian],
     spherical: Mapping[TSpherical, Array],
     n_end: int,
     *,
@@ -25,7 +25,7 @@ def _harmonics(
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     spherical : Mapping[TSpherical, Array]
         The spherical coordinates.
@@ -98,7 +98,7 @@ def _harmonics(
 
 @overload
 def harmonics(
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+    c: SphericalCoordinates[TSpherical, TCartesian],
     spherical: Mapping[TSpherical, Array],
     /,
     *,
@@ -114,7 +114,7 @@ def harmonics(
 
 @overload
 def harmonics(
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+    c: SphericalCoordinates[TSpherical, TCartesian],
     spherical: Mapping[TSpherical, Array],
     /,
     *,
@@ -129,7 +129,7 @@ def harmonics(
 
 
 def harmonics(
-    c: SphericalCoordinates[TSpherical, TEuclidean],
+    c: SphericalCoordinates[TSpherical, TCartesian],
     spherical: Mapping[TSpherical, Array],
     /,
     *,
@@ -146,7 +146,7 @@ def harmonics(
 
     Parameters
     ----------
-    c : SphericalCoordinates[TSpherical, TEuclidean]
+    c : SphericalCoordinates[TSpherical, TCartesian]
         The spherical coordinates.
     spherical : Mapping[TSpherical, Array]
         The spherical coordinates.
