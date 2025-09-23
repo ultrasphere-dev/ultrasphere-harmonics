@@ -2099,6 +2099,7 @@ dependencies = [
 
 [package.optional-dependencies]
 cli = [
+    { name = "aquarel" },
     { name = "cyclopts" },
     { name = "open3d-cpu" },
     { name = "rich" },
@@ -2121,6 +2122,7 @@ docs = [
 
 [package.metadata]
 requires-dist = [
+    { name = "aquarel", marker = "extra == 'cli'", specifier = ">=0.0.7" },
     { name = "array-api-negative-index", specifier = ">=1.0.0" },
     { name = "cyclopts", marker = "extra == 'cli'", specifier = ">=3.24.0" },
     { name = "gumerov-expansion-coefficients", specifier = ">=1.2.0" },

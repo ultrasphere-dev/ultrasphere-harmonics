@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import open3d as o3d
 import pandas as pd
 import plotly.express as px
+from aquarel import load_theme
 from array_api._2024_12 import Array, ArrayNamespaceFull
 from array_api_compat import array_namespace
 from array_api_compat import numpy as np
@@ -320,7 +321,9 @@ def expand_bunny_4d(
 
 
 @app.command()
-def scattering(branching_types: str, n_end: int = 6, k: float = 1) -> None:
+def scattering(
+    branching_types: str, n_end: int = 6, k: float = 1, theme: str = "boxy_dark"
+) -> None:
     """Visualize scattering from a sound-soft sphere."""
     c = create_from_branching_types(branching_types)
 
@@ -362,42 +365,44 @@ def scattering(branching_types: str, n_end: int = 6, k: float = 1) -> None:
         axis=-1,
     )
     utot_v = uin_v + uscat_v
-    vmin = min(
-        xp.min(xp.real(uin_v)), xp.min(xp.real(uscat_v)), xp.min(xp.real(utot_v))
-    )
-    vmax = max(
-        xp.max(xp.real(uin_v)), xp.max(xp.real(uscat_v)), xp.max(xp.real(utot_v))
-    )
-    fig, ax = plt.subplots(1, 3, figsize=(12, 4), layout="constrained")
-    ax[0].scatter(
-        cartesian[0],
-        cartesian[1],
-        c=xp.real(uin_v),
-        s=1,
-        cmap="viridis",
-        vmin=vmin,
-        vmax=vmax,
-    )
-    ax[0].set_title("Incident Wave")
-    ax[1].scatter(
-        cartesian[0],
-        cartesian[1],
-        c=xp.real(uscat_v),
-        s=1,
-        cmap="viridis",
-        vmin=vmin,
-        vmax=vmax,
-    )
-    ax[1].set_title("Scattered Wave")
-    sc = ax[2].scatter(
-        cartesian[0],
-        cartesian[1],
-        c=xp.real(utot_v),
-        s=1,
-        cmap="viridis",
-        vmin=vmin,
-        vmax=vmax,
-    )
-    ax[2].set_title("Total Wave")
-    fig.colorbar(sc, ax=ax.ravel().tolist())
-    fig.savefig(f"scattering_{branching_types}.png")
+    vmax = xp.max([xp.abs(xp.real(u)) for u in (uin_v, uscat_v, utot_v)])
+    vmin = -vmax
+    cmap = "seismic"
+    s = 6
+
+    with load_theme(theme):
+        fig, ax = plt.subplots(1, 3, figsize=(13, 4), layout="constrained")
+        for i in range(3):
+            ax[i].set_aspect("equal")
+        ax[0].scatter(
+            cartesian[0],
+            cartesian[1],
+            c=xp.real(uin_v),
+            s=s,
+            cmap=cmap,
+            vmin=vmin,
+            vmax=vmax,
+        )
+        ax[0].set_title("Real part of Incident Wave")
+        ax[1].scatter(
+            cartesian[0],
+            cartesian[1],
+            c=xp.real(uscat_v),
+            s=s,
+            cmap=cmap,
+            vmin=vmin,
+            vmax=vmax,
+        )
+        ax[1].set_title("Real part of Scattered Wave")
+        sc = ax[2].scatter(
+            cartesian[0],
+            cartesian[1],
+            c=xp.real(utot_v),
+            s=s,
+            cmap=cmap,
+            vmin=vmin,
+            vmax=vmax,
+        )
+        ax[2].set_title("Real part of Total Wave")
+        fig.colorbar(sc, ax=ax.ravel().tolist())
+    fig.savefig(f"scattering_{branching_types}_{k}_{n_end}.png")

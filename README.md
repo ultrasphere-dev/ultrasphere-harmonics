@@ -47,7 +47,7 @@ Hyperspherical harmonics in NumPy / PyTorch / JAX
 Install this via pip (or your favourite package manager):
 
 ```shell
-pip install ultrasphere-harmonics
+pip install ultrasphere-harmonics[cli]
 ```
 
 ## Usage
@@ -206,6 +206,105 @@ Note that $\forall m \in \mathbb{Z}. (-1)^m = (-1)^{-m}$ holds.
 - [Kress2014]: Kress, R. (2014). Linear Integral Equations (Vol. 82). Springer New York. https://doi.org/10.1007/978-1-4614-9593-2
 
 ## Demonstration
+
+### Scattering by a sound-soft sphere in $\mathbb{R}^d, d \geq 2$
+
+#### Mathematical formulation
+
+Let $d \in \mathbb{N} \setminus \{1\}$ be the dimension of the space, $k$ be the wave number, and $\mathbb{S}^{d-1} = \{ x \in \mathbb{R}^d \mid \|x\| = 1 \}$ be a unit sphere in $\mathbb{R}^d$.
+
+Asuume that $u_\text{in}$ is an incident wave satisfying the Helmholtz equation
+
+$$
+\Delta u_\text{in} + k^2 u_\text{in} = 0
+$$
+
+and scattered wave $u$ satisfies the following:
+
+$$
+\begin{cases}
+\Delta u + k^2 u = 0 \quad &x \in \mathbb{R}^d \setminus \overline{\mathbb{S}^{d-1}} \\
+u = -u_\text{in} \quad &x \in \mathbb{S}^{d-1} \\
+\lim_{\|x\| \to \infty} \|x\|^{\frac{d-1}{2}} \left( \frac{\partial u}{\partial \|x\|} - i k u \right) = 0 \quad &\frac{x}{\|x\|} \in \mathbb{S}^{d-1}
+\end{cases}
+$$
+
+The total wave $u_\text{tot}$ is defined as follows:
+
+$$
+u_\text{tot} = u_\text{in} + u
+$$
+
+Let $N \in \mathbb{N}$ be the truncation number for the spherical harmonics expansion.
+
+Then $u$ can be approximated as follows:
+
+$$
+u(x) = \sum_{n=0}^{N-1} \sum_{p=1}^{N(d,n)} \left(u_\text{in}\right)_{n, p} \frac{h^{(1)} (k \|x\|) Y_{n,p} \left( \frac{x}{\|x\|} \right)}{h^{(1)} (k)}
+$$
+
+where
+
+$$
+\left(u_\text{in}\right)_{n, p} := \sum_{i} w_i u_\text{in} (x_i) \overline{Y_{n,p}(x_i)} \approx \int_{\mathbb{S}^{d-1}} u_\text{in}(x) \overline{Y_{n,p}(x)} d x
+$$
+
+and $\{(x_i, w_i)\}_i$ are the quadrature points and weights.
+
+#### Functions needed
+
+- `expand()`: to compute $\left(u_\text{in}\right)_{n, p}$
+- `harmonics_regular_singular()`: to compute $h^{(1)} (k \|x\|) Y_{n,p} \left( \frac{x}{\|x\|} \right)$
+- `ultrasphere.shn1()`: to compute $h^{(1)} (k)$
+- `xp.sum()`: to compute the summation
+
+#### Implementation
+
+See `src/ultrasphere_harmonics/cli.py`.
+The code works for any spherical coordinates (dimension-independent).
+
+#### Results
+
+The incident wave is set to be a spherical wave emitted from the point $(2, 0, \ldots, 0)$:
+
+$$
+u_\text{in} (x) = h^{(1)} (k \|x - (2, 0, \ldots, 0)\|)
+$$
+
+- `--k`: set the wave number $k$
+- `--n-end`: set the truncation number $N$
+
+2D example (type **a** coordinates):
+
+```shell
+uv run ultrasphere-harmonics scattering a --k 10 --n-end 20
+```
+
+![2D Scattering](https://raw.githubusercontent.com/ultrasphere-dev/ultrasphere-harmonics/main/scattering_a_10.0_20.png)
+
+3D example (type **ba** coordinates):
+
+```shell
+uv run ultrasphere-harmonics scattering ba --k 10 --n-end 20
+```
+
+![3D Scattering](https://raw.githubusercontent.com/ultrasphere-dev/ultrasphere-harmonics/main/scattering_ba_10.0_20.png)
+
+4D example (type **bba** coordinates):
+
+```shell
+uv run ultrasphere-harmonics scattering bba --k 1 --n-end 5
+```
+
+![4D Scattering](https://raw.githubusercontent.com/ultrasphere-dev/ultrasphere-harmonics/main/scattering_bba_1.0_5.png)
+
+4D example (type **caa** coordinates):
+
+```shell
+uv run ultrasphere-harmonics scattering caa --k 1 --n-end 5
+```
+
+![4D Scattering](https://raw.githubusercontent.com/ultrasphere-dev/ultrasphere-harmonics/main/scattering_caa_1.0_5.png)
 
 ## Contributors ✨
 
