@@ -203,8 +203,8 @@ def expand[TCartesian, TSpherical](
     ...     phase=False,
     ...     xp=np,
     ... )
-    >>> np.round(expansion, 2)
-    array([ 0.+0.j, -0.+0.j, -0.-0.j,  0.+0.j, -0.+0.j])
+    >>> np.round(expansion, 2) + 0.0
+    array([0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j])
 
     """
     if n < n_end:
