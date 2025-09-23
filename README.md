@@ -306,6 +306,31 @@ uv run ultrasphere-harmonics scattering caa --k 1 --n-end 5
 
 ![4D Scattering](https://raw.githubusercontent.com/ultrasphere-dev/ultrasphere-harmonics/main/scattering_caa_1.0_5.png)
 
+### Spherical Harmonics Expansion of Stanford Bunny
+
+A ray is emitted from a certain point to each direction on a 3D unit sphere and the distance to the most far intersection point is measured.
+
+```shell
+uv run ultrasphere-harmonics expand-bunny
+```
+
+![Spherical Harmonics Expansion of Stanford Bunny](https://raw.githubusercontent.com/ultrasphere-dev/ultrasphere-harmonics/main/expand_bunny.gif)
+
+### Hyperspherical Harmonics Expansion of voxelated 3D Stanford Bunny projected onto 4D Sphere
+
+A ray is emitted from a certain point to each direction on a 3D unit sphere and the points before the most far intersection point are treated as `1` and the others are treated as `0`. The shape is projected onto a 4D unit sphere using stereographic projection and expanded using hyperspherical harmonics and quadrature on a 4D unit sphere, using the similar method as in [Bonvallet2007] and [Hosseinbor2013]. (Not identical, as Least-squares method is not used here, etc.)
+
+```shell
+uv run ultrasphere-harmonics expand-bunny-4d
+```
+
+![4D Expansion of Stanford Bunny](https://raw.githubusercontent.com/ultrasphere-dev/ultrasphere-harmonics/main/expand_bunny_4d.gif)
+
+#### References
+
+- [Bonvallet2007]: Bonvallet, B., Griffin, N., & Li, J. (2007). A 3D shape descriptor: 4D hyperspherical harmonics “an exploration into the fourth dimension.” Proceedings of the IASTED International Conference on Graphics and Visualization in Engineering, 113–116.
+- [Hosseinbor2013]: Hosseinbor, A. P., Chung, M. K., Schaefer, S. M., van Reekum, C. M., Peschke-Schmitz, L., Sutterer, M., Alexander, A. L., & Davidson, R. J. (2013). 4D Hyperspherical Harmonic (HyperSPHARM) Representation of Multiple Disconnected Brain Subcortical Structures. Medical Image Computing and Computer-Assisted Intervention : MICCAI ... International Conference on Medical Image Computing and Computer-Assisted Intervention, 16(0 1), 598–605. https://doi.org/10.1007/978-3-642-40811-3_75
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
