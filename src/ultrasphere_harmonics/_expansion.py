@@ -161,7 +161,7 @@ def expand[TCartesian, TSpherical](
     ...     phase=0,
     ...     xp=np,
     ... )
-    >>> np.round(coef, 2)
+    >>> np.round(coef, 2) + 0.0
     array([0.+0.j  , 0.+0.j  , 0.-1.45j, 0.+1.45j])
 
     >>> coef_fast = expand(
@@ -191,8 +191,8 @@ def expand[TCartesian, TSpherical](
     ...     phase=False,
     ...     xp=np,
     ... )
-    >>> np.round(expansion, 2)
-    array([ 0.+0.j,  0.+0.j,  1.+0.j, -0.+0.j,  0.-0.j])
+    >>> np.round(expansion, 2) + 0.0
+    array([0.+0.j, 0.+0.j, 1.+0.j, 0.+0.j, 0.+0.j])
 
     >>> expansion = expand(
     ...     create_polar(),
