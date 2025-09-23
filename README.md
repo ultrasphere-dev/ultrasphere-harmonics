@@ -211,7 +211,7 @@ Note that $\forall m \in \mathbb{Z}. (-1)^m = (-1)^{-m}$ holds.
 
 #### Mathematical formulation
 
-Let $d \in \mathbb{N} \setminus \{1\}$ be the dimension of the space, $k$ be the wave number, and $\mathbb{S}^{d-1} = \{ x \in \mathbb{R}^d \mid \|x\| = 1 \}$ be a unit sphere in $\mathbb{R}^d$.
+Let $d \in \mathbb{N} \setminus \lbrace 1 \rbrace$ be the dimension of the space, $k$ be the wave number, and $\mathbb{S}^{d-1} = \lbrace x \in \mathbb{R}^d \mid \|x\| = 1 \rbrace$ be a unit sphere in $\mathbb{R}^d$.
 
 Asuume that $u_\text{in}$ is an incident wave satisfying the Helmholtz equation
 
@@ -249,7 +249,7 @@ $$
 \left(u_\text{in}\right)_{n, p} := \sum_{i} w_i u_\text{in} (x_i) \overline{Y_{n,p}(x_i)} \approx \int_{\mathbb{S}^{d-1}} u_\text{in}(x) \overline{Y_{n,p}(x)} d x
 $$
 
-and $\{(x_i, w_i)\}_i$ are the quadrature points and weights.
+and $\lbrace(x_i, w_i)\rbrace_i$ are the quadrature points and weights.
 
 #### Functions needed
 
@@ -274,7 +274,7 @@ $$
 - `--k`: set the wave number $k$
 - `--n-end`: set the truncation number $N$
 
-The three waves $u_\text{in}, u, u_\text{tot}$ in $[-3, 3] \times [-3, 3] \times \{0\}^{d-2}$ are plotted.
+The three waves $u_\text{in}, u, u_\text{tot}$ in $[-3, 3] \times [-3, 3] \times \lbrace 0 \rbrace^{d-2}$ are plotted.
 
 2D example (type **a** coordinates):
 
