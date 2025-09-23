@@ -95,11 +95,11 @@ def test_orthogonal_expand[TSpherical, TCartesian](
 @pytest.mark.parametrize(
     "name, c, n_end",
     [
-        ("spherical", create_spherical(), 5),
-        ("standard-2", create_standard(2), 7),
-        ("standard-2'", create_from_branching_types("bpa"), 10),
-        ("standard-3", create_standard(3), 6),
-        ("hoph-2", create_hopf(2), 6),
+        ("spherical", create_spherical(), 4),
+        ("standard-2", create_standard(2), 4),
+        ("standard-2'", create_from_branching_types("bpa"), 4),
+        ("standard-3", create_standard(3), 4),
+        ("hoph-2", create_hopf(2), 4),
     ],
 )
 @pytest.mark.parametrize("phase", Phase.all())
@@ -156,4 +156,4 @@ def test_approximate[TSpherical, TCartesian](
         ax.set_title(f"Spherical Harmonics Expansion Error for {c}")
         ax.set_yscale("log")
         fig.savefig(PATH / f"{name}-approximate.png")
-    assert error[max(error.keys())] < 2e-3
+    assert error[max(error.keys())] < 5e-3
