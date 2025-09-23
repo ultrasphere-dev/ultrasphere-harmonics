@@ -274,6 +274,8 @@ $$
 - `--k`: set the wave number $k$
 - `--n-end`: set the truncation number $N$
 
+The three waves $u_\text{in}, u, u_\text{tot}$ in $[-3, 3] \times [-3, 3] \times {0}^{d-2}$ are plotted.
+
 2D example (type **a** coordinates):
 
 ```shell
