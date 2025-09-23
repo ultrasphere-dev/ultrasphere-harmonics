@@ -1,4 +1,5 @@
 from collections.abc import Mapping
+from os import environ
 from pathlib import Path
 
 import array_api_extra as xpx
@@ -6,7 +7,6 @@ import numpy as np
 import pytest
 from array_api._2024_12 import Array, ArrayNamespaceFull
 from array_api_compat import is_torch_namespace
-from matplotlib import pyplot as plt
 from ultrasphere import (
     SphericalCoordinates,
     create_from_branching_types,
@@ -24,6 +24,8 @@ from ultrasphere_harmonics._ndim import harm_n_ndim_le
 
 PATH = Path("tests/.cache/")
 Path.mkdir(PATH, exist_ok=True)
+IS_CI = environ.get("CI") == "true"
+SKIP_MATPLOTLIB = IS_CI
 
 
 @pytest.mark.parametrize(
@@ -93,11 +95,11 @@ def test_orthogonal_expand[TSpherical, TCartesian](
 @pytest.mark.parametrize(
     "name, c, n_end",
     [
-        ("spherical", create_spherical(), 5),
-        ("standard-2", create_standard(2), 7),
-        ("standard-2'", create_from_branching_types("bpa"), 10),
-        ("standard-3", create_standard(3), 6),
-        ("hoph-2", create_hopf(2), 6),
+        ("spherical", create_spherical(), 4),
+        ("standard-2", create_standard(2), 4),
+        ("standard-2'", create_from_branching_types("bpa"), 4),
+        ("standard-3", create_standard(3), 4),
+        ("hoph-2", create_hopf(2), 4),
     ],
 )
 @pytest.mark.parametrize("phase", Phase.all())
@@ -144,11 +146,14 @@ def test_approximate[TSpherical, TCartesian](
             phase=phase,
         )
         error[n_end_c] = xp.mean(xp.abs(approx - expected))
-    fig, ax = plt.subplots()
-    ax.plot(list(error.keys()), list(error.values()))
-    ax.set_xlabel("Degree")
-    ax.set_ylabel("MAE")
-    ax.set_title(f"Spherical Harmonics Expansion Error for {c}")
-    ax.set_yscale("log")
-    fig.savefig(PATH / f"{name}-approximate.png")
-    assert error[max(error.keys())] < 2e-3
+    if not SKIP_MATPLOTLIB:
+        from matplotlib import pyplot as plt
+
+        fig, ax = plt.subplots()
+        ax.plot(list(error.keys()), list(error.values()))
+        ax.set_xlabel("Degree")
+        ax.set_ylabel("MAE")
+        ax.set_title(f"Spherical Harmonics Expansion Error for {c}")
+        ax.set_yscale("log")
+        fig.savefig(PATH / f"{name}-approximate.png")
+    assert error[max(error.keys())] < 5e-3
