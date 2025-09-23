@@ -314,7 +314,7 @@ One can see that the total wave (right) is close to zero (white) near the sphere
 
 A ray is emitted from a certain point to each direction on a 3D unit sphere and the distance to the most far intersection point is measured.
 
-Directions are randomly sampled in $\mathbb{S}^2} and the approximated radius are plotted.
+Directions are randomly sampled in $\mathbb{S}^2$ and the approximated radius are plotted.
 
 ```shell
 uv run ultrasphere-harmonics expand-bunny
