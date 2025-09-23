@@ -240,7 +240,7 @@ Let $N \in \mathbb{N}$ be the truncation number for the spherical harmonics expa
 Then $u$ can be approximated as follows:
 
 $$
-u(x) = \sum_{n=0}^{N-1} \sum_{p=1}^{N(d,n)} \left(u_\text{in}\right)_{n, p} \frac{h^{(1)} (k \|x\|) Y_{n,p} \left( \frac{x}{\|x\|} \right)}{h^{(1)} (k)}
+u(x) = - \sum_{n=0}^{N-1} \sum_{p=1}^{N(d,n)} \left(u_\text{in}\right)_{n, p} \frac{h^{(1)} (k \|x\|) Y_{n,p} \left( \frac{x}{\|x\|} \right)}{h^{(1)} (k)}
 $$
 
 where
