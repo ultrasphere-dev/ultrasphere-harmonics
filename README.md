@@ -38,7 +38,7 @@
 
 ---
 
-Hyperspherical harmonics in NumPy / PyTorch / JAX
+Hyperspherical harmonics in NumPy / PyTorch
 
 ![Spherical Harmonics Expansion of Stanford Bunny](https://raw.githubusercontent.com/ultrasphere-dev/ultrasphere-harmonics/main/expand_bunny.gif)
 
@@ -155,9 +155,9 @@ See [API Reference](https://ultrasphere-harmonics.readthedocs.io/en/latest/ultra
 ## 2 formats for storing spherical harmonics
 
 | Format           | indexing `(n, m)` in type **ba** coordinates   |
-| ---------------- | ---------------------------------------------- | ---------------- |
+| ---------------- | ---------------------------------------------- |
 | Multidimensional | `array[..., n, m]`                             |
-| Flatten          | `array[..., (n - 1) ** 2 + (m % (2 * n - 1))]` | Memory efficient |
+| Flatten          | `array[..., (n - 1) ** 2 + (m % (2 * n - 1))]` |
 
 ### Advantages of Multidimensional format
 
@@ -260,21 +260,21 @@ and $\{(x_i, w_i)\}_i$ are the quadrature points and weights.
 
 #### Implementation
 
-See `src/ultrasphere_harmonics/cli.py`.
-The code works for any spherical coordinates (dimension-independent).
+See [`src/ultrasphere_harmonics/cli.py`](https://github.com/ultrasphere-dev/ultrasphere-harmonics/blob/main/src/ultrasphere_harmonics/cli.py).
+The code works for **any** spherical coordinates (dimension-independent).
 
 #### Results
 
-The incident wave is set to be a spherical wave emitted from the point $(2, 0, \ldots, 0)$:
+The incident wave is set to be a spherical wave emitted from the point $x_0 := (2, 0, \ldots, 0)$:
 
 $$
-u_\text{in} (x) = h^{(1)} (k \|x - (2, 0, \ldots, 0)\|)
+u_\text{in} (x) = h^{(1)} (k \|x - x_0\|)
 $$
 
 - `--k`: set the wave number $k$
 - `--n-end`: set the truncation number $N$
 
-The three waves $u_\text{in}, u, u_\text{tot}$ in $[-3, 3] \times [-3, 3] \times {0}^{d-2}$ are plotted.
+The three waves $u_\text{in}, u, u_\text{tot}$ in $[-3, 3] \times [-3, 3] \times \{0\}^{d-2}$ are plotted.
 
 2D example (type **a** coordinates):
 
@@ -308,9 +308,13 @@ uv run ultrasphere-harmonics scattering caa --k 1 --n-end 5
 
 ![4D Scattering](https://raw.githubusercontent.com/ultrasphere-dev/ultrasphere-harmonics/main/scattering_caa_1.0_5.png)
 
+One can see that the total wave (right) is close to zero (white) near the sphere (circle) in all cases.
+
 ### Spherical Harmonics Expansion of Stanford Bunny
 
 A ray is emitted from a certain point to each direction on a 3D unit sphere and the distance to the most far intersection point is measured.
+
+Directions are randomly sampled in $\mathbb{S}^2} and the approximated radius are plotted.
 
 ```shell
 uv run ultrasphere-harmonics expand-bunny
@@ -321,6 +325,8 @@ uv run ultrasphere-harmonics expand-bunny
 ### Hyperspherical Harmonics Expansion of voxelated 3D Stanford Bunny projected onto 4D Sphere
 
 A ray is emitted from a certain point to each direction on a 3D unit sphere and the points before the most far intersection point are treated as `1` and the others are treated as `0`. The shape is projected onto a 4D unit sphere using stereographic projection and expanded using hyperspherical harmonics and quadrature on a 4D unit sphere, using the similar method as in [Bonvallet2007] and [Hosseinbor2013]. (Not identical, as Least-squares method is not used here to make it simpler, etc.)
+
+Points are randomly sampled in $[-1, 1]^3$ and points are plotted if and only if the approximated radius is greater than `threshold` which defaults to `0.5`.
 
 ```shell
 uv run ultrasphere-harmonics expand-bunny-4d
