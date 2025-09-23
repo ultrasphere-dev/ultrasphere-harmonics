@@ -1,4 +1,4 @@
-__version__ = "0.0.0"
+__version__ = "1.1.0"
 from ._core import (
     Phase,
     assume_n_end_and_include_negative_m_from_harmonics,
