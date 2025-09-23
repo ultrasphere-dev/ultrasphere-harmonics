@@ -318,7 +318,7 @@ uv run ultrasphere-harmonics expand-bunny
 
 ### Hyperspherical Harmonics Expansion of voxelated 3D Stanford Bunny projected onto 4D Sphere
 
-A ray is emitted from a certain point to each direction on a 3D unit sphere and the points before the most far intersection point are treated as `1` and the others are treated as `0`. The shape is projected onto a 4D unit sphere using stereographic projection and expanded using hyperspherical harmonics and quadrature on a 4D unit sphere, using the similar method as in [Bonvallet2007] and [Hosseinbor2013]. (Not identical, as Least-squares method is not used here, etc.)
+A ray is emitted from a certain point to each direction on a 3D unit sphere and the points before the most far intersection point are treated as `1` and the others are treated as `0`. The shape is projected onto a 4D unit sphere using stereographic projection and expanded using hyperspherical harmonics and quadrature on a 4D unit sphere, using the similar method as in [Bonvallet2007] and [Hosseinbor2013]. (Not identical, as Least-squares method is not used here to make it simpler.)
 
 ```shell
 uv run ultrasphere-harmonics expand-bunny-4d
