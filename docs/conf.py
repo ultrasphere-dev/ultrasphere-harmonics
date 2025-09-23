@@ -25,11 +25,29 @@ release = "1.0.0"
 # ones.
 extensions = [
     "myst_parser",
-    "sphinx.ext.napoleon",
+    "sphinx.ext.duration",
     "sphinx.ext.autodoc",
     "sphinx.ext.viewcode",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.napoleon",
+    "sphinx_math_dollar",
 ]
-napoleon_google_docstring = False
+myst_enable_extensions = [
+    "amsmath",
+    "dollarmath",
+]
+mathjax_config = {
+    "tex2jax": {
+        "inlineMath": [["\\(", "\\)"]],
+        "displayMath": [["\\[", "\\]"]],
+    },
+}
+mathjax3_config = {
+    "tex": {
+        "inlineMath": [["\\(", "\\)"]],
+        "displayMath": [["\\[", "\\]"]],
+    }
+}
 
 # The suffix of source filenames.
 source_suffix = [

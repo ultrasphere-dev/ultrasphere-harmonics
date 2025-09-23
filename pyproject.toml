@@ -11,23 +11,23 @@ license = { text = "MIT" }
 authors = [
   { name = "34j", email = "34j.95a2p@simplelogin.com" },
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 classifiers = [
   "Development Status :: 2 - Pre-Alpha",
   "Intended Audience :: Developers",
   "Natural Language :: English",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Topic :: Software Development :: Libraries",
 ]
 
 dependencies = [
-  "rich>=10",
-  "typer>=0.15,<1",
+  "array-api-negative-index>=1.0.0",
+  "gumerov-expansion-coefficients>=1.2.0",
+  "jacobi-poly>=1.0.4",
+  "shift-nth-row-n-steps>=1.0.0",
+  "ultrasphere>=2.0.0",
 ]
 urls."Bug Tracker" = "https://github.com/ultrasphere-dev/ultrasphere-harmonics/issues"
 urls.Changelog = "https://github.com/ultrasphere-dev/ultrasphere-harmonics/blob/main/CHANGELOG.md"
@@ -35,16 +35,27 @@ urls.documentation = "https://ultrasphere-harmonics.readthedocs.io"
 urls.repository = "https://github.com/ultrasphere-dev/ultrasphere-harmonics"
 scripts.ultrasphere-harmonics = "ultrasphere_harmonics.cli:app"
 
+[project.optional-dependencies]
+cli = [
+  "aquarel>=0.0.7",
+  "cyclopts>=3.24.0",
+  "open3d-cpu>=0.19.0",
+  "rich>=10",
+  "typer>=0.15,<1",
+]
+
 [dependency-groups]
 dev = [
   "pytest>=8,<9",
   "pytest-cov>=7,<8",
+  "sybil[pytest]>=9.2.0",
 ]
 docs = [
   "furo>=2023.5.20; python_version>='3.11'",
   "myst-parser>=0.16; python_version>='3.11'",
   "sphinx>=4; python_version>='3.11'",
   "sphinx-autobuild>=2025,<2026; python_version>='3.11'",
+  "sphinx-math-dollar>=1.2.1",
 ]
 
 [tool.ruff]
@@ -68,6 +79,7 @@ lint.ignore = [
   "D104", # Missing docstring in public package
   "D107", # Missing docstring in `__init__`
   "D401", # First line of docstring should be in imperative mood
+  "E741"
 ]
 lint.per-file-ignores."conftest.py" = [ "D100" ]
 lint.per-file-ignores."docs/conf.py" = [ "D100" ]
@@ -89,8 +101,9 @@ addopts = """\
     --cov=ultrasphere_harmonics
     --cov-report=term
     --cov-report=xml
+    -p no:doctest
     """
-pythonpath = [ "src" ]
+# pythonpath = [ "src" ]
 
 [tool.coverage.run]
 branch = true
