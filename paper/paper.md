@@ -45,12 +45,12 @@ Our packages would allow researchers to easily implement and extend their work t
 Built on top of `ultrasphere`, `ultrasphere-harmonics`, implements hyperspherical harmonics methods for any type of polyspherical coordinates.
 While spherical harmonics in 3D itself have been widely implemented in various software packages, such as Scipy [@2020SciPy-NMeth], hyperspherical harmonics are rarely implemented, and software packages which supports arbitrary VKS polyspherical coordinates are not known.
 To remedy this, our packages allow to convert between Cartesian coordinates and VKS polyspherical coordinates, compute hyperspherical harmonics, elementary solutions to the Helmholtz equation, hyperspherical expansion of a function, and the translational coefficients of elementary solutions of the Helmholtz equation under arbitrary VKS polyspherical coordinates and dimensions.
-Our package especially utilizes NetworkX [@hagberg_exploring_2008] to make use of the rooted tree representation of VKS polyspherical coordinates, which is known as "method of trees".
-To illustrate the usage of our packages, example code for solving acoustic scattering from a single sound-soft sphere using any type of VKS polyspherical coordinates is implemented in `ultrasphere-harmonics` as a command-line application.
+The underlying implementation leverages the "method of trees", the rooted tree representation of VKS coordinates with the help of NetworkX [@hagberg_exploring_2008].
+A command-line application that solves for acoustic scattering from a sound-soft sphere using arbitrary VKS polyspherical coordinates is included to illustrate a practical use case.
 
 Spherical expansion methods are sometimes computationally expensive, especially in higher dimensions.
-To utilize HPC resources, which environment is recently diversified, our api is made to be compatible with the array API standard [@meurer_python_2023], which enables writing code which runs on multiple array libraries (e.g., NumPy[@harris_array_2020], PyTorch[@paszke_pytorch_2019]) and multiple hardware (e.g., CPU, GPU).
-Our packages fully support vectorization to leverage the performance of these libraries.
+To utilize modern high-performance computing resources, which environment is recently diversified, our api is made to be compatible with the array API standard [@meurer_python_2023], ensuring that the same code can run on multiple array libraries (e.g., NumPy[@harris_array_2020], PyTorch[@paszke_pytorch_2019]) and multiple hardware (e.g., CPU, GPU).
+Our packages fully support vectorization to leverage the performance of these array libraries.
 
 # Acknowledgements
 
