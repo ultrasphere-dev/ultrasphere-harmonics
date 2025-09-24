@@ -31,12 +31,13 @@ bibliography: paper.bib
 
 # Summary
 
-Spherical harmonics, which are the solutions to the angular part of the laplace equation, have been widely used in various fields of science and engineering.
-Spherical harmonics in 3D are well-known and have various applications, and many software packages have been developed for them.
-Hyperspherical harmonics, which are spherical harmonics in higher dimensions, have been applied to many-body problems in quantum mechanics [@fock_zur_1935], representation of crystallographic textures [@bonvallet_3d_2007], description of 3D models [@bonvallet_3d_2007], representation of brain structures [@hosseinbor_4d_2013], representation of the Head-Related Transfer Function, which characterizes how an ear receives a sound from a point in space [@szwajcowski_continuous_2023], and so on.
-However, an attempt to develop a framework which allows codes to work on both 3D and higher dimensions has not been made.
-Therefore, we aim to provide a unified framework for implementing spherical harmonics techniques in arbitrary dimensions and coordinate systems.
-Our packages would allow researchers to easily extend their work to higher dimensions, for example, from 2D to 3D and further to 4D, without having to duplicate code for each dimension.
+Spherical harmonics, which are the solutions to the angular part of the 3 dimensional laplace equation, have been widely used in various fields of science and engineering.
+While numerous software packages exist for standard three-dimensional spherical harmonics, many modern scientific challenges require working with hyperspherical harmonics, which are spherical harmonics in higher dimensions.
+Hyperspherical harmonics are widely used for v
+, including many-body problems in quantum mechanics [@fock_zur_1935], representation of crystallographic textures [@bonvallet_3d_2007], description of 3D models [@bonvallet_3d_2007], representation of brain structures [@hosseinbor_4d_2013], representation of the Head-Related Transfer Function, which characterizes how an ear receives a sound from a point in space [@szwajcowski_continuous_2023].
+However, there is a barrier for researchers to implement spherical harmonics and hyperspherical harmonics methods in their work, as the implementation is often specific to the dimension and coordinate system used, requiring significant effort to adapt the code for different dimensions or coordinate systems.
+To address this, we have developed a software package for implementing spherical harmonics techniques in arbitrary dimensions and coordinate systems.
+Our packages would allow researchers to easily implement and extend their work to higher dimensions, for example, from 2D to 3D and further to 4D, without having to duplicate code for each dimension.
 
 # Statement of need
 
