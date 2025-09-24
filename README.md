@@ -89,7 +89,7 @@ array([[0.28+0.j  , 0.43+0.j  , 0.09+0.14j, 0.09-0.14j],
 
 ### Hyperspherical Harmonics
 
-Spherical harmonics for higher dimensions or lower dimensions can be calculated by changing the structure of spherical coordinates.
+Spherical harmonics for higher dimensions or lower dimensions can be calculated by specifying the structure of Vilenkin–Kuznetsov–Smorodinsky (VKS) polyspherical coordinates.
 
 ```python
 >>> from ultrasphere import create_standard
@@ -103,6 +103,13 @@ Spherical harmonics for higher dimensions or lower dimensions can be calculated 
 array([0.19+0.j  , 0.38+0.j  , 0.15+0.j  , 0.08+0.j  , 0.03+0.08j,
        0.03-0.08j])
 ```
+
+The definition and notation of VKS polyspherical coordinates follows [Cohl2012, Appendix B].
+See [ultrasphere](https://ultrasphere.readthedocs.io/en/latest/) for details of the coordinates.
+
+The definition of (hyper)spherical harmonics also follows [Cohl2012, Appendix B] if `phase=Phase(0)` is set, which would be described later.
+
+- [Cohl2012] Cohl, H. (2012). Fourier, Gegenbauer and Jacobi Expansions for a Power-Law Fundamental Solution of the Polyharmonic Equation and Polyspherical Addition Theorems. Symmetry, Integrability and Geometry: Methods and Applications (SIGMA), 9. https://doi.org/10.3842/SIGMA.2013.042
 
 ### Expansion and Evaluation
 
@@ -193,14 +200,17 @@ $$
 
 ### Spherical Harmonics
 
-| phase      | definition                                                                                                           | difference from `Phase(0)`   | Used in           |
-| ---------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ----------------- |
-| `Phase(0)` | $Y_n^{(0),m} = \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$        | $1$                          | [Kress2014]       |
-| `Phase(1)` | $Y_n^{(1),m} = \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$                      | $(-1)^{\frac{\|m\| - m}{2}}$ | Wolfram MathWorld |
-| `Phase(2)` | $Y_n^{(2),m} = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$ | $(-1)^m$                     | [Gumerov2004]     |
-| `Phase(3)` | $Y_n^{(3),m} = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$               | $(-1)^{\frac{\|m\| + m}{2}}$ | Scipy             |
+| phase      | definition                                                                                                           | difference from `Phase(0)`   | Used in (for example) |
+| ---------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------- | --------------------- |
+| `Phase(0)` | $Y_n^{(0),m} = \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$        | $1$                          | [Kress2014]           |
+| `Phase(1)` | $Y_n^{(1),m} = \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$                      | $(-1)^{\frac{\|m\| - m}{2}}$ | Wolfram MathWorld     |
+| `Phase(2)` | $Y_n^{(2),m} = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-\|m\|)!}{(n+\|m\|)!}} P_n^{\|m\|} (\cos \theta) e^{i m \phi}$ | $(-1)^m$                     | [Gumerov2004]         |
+| `Phase(3)` | $Y_n^{(3),m} = (-1)^m \sqrt{\frac{2n+1}{4\pi} \frac{(n-m)!}{(n+m)!}} P_n^m (\cos \theta) e^{i m \phi}$               | $(-1)^{\frac{\|m\| + m}{2}}$ | Scipy                 |
 
 Note that $\forall m \in \mathbb{Z}. (-1)^m = (-1)^{-m}$ holds.
+
+The `Phase` parameter would have less meaning for hyperspherical harmonics, but it is kept for consistency.
+The phase convention is applied to all type **a** nodes in the VKS polyspherical coordinates.
 
 - [Gumerov2004]: Gumerov, N. A., & Duraiswami, R. (2004). Recursions for the Computation of Multipole Translation and Rotation Coefficients for the 3-D Helmholtz Equation. SIAM Journal on Scientific Computing, 25(4), 1344–1381. https://doi.org/10.1137/S1064827501399705
 - [Kress2014]: Kress, R. (2014). Linear Integral Equations (Vol. 82). Springer New York. https://doi.org/10.1007/978-1-4614-9593-2
