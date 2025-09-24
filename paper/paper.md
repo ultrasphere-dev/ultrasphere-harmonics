@@ -42,9 +42,9 @@ Our packages would allow researchers to easily implement and extend their work t
 # Statement of need
 
 `ultrasphere` is a Python package for Vilenkin–Kuznetsov–Smorodinsky (VKS) polyspherical coordinate systems [@vilenkin_representation_1993; @cohl_fourier_2012].
-`ultrasphere-harmonics` implements hyperspherical harmonics methods for any type of polyspherical coordinates based on `ultrasphere`.
+Built on top of `ultrasphere`, `ultrasphere-harmonics`, implements hyperspherical harmonics methods for any type of polyspherical coordinates.
 While spherical harmonics in 3D itself have been widely implemented in various software packages, such as Scipy [@2020SciPy-NMeth], hyperspherical harmonics are rarely implemented, and software packages which supports arbitrary VKS polyspherical coordinates are not known.
-To remedy this, our packages allows to convert between Cartesian coordinates and VKS polyspherical coordinates, compute hyperspherical harmonics, elementary solutions to the Helmholtz equation, hyperspherical expansion of a function, and the translational coefficients of elementary solutions of the Helmholtz equation under arbitrary VKS polyspherical coordinates and dimensions.
+To remedy this, our packages allow to convert between Cartesian coordinates and VKS polyspherical coordinates, compute hyperspherical harmonics, elementary solutions to the Helmholtz equation, hyperspherical expansion of a function, and the translational coefficients of elementary solutions of the Helmholtz equation under arbitrary VKS polyspherical coordinates and dimensions.
 Our package especially utilizes NetworkX [@hagberg_exploring_2008] to make use of the rooted tree representation of VKS polyspherical coordinates, which is known as "method of trees".
 To illustrate the usage of our packages, example code for solving acoustic scattering from a single sound-soft sphere using any type of VKS polyspherical coordinates is implemented in `ultrasphere-harmonics` as a command-line application.
 
