@@ -22,7 +22,7 @@ affiliations:
   - name: Graduate School of Advanced Science and Engineering, Hiroshima University, Japan
     index: 2
     ror: 03t78wx29
-  - name: Department of Strategic Studies, Institute of Engineering Innovation, Graduate School of Engineering, The University of Tokyo
+  - name: Department of Strategic Studies, Institute of Engineering Innovation, Graduate School of Engineering, The University of Tokyo, Japan
     index: 3
     ror: 057zh3y96
 date: 23 September 2025
