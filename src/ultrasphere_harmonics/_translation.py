@@ -435,26 +435,52 @@ def harmonics_translation_coef[TCartesian, TSpherical](
            -0.00920266+0.05521598j, -0.00920266-0.05521598j])
 
     """
+    xp = array_namespace(*[spherical[k] for k in c.s_nodes], k)
     phase = Phase(phase)
     if method is None:
-        if c.branching_types_expression_str == "ba":
+        if c.branching_types_expression_str in ["a", "ba"]:
             method = "gumerov"
         elif is_type_same:
             method = "plane_wave"
         else:
             method = "triplet"
     if method == "gumerov":
-        if c.branching_types_expression_str == "ba":
+        if c.branching_types_expression_str == "a":
+            SR = harmonics_regular_singular(
+                c,
+                spherical,
+                n_end=n_end + n_end_add - 1,
+                phase=phase,
+                expand_dims=True,
+                concat=True,
+                k=k,
+                type="regular" if is_type_same else "singular",
+                flatten=True,
+            )
+            n = index_array_harmonics(c, c.root, n_end=n_end, xp=xp, flatten=True)[
+                :, None
+            ]
+            n_add = index_array_harmonics(
+                c, c.root, n_end=n_end_add, xp=xp, flatten=True
+            )[None, :]
+            result = 2 * SR[..., n - n_add]
+            if Phase.NEGATIVE_LEGENDRE in phase:
+                # (- n) at the last means (- n - n_add - (n - n_add)) // 2
+                result *= minus_1_power(
+                    (xp.abs(n) + xp.abs(n_add) + xp.abs(n - n_add)) // 2 - n
+                )
+            return result
+        elif c.branching_types_expression_str == "ba":
             result = translational_coefficients(
                 k * spherical["r"],
                 spherical[c.root],
                 spherical[get_child(c.G, c.root, "sin")],
                 n_end=max(n_end, n_end_add),
                 same=is_type_same,
-            ).T[: n_end**2, : n_end_add**2]
+            )
+            result = xp.moveaxis(result, -1, -2)[..., : n_end**2, : n_end_add**2]
             if phase == Phase.CONDON_SHORTLEY:
                 return result
-            xp = array_namespace(result)
             m = index_array_harmonics(
                 c, get_child(c.G, c.root, "sin"), n_end=n_end, xp=xp, flatten=True
             )[:, None]
