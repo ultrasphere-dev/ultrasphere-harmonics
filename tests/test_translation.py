@@ -106,7 +106,7 @@ def test_harmonics_translation_coef[TSpherical, TCartesian](
     xp: ArrayNamespaceFull,
     method: Literal["gumerov", "plane_wave", "triplet"],
 ) -> None:
-    if method == "gumerov" and c.branching_types_expression_str != "ba":
+    if method == "gumerov" and c.branching_types_expression_str not in ["a", "ba"]:
         pytest.skip("gumerov method only supports ba branching type")
     if method == "plane_wave" and from_ != to_:
         pytest.skip("plane_wave method only supports from_=to_")
