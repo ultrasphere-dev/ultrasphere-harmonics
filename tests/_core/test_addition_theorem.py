@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Any, Literal
 
 import array_api_extra as xpx
 import pytest
@@ -26,6 +26,7 @@ def test_addition_theorem_same_x[TSpherical, TCartesian](
     n_end: int,
     xp: ArrayNamespaceFull,
     phase: Phase,
+    device: Any,
 ) -> None:
     """
     Test the addition theorem for spherical harmonics.

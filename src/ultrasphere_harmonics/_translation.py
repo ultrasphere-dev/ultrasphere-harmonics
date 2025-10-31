@@ -1,6 +1,7 @@
 from collections.abc import Mapping
 from typing import Literal
 
+import numpy as np
 from array_api._2024_12 import Array, ArrayNamespaceFull
 from array_api_compat import array_namespace
 from gumerov_expansion_coefficients import translational_coefficients
@@ -296,7 +297,7 @@ def _harmonics_translation_coef_triplet[TCartesian, TSpherical](
     )[None, None, :]
 
     # returns [user1,...,userM,n1,...,nN,np1,...,npN]
-    coef = (2 * xp.pi) ** (c.c_ndim / 2) * xp.sqrt(2 / xp.pi)
+    coef = (2 * xp.pi) ** (c.c_ndim / 2) * np.sqrt(2 / np.pi)
     t_RS = harmonics_regular_singular(
         c,
         spherical,

@@ -125,10 +125,10 @@ def test_type_b(xp: ArrayNamespaceFull) -> None:
         assert type_b_scalar(theta, s_beta, 0, 0) == pytest.approx(np.sqrt(1 / 2))
         # l = 1
         assert type_b_scalar(theta, s_beta, 1, 1) == pytest.approx(
-            xp.sqrt(xp.asarray(3.0)) / xp.asarray(2) * xp.sin(theta)
+            np.sqrt(3) / xp.asarray(2) * xp.sin(theta)
         )
         assert type_b_scalar(theta, s_beta, 0, 1) == pytest.approx(
-            xp.sqrt(xp.asarray(3 / 2)) * xp.cos(theta)
+            np.sqrt(3 / 2) * xp.cos(theta)
         )
 
 

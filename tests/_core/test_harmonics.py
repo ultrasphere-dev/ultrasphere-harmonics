@@ -1,4 +1,5 @@
 from collections.abc import Mapping
+from typing import Any
 
 import array_api_extra as xpx
 import pytest
@@ -33,8 +34,9 @@ def test_harmonics_orthogonal[TSpherical, TCartesian](
     n_end: int,
     phase: Phase,
     xp: ArrayNamespaceFull,
+    device: Any,
 ) -> None:
-    expected = xp.eye(int(harm_n_ndim_le(n_end, c_ndim=c.c_ndim)))
+    expected = xp.eye(int(harm_n_ndim_le(n_end, c_ndim=c.c_ndim)), device=device)
 
     def f(s: Mapping[TSpherical, Array]) -> Array:
         Y = harmonics(
@@ -47,12 +49,14 @@ def test_harmonics_orthogonal[TSpherical, TCartesian](
         )
         return Y[..., :, None] * xp.conj(Y[..., None, :])
 
-    actual = integrate(c, f, False, 2 * n_end - 1, xp=xp)
+    actual = integrate(c, f, False, 2 * n_end - 1, xp=xp, device=device)
     assert xp.all(xpx.isclose(actual, expected, rtol=1e-6, atol=1e-6))
 
 
 @pytest.mark.parametrize("n_end", [1, 2, 12])  # scipy does not support n_end == 0
-def test_match_scipy(n_end: int, xp: ArrayNamespaceFull) -> None:
+def test_match_scipy(n_end: int, xp: ArrayNamespaceFull, device: Any) -> None:
+    if device != "cpu":
+        pytest.skip("sph_harm_y_all only supports CPU")
     c = create_spherical()
     shape = ()
     x = xp.random.random_uniform(low=-1, high=1, shape=(c.c_ndim, *shape))

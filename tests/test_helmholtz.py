@@ -1,3 +1,5 @@
+from typing import Any
+
 import array_api_extra as xpx
 import numpy as np
 import pytest
@@ -13,7 +15,9 @@ from ultrasphere_harmonics._helmholtz import harmonics_regular_singular
 
 @pytest.mark.parametrize("n_end", [1, 2, 12])  # scipy does not support n_end == 0
 @pytest.mark.parametrize("k", [1, 2])
-def test_match_scipy(n_end: int, xp: ArrayNamespaceFull, k: Array) -> None:
+def test_match_scipy(n_end: int, xp: ArrayNamespaceFull, k: Array, device: Any) -> None:
+    if device != "cpu":
+        pytest.skip("sph_harm_y_all only supports CPU")
     c = create_spherical()
     shape = ()
     x = xp.random.random_uniform(low=-1, high=1, shape=(c.c_ndim, *shape))

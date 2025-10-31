@@ -1,5 +1,6 @@
 from enum import STRICT, Flag, auto
 
+import numpy as np
 from array_api._2024_12 import Array
 from array_api_compat import array_namespace
 from array_api_negative_index import to_symmetric
@@ -119,7 +120,7 @@ def type_a(
         )
         * m
         * theta[..., None]
-    ) / xp.sqrt(xp.asarray(2 * xp.pi))
+    ) / np.sqrt(2 * np.pi)
     phase = Phase(phase)
     if Phase.CONDON_SHORTLEY in phase:
         if Phase.NEGATIVE_LEGENDRE in phase:

@@ -50,3 +50,8 @@ def xp(xp_device: tuple[ArrayNamespaceFull, Any]) -> ArrayNamespaceFull:
 @pytest.fixture(scope="session")
 def device(xp_device: tuple[ArrayNamespaceFull, Any]) -> Any:
     return xp_device[1]
+
+
+@pytest.fixture(scope="session", params=["float32", "float64"])
+def dtype(request: pytest.FixtureRequest, xp: ArrayNamespaceFull) -> str:
+    return getattr(xp, request.param)
