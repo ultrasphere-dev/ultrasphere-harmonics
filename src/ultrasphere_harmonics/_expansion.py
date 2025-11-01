@@ -220,7 +220,8 @@ def expand[TCartesian, TSpherical](
             try:
                 val = f(xs)  # type: ignore
             except Exception as e:
-                raise RuntimeError(f"Error occurred while evaluating {f=}") from e
+                e.add_note("Error occurred while evaluating f in expand.")
+                raise
         else:
             val = f
 

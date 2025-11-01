@@ -1,5 +1,5 @@
 from collections.abc import Mapping
-from typing import Literal, overload
+from typing import Any, Literal, overload
 
 import array_api_extra as xpx
 from array_api._2024_12 import Array, ArrayNamespaceFull
@@ -23,6 +23,8 @@ def _index_array_harmonics[TSpherical, TCartesian](
     xp: ArrayNamespaceFull,
     expand_dims: bool = True,
     include_negative_m: bool = True,
+    dtype: Any = None,
+    device: Any = None,
 ) -> Array:
     """
     The index of the eigenfunction corresponding to the node.
@@ -41,6 +43,10 @@ def _index_array_harmonics[TSpherical, TCartesian](
         Whether to include negative m values, by default True
     xp : ArrayNamespaceFull
         The array namespace.
+    dtype : Any, optional
+        The dtype, by default None
+    device : Any, optional
+        The device, by default None
 
     Returns
     -------
@@ -50,16 +56,18 @@ def _index_array_harmonics[TSpherical, TCartesian](
     """
     branching_type = c.branching_types[node]
     if branching_type == BranchingType.A and include_negative_m:
-        result = to_symmetric(xp.arange(0, n_end), asymmetric=True)
+        result = to_symmetric(
+            xp.arange(0, n_end, dtype=dtype, device=device), asymmetric=True
+        )
     elif (
         branching_type == BranchingType.B
         or branching_type == BranchingType.BP
         or (branching_type == BranchingType.A and not include_negative_m)
     ):
-        result = xp.arange(0, n_end)
+        result = xp.arange(0, n_end, dtype=dtype, device=device)
     elif branching_type == BranchingType.C:
         # result = xp.arange(0, (n_end + 1) // 2)
-        result = xp.arange(0, n_end)
+        result = xp.arange(0, n_end, dtype=dtype, device=device)
     if expand_dims:
         idx = c.s_nodes.index(node)
         result = result[create_slice(c.s_ndim, [(idx, slice(None))], default=None)]
@@ -77,6 +85,8 @@ def _index_array_harmonics_all[TSpherical, TCartesian](
     expand_dims: bool = ...,
     as_array: Literal[False],
     mask: Literal[False] = ...,
+    dtype: Any = ...,
+    device: Any = ...,
 ) -> Mapping[TSpherical, Array]: ...
 @overload
 def _index_array_harmonics_all[TSpherical, TCartesian](
@@ -89,6 +99,8 @@ def _index_array_harmonics_all[TSpherical, TCartesian](
     expand_dims: Literal[True] = ...,
     as_array: Literal[True],
     mask: bool = ...,
+    dtype: Any = ...,
+    device: Any = ...,
 ) -> Array: ...
 
 
@@ -102,6 +114,8 @@ def _index_array_harmonics_all[TSpherical, TCartesian](
     expand_dims: bool = True,
     as_array: bool,
     mask: bool = False,
+    dtype: Any = None,
+    device: Any = None,
 ) -> Array | Mapping[TSpherical, Array]:
     """
     The all indices of the eigenfunction corresponding to the spherical coordinates.
@@ -124,6 +138,10 @@ def _index_array_harmonics_all[TSpherical, TCartesian](
         Must be False if as_array is False.
     xp : ArrayNamespaceFull
         The array namespace.
+    dtype : Any, optional
+        The dtype, by default None
+    device : Any, optional
+        The device, by default None
 
     Returns
     -------
@@ -160,6 +178,8 @@ def _index_array_harmonics_all[TSpherical, TCartesian](
             n_end=n_end,
             expand_dims=expand_dims,
             include_negative_m=include_negative_m,
+            dtype=dtype,
+            device=device,
         )
         for node in c.s_nodes
     }
@@ -186,6 +206,7 @@ def flatten_mask_harmonics[TSpherical, TCartesian](
     n_end: int,
     xp: ArrayNamespaceFull,
     include_negative_m: bool = True,
+    device: Any = None,
 ) -> Array:
     """
     Create a mask representing the valid combinations of the quantum numbers.
@@ -205,6 +226,8 @@ def flatten_mask_harmonics[TSpherical, TCartesian](
         If None, all nodes are considered.
     xp : ArrayNamespaceFull
         The array namespace.
+    device : Any, optional
+        The device, by default None
 
     Returns
     -------
@@ -229,8 +252,9 @@ def flatten_mask_harmonics[TSpherical, TCartesian](
         as_array=False,
         expand_dims=True,
         xp=xp,
+        device=device,
     )
-    mask = xp.ones((1,) * c.s_ndim, dtype=bool)
+    mask = xp.ones((1,) * c.s_ndim, dtype=bool, device=device)
     for node, branching_type in c.branching_types.items():
         if branching_type == BranchingType.B:
             mask = mask & (
@@ -318,7 +342,11 @@ def flatten_harmonics[TSpherical, TCartesian](
             flatten=False,
         )
     mask = flatten_mask_harmonics(
-        c, n_end=n_end, xp=xp, include_negative_m=include_negative_m
+        c,
+        n_end=n_end,
+        xp=xp,
+        include_negative_m=include_negative_m,
+        device=harmonics.device,
     )
     shape = xpx.broadcast_shapes(harmonics.shape, mask.shape + (1,) * (-axis_end - 1))
     harmonics = xp.broadcast_to(harmonics, shape)
@@ -374,7 +402,11 @@ def unflatten_harmonics[TSpherical, TCartesian](
         c, harmonics, flatten=True
     )
     mask = flatten_mask_harmonics(
-        c, n_end=n_end, xp=xp, include_negative_m=include_negative_m
+        c,
+        n_end=n_end,
+        xp=xp,
+        include_negative_m=include_negative_m,
+        device=harmonics.device,
     )
     shape = (*harmonics.shape[:-1], *mask.shape)
     result = xp.zeros(shape, dtype=harmonics.dtype, device=harmonics.device)
@@ -392,6 +424,8 @@ def index_array_harmonics[TSpherical, TCartesian](
     expand_dims: bool = True,
     include_negative_m: bool = True,
     flatten: bool = False,
+    dtype: Any = None,
+    device: Any = None,
 ) -> Array:
     """
     The index of the eigenfunction corresponding to the node.
@@ -413,6 +447,10 @@ def index_array_harmonics[TSpherical, TCartesian](
         Whether to flatten the result, by default False
     xp : ArrayNamespaceFull
         The array namespace.
+    dtype : Any, optional
+        The dtype, by default None
+    device : Any, optional
+        The device, by default None
 
     Returns
     -------
@@ -453,6 +491,8 @@ def index_array_harmonics[TSpherical, TCartesian](
         xp=xp,
         expand_dims=expand_dims,
         include_negative_m=include_negative_m,
+        dtype=dtype,
+        device=device,
     )
     if flatten:
         return flatten_harmonics(
@@ -472,6 +512,8 @@ def index_array_harmonics_all[TSpherical, TCartesian](
     as_array: Literal[False],
     mask: Literal[False] = ...,
     flatten: bool | None = ...,
+    dtype: Any = ...,
+    device: Any = ...,
 ) -> Mapping[TSpherical, Array]: ...
 @overload
 def index_array_harmonics_all[TSpherical, TCartesian](
@@ -484,6 +526,8 @@ def index_array_harmonics_all[TSpherical, TCartesian](
     as_array: Literal[True],
     mask: bool = ...,
     flatten: bool | None = ...,
+    dtype: Any = ...,
+    device: Any = ...,
 ) -> Array: ...
 
 
@@ -497,6 +541,8 @@ def index_array_harmonics_all[TSpherical, TCartesian](
     as_array: bool,
     mask: bool = False,
     flatten: bool | None = None,
+    dtype: Any = None,
+    device: Any = None,
 ) -> Array | Mapping[TSpherical, Array]:
     """
     The all indices of the eigenfunction corresponding to the spherical coordinates.
@@ -522,6 +568,10 @@ def index_array_harmonics_all[TSpherical, TCartesian](
         If None, True iff as_array is True.
     xp : ArrayNamespaceFull
         The array namespace.
+    dtype : Any, optional
+        The dtype, by default None
+    device : Any, optional
+        The device, by default None
 
     Returns
     -------
@@ -583,6 +633,8 @@ def index_array_harmonics_all[TSpherical, TCartesian](
         as_array=as_array,
         expand_dims=expand_dims,
         mask=mask,
+        dtype=dtype,
+        device=device,
     )
     if flatten:
         if as_array:

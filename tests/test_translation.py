@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 import array_api_extra as xpx
 import pytest
@@ -18,7 +18,9 @@ from ultrasphere_harmonics._helmholtz import (
 from ultrasphere_harmonics._translation import harmonics_translation_coef
 
 
-def test_harmonics_translation_coef_gumerov_table(xp: ArrayNamespaceFull) -> None:
+def test_harmonics_translation_coef_gumerov_table(
+    xp: ArrayNamespaceFull, device: Any, dtype: Any
+) -> None:
     if "torch" in xp.__name__:
         pytest.skip("round_cpu not implemented in torch")
     # Gumerov, N.A., & Duraiswami, R. (2001). Fast, Exact,
@@ -26,13 +28,13 @@ def test_harmonics_translation_coef_gumerov_table(xp: ArrayNamespaceFull) -> Non
     # Rotation Coefficients for the 3-D Helmholtz Equation.
     # got completely same results as the table in 12.3 Example
     c = create_spherical()
-    x = xp.asarray([-1.0, 1.0, 0.0])
-    t = xp.asarray([2.0, -7.0, 1.0])
-    y = xp.add(x, t)
+    x = xp.asarray([-1.0, 1.0, 0.0], device=device, dtype=dtype)
+    t = xp.asarray([2.0, -7.0, 1.0], device=device, dtype=dtype)
+    y = x + t
     x_spherical = c.from_cartesian(x)
     y_spherical = c.from_cartesian(y)
     t_spherical = c.from_cartesian(t)
-    k = xp.asarray(1)
+    k = xp.asarray(1, device=device)
 
     n_end = 6
     for n_end_add in [1, 3, 5, 7, 9]:
@@ -105,6 +107,8 @@ def test_harmonics_translation_coef[TSpherical, TCartesian](
     to_: Literal["regular", "singular"],
     xp: ArrayNamespaceFull,
     method: Literal["gumerov", "plane_wave", "triplet"],
+    device: Any,
+    dtype: Any,
 ) -> None:
     if method == "gumerov" and c.branching_types_expression_str not in ["a", "ba"]:
         pytest.skip("gumerov method only supports ba branching type")
@@ -112,9 +116,9 @@ def test_harmonics_translation_coef[TSpherical, TCartesian](
         pytest.skip("plane_wave method only supports from_=to_")
 
     # get x, t, y := x + t
-    x = xp.arange(c.c_ndim)
-    t = xp.flip(xp.arange(c.c_ndim))
-    k = 1.0
+    x = xp.arange(c.c_ndim, device=device, dtype=dtype)
+    t = xp.flip(xp.arange(c.c_ndim, device=device, dtype=dtype))
+    k = xp.asarray(1.0, device=device, dtype=dtype)
     if (from_, to_) == ("singular", "singular"):
         # |t| < |x| (if too close, the result would be inaccurate)
         t = t * 0.1
@@ -181,10 +185,14 @@ def test_harmonics_translation_coef[TSpherical, TCartesian](
     assert xp.all(xpx.isclose(actual, expected, rtol=1e-3, atol=1e-3))
 
 
-def test_dataset_coef() -> None:
+def test_dataset_coef(device: Any, dtype: Any, xp: ArrayNamespaceFull) -> None:
+    if "numpy" not in xp.__name__:
+        pytest.skip("only numpy supported for dataset generation")
+    if "float64" not in str(dtype):
+        pytest.skip("only float64 supported for dataset generation")
     import numpy as np
 
-    cartesian = np.array([2, -7, 1])
+    cartesian = xp.asarray([2.0, -7.0, 1.0], device=device, dtype=dtype)
     c = create_spherical()
     spherical = c.from_cartesian(cartesian)
     Path("tests/.cache").mkdir(exist_ok=True)

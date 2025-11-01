@@ -1,5 +1,6 @@
 from enum import STRICT, Flag, auto
 
+import numpy as np
 from array_api._2024_12 import Array
 from array_api_compat import array_namespace
 from array_api_negative_index import to_symmetric
@@ -119,7 +120,7 @@ def type_a(
         )
         * m
         * theta[..., None]
-    ) / xp.sqrt(xp.asarray(2 * xp.pi))
+    ) / np.sqrt(2 * np.pi)
     phase = Phase(phase)
     if Phase.CONDON_SHORTLEY in phase:
         if Phase.NEGATIVE_LEGENDRE in phase:
@@ -392,7 +393,9 @@ def type_c(
         # [l_alpha, l_beta, n] -> [l_alpha, l_beta, l = 2n + l_alpha + l_beta]
         # 1. [l_alpha, l_beta, n] -> [l_alpha, l_beta, 2n]
         # add zeros to the left for each row, i.e. [1, 2, 3] -> [1, 0, 2, 0, 3, 0]
-        res_expaneded = xp.zeros((*res.shape[:-1], n_end))
+        res_expaneded = xp.zeros(
+            (*res.shape[:-1], n_end), dtype=res.dtype, device=res.device
+        )
         res_expaneded[..., ::2] = res
         # 2. [l_alpha, l_beta, 2n] -> [l_alpha, l_beta, 2n + l_alpha]
         res_expaneded = shift_nth_row_n_steps(
