@@ -27,6 +27,7 @@ def test_addition_theorem_same_x[TSpherical, TCartesian](
     xp: ArrayNamespaceFull,
     phase: Phase,
     device: Any,
+    dtype: Any,
 ) -> None:
     """
     Test the addition theorem for spherical harmonics.
@@ -38,7 +39,9 @@ def test_addition_theorem_same_x[TSpherical, TCartesian](
 
     """
     shape = (5,)
-    x = xp.random.random_uniform(low=-1, high=1, shape=(c.c_ndim, *shape))
+    x = xp.random.random_uniform(
+        low=-1, high=1, shape=(c.c_ndim, *shape), dtype=dtype, device=device
+    )
     x_spherical = c.from_cartesian(x)
     n = xp.arange(n_end)[(None,) * len(shape) + (slice(None),)]
     expected = (
@@ -78,6 +81,8 @@ def test_addition_theorem[TSpherical, TCartesian](
     type: Literal["legendre", "gegenbauer", "gegenbauer-cohl"],
     xp: ArrayNamespaceFull,
     phase: Phase,
+    device: Any,
+    dtype: Any,
 ) -> None:
     """
     Test the addition theorem for spherical harmonics.
@@ -89,8 +94,12 @@ def test_addition_theorem[TSpherical, TCartesian](
 
     """
     shape = (5,)
-    x = xp.random.random_uniform(low=-1, high=1, shape=(c.c_ndim, *shape))
-    y = xp.random.random_uniform(low=-1, high=1, shape=(c.c_ndim, *shape))
+    x = xp.random.random_uniform(
+        low=-1, high=1, shape=(c.c_ndim, *shape), dtype=dtype, device=device
+    )
+    y = xp.random.random_uniform(
+        low=-1, high=1, shape=(c.c_ndim, *shape), dtype=dtype, device=device
+    )
 
     # [...]
     x_spherical = c.from_cartesian(x)

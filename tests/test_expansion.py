@@ -48,6 +48,7 @@ def test_orthogonal_expand[TSpherical, TCartesian](
     concat: bool,
     xp: ArrayNamespaceFull,
     device: Any,
+    dtype: Any,
 ) -> None:
     def f(spherical: Mapping[TSpherical, Array]) -> Array:
         return harmonics(  # type: ignore[call-overload]
@@ -67,7 +68,7 @@ def test_orthogonal_expand[TSpherical, TCartesian](
         does_f_support_separation_of_variables=not concat,
         phase=phase,
         xp=xp,
-        dtype=xp.float32,
+        dtype=dtype,
         device=device,
     )
     if not concat:
@@ -90,7 +91,7 @@ def test_orthogonal_expand[TSpherical, TCartesian](
     else:
         expected = xp.eye(
             int(harm_n_ndim_le(n_end, c_ndim=c.c_ndim)),
-            dtype=xp.complex64,
+            dtype=xp.result_type(dtype, xp.complex64),
             device=device,
         )
         assert xp.all(xpx.isclose(actual, expected, rtol=1e-6, atol=1e-6))
@@ -114,6 +115,7 @@ def test_approximate[TSpherical, TCartesian](
     phase: Phase,
     xp: ArrayNamespaceFull,
     device: Any,
+    dtype: Any,
 ) -> None:
     k = xp.arange(c.c_ndim) / c.c_ndim
 
@@ -141,6 +143,7 @@ def test_approximate[TSpherical, TCartesian](
         phase=phase,
         xp=xp,
         device=device,
+        dtype=dtype,
     )
     for n_end_c in np.linspace(1, n_end, 5):
         n_end_c = int(n_end_c)

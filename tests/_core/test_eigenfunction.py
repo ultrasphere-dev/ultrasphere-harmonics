@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 import numpy as xp
 import pytest
@@ -116,8 +118,10 @@ def type_c_scalar(
     return array[l_alpha, l_beta, l].item()
 
 
-def test_type_b(xp: ArrayNamespaceFull) -> None:
-    for theta in xp.random.random_uniform(low=0, high=xp.pi, shape=(3)):
+def test_type_b(xp: ArrayNamespaceFull, dtype: Any, device: Any) -> None:
+    for theta in xp.random.random_uniform(
+        low=0, high=xp.pi, shape=(3), device=device, dtype=dtype
+    ):
         # we refer to 3d spherical harmonics table where s_beta = 0
         # https://en.wikipedia.org/wiki/Table_of_spherical_harmonics
         s_beta = 0
@@ -135,10 +139,14 @@ def test_type_b(xp: ArrayNamespaceFull) -> None:
 @pytest.mark.parametrize("index_with_surrogate_quantum_number", [True, False])
 def test_type_c(
     index_with_surrogate_quantum_number: bool,
+    dtype: Any,
+    device: Any,
 ) -> None:
     # we consider O(2) \otimes O(2) 4d spherical harmonics where s_beta = 1
     # http://kuiperbelt.la.coocan.jp/sf/egan/Diaspora/atomic-orbital/laplacian/4D-2.html
-    for theta in xp.random.random_uniform(low=0, high=xp.pi / 2, shape=(3)):
+    for theta in xp.random.random_uniform(
+        low=0, high=xp.pi / 2, shape=(3), device=device, dtype=dtype
+    ):
         for l, l_alpha, l_beta in [
             (0, 0, 0),
             (1, 1, 0),
