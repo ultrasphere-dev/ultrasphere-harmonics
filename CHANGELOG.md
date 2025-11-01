@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.3.0-rc.1 (2025-11-01)
+
+### Features
+
+- Device support ([`32259cd`](https://github.com/ultrasphere-dev/ultrasphere-harmonics/commit/32259cdd2080d2c2104702cda0c504eeb6930d94))
+- Device support ([`e6c5f36`](https://github.com/ultrasphere-dev/ultrasphere-harmonics/commit/e6c5f3669c42df59be03d7f02dce9fe399da3089))
+- Device support ([`6fd70cd`](https://github.com/ultrasphere-dev/ultrasphere-harmonics/commit/6fd70cda798565e2907726305de7010b70c590d7))
+- Device support ([`6963ae3`](https://github.com/ultrasphere-dev/ultrasphere-harmonics/commit/6963ae3ba3444ec402091c53a57dc9682fac5586))
+- Device support ([`7929e1c`](https://github.com/ultrasphere-dev/ultrasphere-harmonics/commit/7929e1c3402ce2cc3031863d07f5051c923f8d8c))
+- Device support ([`e861aa2`](https://github.com/ultrasphere-dev/ultrasphere-harmonics/commit/e861aa2423af2d1af4ea3b9638e9569853dae6e2))
+- Device support ([`cf6ba01`](https://github.com/ultrasphere-dev/ultrasphere-harmonics/commit/cf6ba01f89d320fc6a63883e7852da5ef519f132))
+- Device support ([`7014e40`](https://github.com/ultrasphere-dev/ultrasphere-harmonics/commit/7014e40c23f3298fe65b2758dc2547d38628e0e7))
+
 ## v1.2.0 (2025-10-03)
 
 ### Features
