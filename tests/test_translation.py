@@ -188,6 +188,8 @@ def test_harmonics_translation_coef[TSpherical, TCartesian](
 def test_dataset_coef(device: Any, dtype: Any, xp: ArrayNamespaceFull) -> None:
     if "numpy" not in xp.__name__:
         pytest.skip("only numpy supported for dataset generation")
+    if "float64" not in str(dtype):
+        pytest.skip("only float64 supported for dataset generation")
     import numpy as np
 
     cartesian = xp.asarray([2.0, -7.0, 1.0], device=device, dtype=dtype)
@@ -207,7 +209,7 @@ def test_dataset_coef(device: Any, dtype: Any, xp: ArrayNamespaceFull) -> None:
                 k=1.0,
             )
             np.savetxt(
-                f"tests/.cache/translation_coef_{is_same_type}_{phase}_{dtype}.csv".replace(
+                f"tests/.cache/translation_coef_{is_same_type}_{phase}.csv".replace(
                     "|", "_"
                 ),
                 coef,
@@ -225,7 +227,7 @@ def test_dataset_coef(device: Any, dtype: Any, xp: ArrayNamespaceFull) -> None:
                 type=type_,
             )
             np.savetxt(
-                f"tests/.cache/{type_}_{phase}_{dtype.__name__}.csv".replace("|", "_"),
+                f"tests/.cache/{type_}_{phase}.csv".replace("|", "_"),
                 RS,
                 delimiter=",",
             )
