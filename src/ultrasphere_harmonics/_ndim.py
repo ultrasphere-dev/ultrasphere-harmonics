@@ -5,7 +5,7 @@ from array_api_compat import array_namespace
 from jacobi_poly import binom
 
 
-def homogeneous_ndim_eq(n: int | Array, *, c_ndim: int | Array) -> int | Array:
+def homogeneous_ndim_eq(n: int | Array, *, c_ndim: int) -> int | Array:
     r"""
     The dimension of the homogeneous polynomials of degree equals to n.
 
@@ -17,7 +17,7 @@ def homogeneous_ndim_eq(n: int | Array, *, c_ndim: int | Array) -> int | Array:
     ----------
     n : int | Array
         The degree.
-    c_ndim : int | Array
+    c_ndim : int
         The dimension of the Cartesian space.
 
     Returns
@@ -42,7 +42,7 @@ def homogeneous_ndim_eq(n: int | Array, *, c_ndim: int | Array) -> int | Array:
     return xp.asarray(xp.astype(xp.round(result), int))
 
 
-def homogeneous_ndim_le(n_end: int | Array, *, c_ndim: int | Array) -> int | Array:
+def homogeneous_ndim_le(n_end: int | Array, *, c_ndim: int) -> int | Array:
     r"""
     The dimension of the homogeneous polynomials of degree below n_end.
 
@@ -67,7 +67,7 @@ def homogeneous_ndim_le(n_end: int | Array, *, c_ndim: int | Array) -> int | Arr
     ----------
     n_end : int | Array
         The degree.
-    c_ndim : int | Array
+    c_ndim : int
         The dimension of the Cartesian space.
 
     Returns
@@ -87,11 +87,11 @@ def homogeneous_ndim_le(n_end: int | Array, *, c_ndim: int | Array) -> int | Arr
 
     """
     try:
-        xp = array_namespace(n_end, c_ndim)
+        xp = array_namespace(n_end)
     except TypeError:
         xp = np
-    n_end = xp.asarray(n_end)
-    c_ndim = xp.asarray(c_ndim)
+        n_end = xp.asarray(n_end)
+    c_ndim = xp.asarray(c_ndim, dtype=n_end.dtype, device=n_end.device)  # type: ignore
     return xpx.apply_where(
         n_end < 1,
         (n_end, c_ndim),
@@ -105,7 +105,7 @@ def homogeneous_ndim_le(n_end: int | Array, *, c_ndim: int | Array) -> int | Arr
     )
 
 
-def harm_n_ndim_eq(n: int | Array, *, c_ndim: int | Array) -> int | Array:
+def harm_n_ndim_eq(n: int | Array, *, c_ndim: int) -> int | Array:
     r"""
     The dimension of the spherical harmonics of degree equals to n.
 
@@ -129,7 +129,7 @@ def harm_n_ndim_eq(n: int | Array, *, c_ndim: int | Array) -> int | Array:
     ----------
     n : int | Array
         The degree.
-    c_ndim : int | Array
+    c_ndim : int
         The dimension of the Cartesian space.
 
     Returns
@@ -149,11 +149,11 @@ def harm_n_ndim_eq(n: int | Array, *, c_ndim: int | Array) -> int | Array:
 
     """
     try:
-        xp = array_namespace(n, c_ndim)
+        xp = array_namespace(n)
     except TypeError:
         xp = np
-    n = xp.asarray(n)
-    c_ndim = xp.asarray(c_ndim)
+        n = xp.asarray(n)
+    c_ndim = xp.asarray(c_ndim, dtype=n.dtype, device=n.device)  # type: ignore
     return xpx.apply_where(
         c_ndim > 2,
         (n, c_ndim),
@@ -172,7 +172,7 @@ def harm_n_ndim_eq(n: int | Array, *, c_ndim: int | Array) -> int | Array:
     )
 
 
-def harm_n_ndim_le(n_end: int | Array, *, c_ndim: int | Array) -> int | Array:
+def harm_n_ndim_le(n_end: int | Array, *, c_ndim: int) -> int | Array:
     r"""
     The dimension of the spherical harmonics of degree below n_end.
 
@@ -190,7 +190,7 @@ def harm_n_ndim_le(n_end: int | Array, *, c_ndim: int | Array) -> int | Array:
     ----------
     n_end : int | Array
         The degree.
-    c_ndim : int | Array
+    c_ndim : int
         The dimension of the Cartesian space.
 
     Returns
@@ -210,11 +210,11 @@ def harm_n_ndim_le(n_end: int | Array, *, c_ndim: int | Array) -> int | Array:
 
     """
     try:
-        xp = array_namespace(n_end, c_ndim)
+        xp = array_namespace(n_end)
     except TypeError:
         xp = np
-    n_end = xp.asarray(n_end)
-    c_ndim = xp.asarray(c_ndim)
+        n_end = xp.asarray(n_end)
+    c_ndim = xp.asarray(c_ndim, dtype=n_end.dtype, device=n_end.device)  # type: ignore
     return xpx.apply_where(
         n_end < 1,
         (n_end, c_ndim),

@@ -1,6 +1,7 @@
 from collections.abc import Mapping
 from os import environ
 from pathlib import Path
+from typing import Any
 
 import array_api_extra as xpx
 import numpy as np
@@ -46,6 +47,8 @@ def test_orthogonal_expand[TSpherical, TCartesian](
     phase: Phase,
     concat: bool,
     xp: ArrayNamespaceFull,
+    device: Any,
+    dtype: Any,
 ) -> None:
     def f(spherical: Mapping[TSpherical, Array]) -> Array:
         return harmonics(  # type: ignore[call-overload]
@@ -65,8 +68,8 @@ def test_orthogonal_expand[TSpherical, TCartesian](
         does_f_support_separation_of_variables=not concat,
         phase=phase,
         xp=xp,
-        dtype=xp.float32,
-        device=None,
+        dtype=dtype,
+        device=device,
     )
     if not concat:
         if is_torch_namespace(xp):
@@ -74,7 +77,7 @@ def test_orthogonal_expand[TSpherical, TCartesian](
         for key, value in actual.items():
             # assert quantum numbers are the same for non-zero values
             expansion_nonzero = xp.moveaxis(
-                xp.asarray(xp.nonzero(xp.abs(value) > 1e-3)), 0, 1
+                xp.stack(xp.nonzero(xp.abs(value) > 1e-3)), 0, 1
             )
             assert expansion_nonzero.shape[1] == ndim_harmonics(c, key) * 2
             l, r = (
@@ -87,7 +90,9 @@ def test_orthogonal_expand[TSpherical, TCartesian](
             assert xp.all(l[idx, :] == r[idx, :])
     else:
         expected = xp.eye(
-            int(harm_n_ndim_le(n_end, c_ndim=c.c_ndim)), dtype=xp.complex64
+            int(harm_n_ndim_le(n_end, c_ndim=c.c_ndim)),
+            dtype=xp.result_type(dtype, xp.complex64),
+            device=device,
         )
         assert xp.all(xpx.isclose(actual, expected, rtol=1e-6, atol=1e-6))
 
@@ -109,8 +114,10 @@ def test_approximate[TSpherical, TCartesian](
     n_end: int,
     phase: Phase,
     xp: ArrayNamespaceFull,
+    device: Any,
+    dtype: Any,
 ) -> None:
-    k = xp.arange(c.c_ndim) / c.c_ndim
+    k = xp.arange(c.c_ndim, dtype=dtype, device=device) / c.c_ndim
 
     def f(s: Mapping[TSpherical, Array]) -> Array:
         x = c.to_cartesian(s, as_array=True)
@@ -124,7 +131,7 @@ def test_approximate[TSpherical, TCartesian](
             )
         )
 
-    spherical, _ = roots(c, 1, expand_dims_x=True, xp=xp)
+    spherical, _ = roots(c, 1, expand_dims_x=True, xp=xp, device=device, dtype=dtype)
     expected = f(spherical)
     error = {}
     expansion = expand(
@@ -135,6 +142,8 @@ def test_approximate[TSpherical, TCartesian](
         does_f_support_separation_of_variables=False,
         phase=phase,
         xp=xp,
+        device=device,
+        dtype=dtype,
     )
     for n_end_c in np.linspace(1, n_end, 5):
         n_end_c = int(n_end_c)
@@ -146,7 +155,7 @@ def test_approximate[TSpherical, TCartesian](
             phase=phase,
         )
         error[n_end_c] = xp.mean(xp.abs(approx - expected))
-    if not SKIP_MATPLOTLIB:
+    if not SKIP_MATPLOTLIB and "numpy" in xp.__name__:
         from matplotlib import pyplot as plt
 
         fig, ax = plt.subplots()

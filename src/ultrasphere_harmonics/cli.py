@@ -354,7 +354,9 @@ def scattering(
     cartesian = cartesian[:, xp.linalg.vector_norm(cartesian, axis=0) > 1.0]
     spherical = c.from_cartesian(cartesian)
     uin_v = uin(spherical)
-    n = index_array_harmonics(c, c.root, n_end=n_end, xp=xp, flatten=True)
+    n = index_array_harmonics(
+        c, c.root, n_end=n_end, xp=xp, flatten=True, device=uin_v.device
+    )
     uscat_v = -xp.sum(
         1
         / shn1(n, xp.asarray(c.c_ndim), xp.asarray(k))

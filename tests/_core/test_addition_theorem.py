@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Any, Literal
 
 import array_api_extra as xpx
 import pytest
@@ -26,6 +26,8 @@ def test_addition_theorem_same_x[TSpherical, TCartesian](
     n_end: int,
     xp: ArrayNamespaceFull,
     phase: Phase,
+    device: Any,
+    dtype: Any,
 ) -> None:
     """
     Test the addition theorem for spherical harmonics.
@@ -37,9 +39,11 @@ def test_addition_theorem_same_x[TSpherical, TCartesian](
 
     """
     shape = (5,)
-    x = xp.random.random_uniform(low=-1, high=1, shape=(c.c_ndim, *shape))
+    x = xp.random.random_uniform(
+        low=-1, high=1, shape=(c.c_ndim, *shape), dtype=dtype, device=device
+    )
     x_spherical = c.from_cartesian(x)
-    n = xp.arange(n_end)[(None,) * len(shape) + (slice(None),)]
+    n = xp.arange(n_end, device=device)[(None,) * len(shape) + (slice(None),)]
     expected = (
         harm_n_ndim_eq(n, c_ndim=c.c_ndim)
         / c.surface_area()
@@ -77,6 +81,8 @@ def test_addition_theorem[TSpherical, TCartesian](
     type: Literal["legendre", "gegenbauer", "gegenbauer-cohl"],
     xp: ArrayNamespaceFull,
     phase: Phase,
+    device: Any,
+    dtype: Any,
 ) -> None:
     """
     Test the addition theorem for spherical harmonics.
@@ -88,8 +94,12 @@ def test_addition_theorem[TSpherical, TCartesian](
 
     """
     shape = (5,)
-    x = xp.random.random_uniform(low=-1, high=1, shape=(c.c_ndim, *shape))
-    y = xp.random.random_uniform(low=-1, high=1, shape=(c.c_ndim, *shape))
+    x = xp.random.random_uniform(
+        low=-1, high=1, shape=(c.c_ndim, *shape), dtype=dtype, device=device
+    )
+    y = xp.random.random_uniform(
+        low=-1, high=1, shape=(c.c_ndim, *shape), dtype=dtype, device=device
+    )
 
     # [...]
     x_spherical = c.from_cartesian(x)
@@ -98,20 +108,20 @@ def test_addition_theorem[TSpherical, TCartesian](
     ip = xp.sum(x * y, axis=0)
     ip_normalized = ip / x_spherical["r"] / y_spherical["r"]
     # expected [..., n]
-    n = xp.arange(n_end)[(None,) * c.s_ndim + (slice(None),)]
+    n = xp.arange(n_end, device=device)[(None,) * c.s_ndim + (slice(None),)]
     d = c.c_ndim
     if type == "legendre":
         expected = (
             legendre(
                 ip_normalized,
-                ndim=xp.asarray(d),
+                ndim=d,
                 n_end=n_end,
             )
             * harm_n_ndim_eq(n, c_ndim=c.c_ndim)
             / c.surface_area()
         )
     elif type == "gegenbauer":
-        alpha = xp.asarray((d - 2) / 2)[(None,) * ip_normalized.ndim]
+        alpha = xp.asarray((d - 2) / 2, device=device)[(None,) * ip_normalized.ndim]
         expected = (
             gegenbauer(ip_normalized, alpha=alpha, n_end=n_end)
             / gegenbauer(xp.ones_like(ip_normalized), alpha=alpha, n_end=n_end)
@@ -119,7 +129,7 @@ def test_addition_theorem[TSpherical, TCartesian](
             / c.surface_area()
         )
     elif type == "gegenbauer-cohl":
-        alpha = xp.asarray((d - 2) / 2)[(None,) * ip_normalized.ndim]
+        alpha = xp.asarray((d - 2) / 2, device=device)[(None,) * ip_normalized.ndim]
         expected = (
             gegenbauer(ip_normalized, alpha=alpha, n_end=n_end)
             * (2 * n + d - 2)

@@ -153,6 +153,7 @@ def harmonics_regular_singular_component[TCartesian, TSpherical](  # type: ignor
         xp=xp,
         expand_dims=expand_dims,
         flatten=False,
+        device=spherical["r"].device,
     )[(None,) * extra_dims + (...,)]
 
     kr = k * spherical["r"]

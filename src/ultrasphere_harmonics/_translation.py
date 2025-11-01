@@ -1,6 +1,7 @@
 from collections.abc import Mapping
-from typing import Literal
+from typing import Any, Literal
 
+import numpy as np
 from array_api._2024_12 import Array, ArrayNamespaceFull
 from array_api_compat import array_namespace
 from gumerov_expansion_coefficients import translational_coefficients
@@ -65,12 +66,20 @@ def _harmonics_translation_coef_plane_wave[TCartesian, TSpherical](
 
     """
     xp = array_namespace(*[cartesian[k] for k in c.c_nodes])
+    dtype = cartesian[c.c_nodes[0]].dtype
+    device = cartesian[c.c_nodes[0]].device
     _, k = xp.broadcast_arrays(cartesian[c.c_nodes[0]], k)
     n = index_array_harmonics(
-        c, c.root, n_end=n_end, xp=xp, expand_dims=True, flatten=True
+        c, c.root, n_end=n_end, xp=xp, expand_dims=True, flatten=True, device=device
     )[:, None]
     ns = index_array_harmonics(
-        c, c.root, n_end=n_end_add, xp=xp, expand_dims=True, flatten=True
+        c,
+        c.root,
+        n_end=n_end_add,
+        xp=xp,
+        expand_dims=True,
+        flatten=True,
+        device=device,
     )[None, :]
 
     def to_expand(spherical: Mapping[TSpherical, Array]) -> Array:
@@ -120,6 +129,8 @@ def _harmonics_translation_coef_plane_wave[TCartesian, TSpherical](
         n_end=n_end_add,
         phase=phase,
         xp=xp,
+        dtype=dtype,
+        device=device,
     )
 
 
@@ -130,6 +141,8 @@ def harmonics_twins_expansion[TCartesian, TSpherical](
     n_end_2: int,
     phase: Phase,
     xp: ArrayNamespaceFull,
+    dtype: Any | None = None,
+    device: Any | None = None,
     conj_1: bool = False,
     conj_2: bool = False,
 ) -> Array:
@@ -151,6 +164,10 @@ def harmonics_twins_expansion[TCartesian, TSpherical](
         See `Phase` for details.
     xp : ArrayNamespaceFull
         The array namespace.
+    dtype : Any | None
+        The dtype, by default None
+    device : Any | None
+        The device, by default None
     conj_1 : bool
         Whether to conjugate the first harmonics.
         by default False
@@ -217,6 +234,8 @@ def harmonics_twins_expansion[TCartesian, TSpherical](
         n_end=n_end_1 + n_end_2 - 1,
         phase=phase,
         xp=xp,
+        dtype=dtype,
+        device=device,
     )
     result = expand_dims_harmonics(c, result)
     result = concat_harmonics(c, result)
@@ -284,19 +303,33 @@ def _harmonics_translation_coef_triplet[TCartesian, TSpherical](
 
     """
     xp = array_namespace(*[spherical[k] for k in c.s_nodes])
+    dtype = spherical["r"].dtype
+    device = spherical["r"].device
     # [user1,...,userM,n1,...,nN,nsummed1,...,nsummedN,ntemp1,...,ntempN]
     n = index_array_harmonics(
-        c, c.root, n_end=n_end, expand_dims=True, xp=xp, flatten=True
+        c, c.root, n_end=n_end, expand_dims=True, xp=xp, flatten=True, device=device
     )[:, None, None]
     ns = index_array_harmonics(
-        c, c.root, n_end=n_end_add, expand_dims=True, xp=xp, flatten=True
+        c,
+        c.root,
+        n_end=n_end_add,
+        expand_dims=True,
+        xp=xp,
+        flatten=True,
+        device=device,
     )[None, :, None]
     ntemp = index_array_harmonics(
-        c, c.root, n_end=n_end + n_end_add - 1, expand_dims=True, xp=xp, flatten=True
+        c,
+        c.root,
+        n_end=n_end + n_end_add - 1,
+        expand_dims=True,
+        xp=xp,
+        flatten=True,
+        device=device,
     )[None, None, :]
 
     # returns [user1,...,userM,n1,...,nN,np1,...,npN]
-    coef = (2 * xp.pi) ** (c.c_ndim / 2) * xp.sqrt(2 / xp.pi)
+    coef = (2 * xp.pi) ** (c.c_ndim / 2) * np.sqrt(2 / np.pi)
     t_RS = harmonics_regular_singular(
         c,
         spherical,
@@ -316,6 +349,8 @@ def _harmonics_translation_coef_triplet[TCartesian, TSpherical](
         conj_1=False,
         conj_2=True,
         xp=xp,
+        dtype=dtype,
+        device=device,
     )
     return coef * xp.sum(
         (-1j) ** (n - ns - ntemp) * t_RS[..., None, None, :] * expansion,
@@ -437,6 +472,7 @@ def harmonics_translation_coef[TCartesian, TSpherical](
     """
     xp = array_namespace(*[spherical[k] for k in c.s_nodes], k)
     phase = Phase(phase)
+    device = spherical["r"].device
     if method is None:
         if c.branching_types_expression_str in ["a", "ba"]:
             method = "gumerov"
@@ -457,11 +493,11 @@ def harmonics_translation_coef[TCartesian, TSpherical](
                 type="regular" if is_type_same else "singular",
                 flatten=True,
             )
-            n = index_array_harmonics(c, c.root, n_end=n_end, xp=xp, flatten=True)[
-                :, None
-            ]
+            n = index_array_harmonics(
+                c, c.root, n_end=n_end, xp=xp, flatten=True, device=device
+            )[:, None]
             n_add = index_array_harmonics(
-                c, c.root, n_end=n_end_add, xp=xp, flatten=True
+                c, c.root, n_end=n_end_add, xp=xp, flatten=True, device=device
             )[None, :]
             result = 2 * SR[..., n - n_add]
             if Phase.NEGATIVE_LEGENDRE in phase:
@@ -482,10 +518,20 @@ def harmonics_translation_coef[TCartesian, TSpherical](
             if phase == Phase.CONDON_SHORTLEY:
                 return result
             m = index_array_harmonics(
-                c, get_child(c.G, c.root, "sin"), n_end=n_end, xp=xp, flatten=True
+                c,
+                get_child(c.G, c.root, "sin"),
+                n_end=n_end,
+                xp=xp,
+                flatten=True,
+                device=device,
             )[:, None]
             m_add = index_array_harmonics(
-                c, get_child(c.G, c.root, "sin"), n_end=n_end_add, xp=xp, flatten=True
+                c,
+                get_child(c.G, c.root, "sin"),
+                n_end=n_end_add,
+                xp=xp,
+                flatten=True,
+                device=device,
             )[None, :]
             if phase == Phase(0):
                 result *= minus_1_power(m + m_add)

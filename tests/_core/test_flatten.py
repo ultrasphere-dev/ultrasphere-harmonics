@@ -1,4 +1,5 @@
 from collections.abc import Mapping
+from typing import Any
 
 import array_api_extra as xpx
 import pytest
@@ -31,10 +32,19 @@ from ultrasphere_harmonics._core._flatten import (
 )
 @pytest.mark.parametrize("n_end", [4, 7])
 def test_index_array_harmonics_all[TCartesian, TSpherical](
-    c: SphericalCoordinates[TSpherical, TCartesian], n_end: int, xp: ArrayNamespaceFull
+    c: SphericalCoordinates[TSpherical, TCartesian],
+    n_end: int,
+    xp: ArrayNamespaceFull,
+    device: Any,
 ) -> None:
     iall_concat = _index_array_harmonics_all(
-        c, n_end=n_end, include_negative_m=False, expand_dims=True, as_array=True, xp=xp
+        c,
+        n_end=n_end,
+        include_negative_m=False,
+        expand_dims=True,
+        as_array=True,
+        xp=xp,
+        device=device,
     )
     iall: Mapping[TSpherical, Array] = _index_array_harmonics_all(
         c,
@@ -43,6 +53,7 @@ def test_index_array_harmonics_all[TCartesian, TSpherical](
         expand_dims=True,
         as_array=False,
         xp=xp,
+        device=device,
     )
     assert iall_concat.shape == (
         c.s_ndim,
@@ -67,11 +78,13 @@ def test_flatten_unflatten_harmonics[TSpherical, TCartesian](
     c: SphericalCoordinates[TSpherical, TCartesian],
     xp: ArrayNamespaceFull,
     phase: Phase,
+    device: Any,
+    dtype: Any,
 ) -> None:
     n_end = 4
     harmonics = harmonics_(
         c,
-        roots(c, n=n_end, expand_dims_x=True, xp=xp)[0],
+        roots(c, n=n_end, expand_dims_x=True, xp=xp, device=device, dtype=dtype)[0],
         n_end=n_end,
         phase=phase,
         concat=True,
