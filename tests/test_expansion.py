@@ -117,7 +117,7 @@ def test_approximate[TSpherical, TCartesian](
     device: Any,
     dtype: Any,
 ) -> None:
-    k = xp.arange(c.c_ndim) / c.c_ndim
+    k = xp.arange(c.c_ndim, dtype=dtype, device=device) / c.c_ndim
 
     def f(s: Mapping[TSpherical, Array]) -> Array:
         x = c.to_cartesian(s, as_array=True)
@@ -131,7 +131,7 @@ def test_approximate[TSpherical, TCartesian](
             )
         )
 
-    spherical, _ = roots(c, 1, expand_dims_x=True, xp=xp)
+    spherical, _ = roots(c, 1, expand_dims_x=True, xp=xp, device=device, dtype=dtype)
     expected = f(spherical)
     error = {}
     expansion = expand(
@@ -155,7 +155,7 @@ def test_approximate[TSpherical, TCartesian](
             phase=phase,
         )
         error[n_end_c] = xp.mean(xp.abs(approx - expected))
-    if not SKIP_MATPLOTLIB:
+    if not SKIP_MATPLOTLIB and "numpy" in xp.__name__:
         from matplotlib import pyplot as plt
 
         fig, ax = plt.subplots()

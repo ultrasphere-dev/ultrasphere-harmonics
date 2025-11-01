@@ -698,7 +698,7 @@ wheels = [
 
 [[package]]
 name = "jacobi-poly"
-version = "1.0.4"
+version = "1.0.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "array-api-compat" },
@@ -710,9 +710,9 @@ dependencies = [
     { name = "typer" },
     { name = "types-array-api" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a0/09/1eece5f815215ebc0813de94b54f7eee3a6bb1bdeb10012e1509ce853fca/jacobi_poly-1.0.4.tar.gz", hash = "sha256:8548d56d3d5e29ae40e7ab47624d7da3aba1fd83734f00bdd4a55cafaf62678f", size = 12361, upload-time = "2025-09-14T00:51:41.299Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b4/96/751eb3c9676092118d2b31902f4abbd9840e030dc7e7be20aac02e0f3336/jacobi_poly-1.0.5.tar.gz", hash = "sha256:a348f608b17ff68ecb48f625b03d3770b62bc3a40dc0ca4b4d85fd41ccd0de4a", size = 12418, upload-time = "2025-11-01T04:34:31.604Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4b/71/f795afe5ada537d179d02a8527e25a1088a1fae6b74bd420e6965ed1a9be/jacobi_poly-1.0.4-py3-none-any.whl", hash = "sha256:0a9cb581eacacae7cd77707965b9c9373b9ca48222196a92b35c46e6051a2b49", size = 9115, upload-time = "2025-09-14T00:51:39.859Z" },
+    { url = "https://files.pythonhosted.org/packages/ab/8a/08676e7671e65d51fe02f5c888127e02016ebe285cd6b763ff3e725a46be/jacobi_poly-1.0.5-py3-none-any.whl", hash = "sha256:17bbee2a1af617a3ff59edd778fe17b4042694efed33155a52d2d166219f7d96", size = 9131, upload-time = "2025-11-01T04:34:30.316Z" },
 ]
 
 [[package]]
@@ -2387,7 +2387,7 @@ requires-dist = [
     { name = "array-api-negative-index", specifier = ">=1.0.0" },
     { name = "cyclopts", marker = "extra == 'cli'", specifier = ">=3.24.0" },
     { name = "gumerov-expansion-coefficients", specifier = ">=1.2.0" },
-    { name = "jacobi-poly", specifier = ">=1.0.4" },
+    { name = "jacobi-poly", specifier = ">=1.0.5" },
     { name = "open3d-cpu", marker = "extra == 'cli'", specifier = ">=0.19.0" },
     { name = "rich", marker = "extra == 'cli'", specifier = ">=10" },
     { name = "shift-nth-row-n-steps", specifier = ">=1.0.0" },

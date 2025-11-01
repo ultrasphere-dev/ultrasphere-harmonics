@@ -34,7 +34,7 @@ def test_harmonics_translation_coef_gumerov_table(
     x_spherical = c.from_cartesian(x)
     y_spherical = c.from_cartesian(y)
     t_spherical = c.from_cartesian(t)
-    k = xp.asarray(1)
+    k = xp.asarray(1, device=device)
 
     n_end = 6
     for n_end_add in [1, 3, 5, 7, 9]:
@@ -118,7 +118,7 @@ def test_harmonics_translation_coef[TSpherical, TCartesian](
     # get x, t, y := x + t
     x = xp.arange(c.c_ndim, device=device, dtype=dtype)
     t = xp.flip(xp.arange(c.c_ndim, device=device, dtype=dtype))
-    k = 1.0
+    k = xp.asarray(1.0, device=device, dtype=dtype)
     if (from_, to_) == ("singular", "singular"):
         # |t| < |x| (if too close, the result would be inaccurate)
         t = t * 0.1

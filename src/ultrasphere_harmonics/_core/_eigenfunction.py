@@ -393,7 +393,9 @@ def type_c(
         # [l_alpha, l_beta, n] -> [l_alpha, l_beta, l = 2n + l_alpha + l_beta]
         # 1. [l_alpha, l_beta, n] -> [l_alpha, l_beta, 2n]
         # add zeros to the left for each row, i.e. [1, 2, 3] -> [1, 0, 2, 0, 3, 0]
-        res_expaneded = xp.zeros((*res.shape[:-1], n_end))
+        res_expaneded = xp.zeros(
+            (*res.shape[:-1], n_end), dtype=res.dtype, device=res.device
+        )
         res_expaneded[..., ::2] = res
         # 2. [l_alpha, l_beta, 2n] -> [l_alpha, l_beta, 2n + l_alpha]
         res_expaneded = shift_nth_row_n_steps(
