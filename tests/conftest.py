@@ -21,11 +21,7 @@ def xp(request: pytest.FixtureRequest) -> ArrayNamespaceFull:
         xp.random.random_uniform = random_uniform
         xp.random.integers = integers
     elif backend == "torch":
-        import torch
         from array_api_compat import torch as xp
-
-        if device == "cuda" and not torch.cuda.is_available():
-            pytest.skip("CUDA is not available")
 
         def random_uniform(low=0, high=1, shape=None, device=None, dtype=None):
             return xp.rand(shape, device=device, dtype=dtype) * (high - low) + low
@@ -43,11 +39,10 @@ def xp(request: pytest.FixtureRequest) -> ArrayNamespaceFull:
 @pytest.fixture(scope="session", params=["cpu", "cuda"])
 def device(request: pytest.FixtureRequest, xp: ArrayNamespaceFull) -> Any:
     device = request.param
-    if device == "cuda":
-        try:
-            _ = xp.asarray(1, device="cuda")
-        except Exception:
-            pytest.skip("CUDA is not available")
+    try:
+        _ = xp.asarray(1, device=device)
+    except Exception:
+        pytest.skip(f"{device=} is not available")
     return device
 
 
