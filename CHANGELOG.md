@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.3.0 (2025-11-01)
+
+### Features
+
+- Device support ([`bfaca20`](https://github.com/ultrasphere-dev/ultrasphere-harmonics/commit/bfaca20196cf6043367f58bc14c186e72c9d1ade))
+
 ## v1.2.0 (2025-10-03)
 
 ### Features
