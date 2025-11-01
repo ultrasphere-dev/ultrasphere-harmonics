@@ -13,10 +13,10 @@ def xp(request: pytest.FixtureRequest) -> ArrayNamespaceFull:
         rng = xp.random.default_rng()
 
         def random_uniform(low=0, high=1, shape=None, device=None, dtype=None):
-            return rng.random(shape, device=device, dtype=dtype) * (high - low) + low
+            return rng.random(shape, dtype=dtype) * (high - low) + low
 
         def integers(low, high=None, shape=None, device=None, dtype=None):
-            return rng.integers(low, high, size=shape, device=device, dtype=dtype)
+            return rng.integers(low, high, size=shape, dtype=dtype)
 
         xp.random.random_uniform = random_uniform
         xp.random.integers = integers

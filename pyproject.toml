@@ -27,7 +27,7 @@ dependencies = [
   "gumerov-expansion-coefficients>=1.2.0",
   "jacobi-poly>=1.0.4",
   "shift-nth-row-n-steps>=1.0.0",
-  "ultrasphere>=2.0.0",
+  "ultrasphere>=2.0.4",
 ]
 urls."Bug Tracker" = "https://github.com/ultrasphere-dev/ultrasphere-harmonics/issues"
 urls.Changelog = "https://github.com/ultrasphere-dev/ultrasphere-harmonics/blob/main/CHANGELOG.md"

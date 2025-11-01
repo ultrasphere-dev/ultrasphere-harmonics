@@ -56,4 +56,5 @@ def concat_harmonics[TSpherical, TCartesian](
         )
     except Exception as e:
         shapes = {k: v.shape for k, v in harmonics.items()}
-        raise RuntimeError(f"Error occurred while concatenating {shapes=}") from e
+        e.add_note(f"Harmonics shapes: {shapes}")
+        raise

@@ -36,7 +36,6 @@ def test_index_array_harmonics_all[TCartesian, TSpherical](
     n_end: int,
     xp: ArrayNamespaceFull,
     device: Any,
-    dtype: Any,
 ) -> None:
     iall_concat = _index_array_harmonics_all(
         c,
@@ -46,7 +45,6 @@ def test_index_array_harmonics_all[TCartesian, TSpherical](
         as_array=True,
         xp=xp,
         device=device,
-        dtype=dtype,
     )
     iall: Mapping[TSpherical, Array] = _index_array_harmonics_all(
         c,
@@ -55,6 +53,7 @@ def test_index_array_harmonics_all[TCartesian, TSpherical](
         expand_dims=True,
         as_array=False,
         xp=xp,
+        device=device,
     )
     assert iall_concat.shape == (
         c.s_ndim,

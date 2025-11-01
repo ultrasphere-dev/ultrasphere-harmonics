@@ -185,10 +185,12 @@ def test_harmonics_translation_coef[TSpherical, TCartesian](
     assert xp.all(xpx.isclose(actual, expected, rtol=1e-3, atol=1e-3))
 
 
-def test_dataset_coef(device: Any, dtype: Any) -> None:
+def test_dataset_coef(device: Any, dtype: Any, xp: ArrayNamespaceFull) -> None:
+    if "numpy" not in xp.__name__:
+        pytest.skip("only numpy supported for dataset generation")
     import numpy as np
 
-    cartesian = np.array([2.0, -7.0, 1.0], device=device, dtype=dtype)
+    cartesian = xp.asarray([2.0, -7.0, 1.0], device=device, dtype=dtype)
     c = create_spherical()
     spherical = c.from_cartesian(cartesian)
     Path("tests/.cache").mkdir(exist_ok=True)

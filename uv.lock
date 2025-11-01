@@ -455,6 +455,15 @@ wheels = [
 ]
 
 [[package]]
+name = "execnet"
+version = "2.1.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/bb/ff/b4c0dc78fbe20c3e59c0c7334de0c27eb4001a2b2017999af398bf730817/execnet-2.1.1.tar.gz", hash = "sha256:5189b52c6121c24feae288166ab41b32549c7e2348652736540b9e6e7d4e72e3", size = 166524, upload-time = "2024-04-08T09:04:19.245Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/43/09/2aea36ff60d16dd8879bdb2f5b3ee0ba8d08cbbdcdfe870e695ce3784385/execnet-2.1.1-py3-none-any.whl", hash = "sha256:26dee51f1b80cebd6d0ca8e74dd8745419761d3bef34163928cbebbdc4749fdc", size = 40612, upload-time = "2024-04-08T09:04:17.414Z" },
+]
+
+[[package]]
 name = "executing"
 version = "2.2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1580,6 +1589,19 @@ wheels = [
 ]
 
 [[package]]
+name = "pytest-xdist"
+version = "3.8.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "execnet" },
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/78/b4/439b179d1ff526791eb921115fca8e44e596a13efeda518b9d845a619450/pytest_xdist-3.8.0.tar.gz", hash = "sha256:7e578125ec9bc6050861aa93f2d59f1d8d085595d6551c2c90b6f4fad8d3a9f1", size = 88069, upload-time = "2025-07-01T13:30:59.346Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ca/31/d4e37e9e550c2b92a9cbc2e4d0b7420a27224968580b5a447f420847c975/pytest_xdist-3.8.0-py3-none-any.whl", hash = "sha256:202ca578cfeb7370784a8c33d6d05bc6e13b4f25b5053c30a152269fd10f0b88", size = 46396, upload-time = "2025-07-01T13:30:56.632Z" },
+]
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 source = { registry = "https://pypi.org/simple" }
@@ -2302,7 +2324,7 @@ wheels = [
 
 [[package]]
 name = "ultrasphere"
-version = "2.0.0"
+version = "2.0.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aquarel" },
@@ -2311,15 +2333,16 @@ dependencies = [
     { name = "jacobi-poly" },
     { name = "matplotlib" },
     { name = "networkx" },
+    { name = "pytest-xdist" },
     { name = "rich" },
     { name = "scipy" },
     { name = "strenum" },
     { name = "typer" },
     { name = "types-array-api" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0f/e4/0d80aedfd75955b7ae9901d711a9c0c2c383dfdef1b53245f6d594d4eb92/ultrasphere-2.0.0.tar.gz", hash = "sha256:ab2348258250bdd7fd4eb526c8d0bbe5538ad76ccda05d1dc9426f78d2b3638d", size = 23769, upload-time = "2025-09-23T02:57:04.706Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/1e/f3/4de10bb786c0cd06cb2b492128b59218de022d9e85b9da24053181ce5124/ultrasphere-2.0.4.tar.gz", hash = "sha256:2ee55ffd9ee6dbae56c395c9dbb5874bef1fd1b5b5381be31a33be84480e1e26", size = 26798, upload-time = "2025-10-31T11:33:50.06Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fc/80/3dd37ae226f785c64d9ba828568e4cbce53b28f07cb5772fc6cd472f5cf8/ultrasphere-2.0.0-py3-none-any.whl", hash = "sha256:23723f951c13b9b9f0fb3bc2c5d7d32af61c4c0c1b0b9d4af20b33225d593131", size = 21306, upload-time = "2025-09-23T02:57:03.129Z" },
+    { url = "https://files.pythonhosted.org/packages/e0/1c/cdeb8820a6c517c4e757c7b6f91ce3a78d2c81c64243715cf4147e8844b0/ultrasphere-2.0.4-py3-none-any.whl", hash = "sha256:7d6521ec107051498fb2fbf64a29691df0f82dd634c5efaa45946d0c0dbb126b", size = 23796, upload-time = "2025-10-31T11:33:48.892Z" },
 ]
 
 [[package]]
@@ -2369,7 +2392,7 @@ requires-dist = [
     { name = "rich", marker = "extra == 'cli'", specifier = ">=10" },
     { name = "shift-nth-row-n-steps", specifier = ">=1.0.0" },
     { name = "typer", marker = "extra == 'cli'", specifier = ">=0.15,<1" },
-    { name = "ultrasphere", specifier = ">=2.0.0" },
+    { name = "ultrasphere", specifier = ">=2.0.4" },
 ]
 provides-extras = ["cli"]
 

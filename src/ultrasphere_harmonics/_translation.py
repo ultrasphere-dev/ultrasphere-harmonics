@@ -68,10 +68,16 @@ def _harmonics_translation_coef_plane_wave[TCartesian, TSpherical](
     xp = array_namespace(*[cartesian[k] for k in c.c_nodes])
     _, k = xp.broadcast_arrays(cartesian[c.c_nodes[0]], k)
     n = index_array_harmonics(
-        c, c.root, n_end=n_end, xp=xp, expand_dims=True, flatten=True
+        c, c.root, n_end=n_end, xp=xp, expand_dims=True, flatten=True, device=k.device
     )[:, None]
     ns = index_array_harmonics(
-        c, c.root, n_end=n_end_add, xp=xp, expand_dims=True, flatten=True
+        c,
+        c.root,
+        n_end=n_end_add,
+        xp=xp,
+        expand_dims=True,
+        flatten=True,
+        device=k.device,
     )[None, :]
 
     def to_expand(spherical: Mapping[TSpherical, Array]) -> Array:
@@ -287,13 +293,25 @@ def _harmonics_translation_coef_triplet[TCartesian, TSpherical](
     xp = array_namespace(*[spherical[k] for k in c.s_nodes])
     # [user1,...,userM,n1,...,nN,nsummed1,...,nsummedN,ntemp1,...,ntempN]
     n = index_array_harmonics(
-        c, c.root, n_end=n_end, expand_dims=True, xp=xp, flatten=True
+        c, c.root, n_end=n_end, expand_dims=True, xp=xp, flatten=True, device=k.device
     )[:, None, None]
     ns = index_array_harmonics(
-        c, c.root, n_end=n_end_add, expand_dims=True, xp=xp, flatten=True
+        c,
+        c.root,
+        n_end=n_end_add,
+        expand_dims=True,
+        xp=xp,
+        flatten=True,
+        device=k.device,
     )[None, :, None]
     ntemp = index_array_harmonics(
-        c, c.root, n_end=n_end + n_end_add - 1, expand_dims=True, xp=xp, flatten=True
+        c,
+        c.root,
+        n_end=n_end + n_end_add - 1,
+        expand_dims=True,
+        xp=xp,
+        flatten=True,
+        device=k.device,
     )[None, None, :]
 
     # returns [user1,...,userM,n1,...,nN,np1,...,npN]
@@ -458,11 +476,11 @@ def harmonics_translation_coef[TCartesian, TSpherical](
                 type="regular" if is_type_same else "singular",
                 flatten=True,
             )
-            n = index_array_harmonics(c, c.root, n_end=n_end, xp=xp, flatten=True)[
-                :, None
-            ]
+            n = index_array_harmonics(
+                c, c.root, n_end=n_end, xp=xp, flatten=True, device=k.device
+            )[:, None]
             n_add = index_array_harmonics(
-                c, c.root, n_end=n_end_add, xp=xp, flatten=True
+                c, c.root, n_end=n_end_add, xp=xp, flatten=True, device=k.device
             )[None, :]
             result = 2 * SR[..., n - n_add]
             if Phase.NEGATIVE_LEGENDRE in phase:
@@ -483,10 +501,20 @@ def harmonics_translation_coef[TCartesian, TSpherical](
             if phase == Phase.CONDON_SHORTLEY:
                 return result
             m = index_array_harmonics(
-                c, get_child(c.G, c.root, "sin"), n_end=n_end, xp=xp, flatten=True
+                c,
+                get_child(c.G, c.root, "sin"),
+                n_end=n_end,
+                xp=xp,
+                flatten=True,
+                device=k.device,
             )[:, None]
             m_add = index_array_harmonics(
-                c, get_child(c.G, c.root, "sin"), n_end=n_end_add, xp=xp, flatten=True
+                c,
+                get_child(c.G, c.root, "sin"),
+                n_end=n_end_add,
+                xp=xp,
+                flatten=True,
+                device=k.device,
             )[None, :]
             if phase == Phase(0):
                 result *= minus_1_power(m + m_add)
