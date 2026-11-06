@@ -9,7 +9,7 @@ description = "Hyperspherical harmonics in NumPy / PyTorch / JAX"
 readme = "README.md"
 license = "MIT"
 authors = [
-  { name = "34j", email = "34j.95a2p@simplelogin.com" },
+  { name = "34j" },
 ]
 requires-python = ">=3.12"
 classifiers = [
