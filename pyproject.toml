@@ -33,7 +33,7 @@ dependencies = [
 optional-dependencies.cli = [
   "aquarel>=0.0.7",
   "cyclopts>=3.24",
-  "open3d-cpu>=0.19",
+  "open3d-cpu>=0.19; sys_platform=='linux' and platform_machine=='x86_64'",
   "rich>=10",
   "typer>=0.15,<1",
 ]
@@ -50,7 +50,6 @@ dev = [
   "pytest",
   "pytest-cov",
   "torch>=2.9",
-  "ty",
 ]
 docs = [
   "packaging-34j[docs]",
@@ -110,9 +109,6 @@ warn_unreachable = true
 overrides = [ { module = "tests.*", allow_untyped_defs = true }, { module = "docs.*", ignore_errors = true } ]
 no_implicit_optional = true
 show_error_codes = true
-
-[tool.ty]
-terminal.error-on-warning = true
 
 [tool.pytest]
 # ini_options.pythonpath = [ "src" ]
