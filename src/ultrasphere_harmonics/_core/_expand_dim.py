@@ -118,11 +118,11 @@ def expand_dims_harmonics[TSpherical, TCartesian](
     ...     concat=False,
     ...     expand_dims=False,
     ... )
-    >>> {k: harm[k].shape for k in c.s_nodes} # not broadcastable
+    >>> {k: harm[k].shape for k in c.s_nodes}  # not broadcastable
     {'theta': (3, 2), 'phi': (3,)}
 
     >>> harm = expand_dims_harmonics(c, harm)
-    >>> {k: harm[k].shape for k in c.s_nodes} # broadcastable
+    >>> {k: harm[k].shape for k in c.s_nodes}  # broadcastable
     {'theta': (2, 3), 'phi': (1, 3)}
 
     """

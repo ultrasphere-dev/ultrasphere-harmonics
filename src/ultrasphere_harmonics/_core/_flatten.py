@@ -153,17 +153,17 @@ def _index_array_harmonics_all[TSpherical, TCartesian](
         len(index_array_harmonics(c, node(c.s_ndim)))].
         If as_array is False, the dictionary of indices.
 
-    Notes
-    -----
-        To check the indices where all quantum numbers match,
-        `(numbers1 == numbers2).all(axis=0)`
-        can be used.
-
     Raises
     ------
     ValueError
         If expand_dims is False and as_array is True.
         If mask is True and as_array is False.
+
+    Notes
+    -----
+        To check the indices where all quantum numbers match,
+        `(numbers1 == numbers2).all(axis=0)`
+        can be used.
 
     """
     if not expand_dims and as_array:
@@ -272,9 +272,9 @@ def flatten_mask_harmonics[TSpherical, TCartesian](
             )
             mask = mask & (value % 2 == 0) & (value >= 0)
 
-    shape = xpx.broadcast_shapes(
-        *[index_array.shape for index_array in index_arrays.values()]
-    )
+    shape = xpx.broadcast_shapes(*[
+        index_array.shape for index_array in index_arrays.values()
+    ])
     mask = xp.broadcast_to(mask, shape)
     return mask
 
@@ -583,17 +583,17 @@ def index_array_harmonics_all[TSpherical, TCartesian](
         len(index_array_harmonics(c, node(c.s_ndim)))]`.
         If as_array is False, the dictionary of indices.
 
-    Notes
-    -----
-        To check the indices where all quantum numbers match,
-        `(numbers1 == numbers2).all(axis=0)`
-        can be used.
-
     Raises
     ------
     ValueError
         If expand_dims is False and as_array is True.
         If mask is True and as_array is False.
+
+    Notes
+    -----
+        To check the indices where all quantum numbers match,
+        `(numbers1 == numbers2).all(axis=0)`
+        can be used.
 
     Example
     -------

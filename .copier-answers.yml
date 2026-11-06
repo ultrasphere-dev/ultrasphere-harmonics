@@ -1,24 +1,19 @@
 # Changes here will be overwritten by Copier
-_commit: 2e4f7d0
-_src_path: gh:34j/pypackage-template
-add_me_as_contributor: false
-cli_name: ultrasphere-harmonics
+_commit: cba0ccb
+_src_path: gh:34j/pypackage-template-fork
 copyright_year: '2025'
 documentation: true
-email: 34j.95a2p@simplelogin.com
-full_name: 34j
-github_app_installation_ids: 31487150,37771054
-github_username: ultrasphere-dev
+github_user: ultrasphere-dev
 has_cli: true
 initial_commit: false
-is_django_package: false
+module_name: ultrasphere_harmonics
 open_source_license: MIT
-open_with_editor: true
-package_name: ultrasphere_harmonics
+open_with_editor: false
 project_name: ultrasphere-harmonics
 project_short_description: Hyperspherical harmonics in NumPy / PyTorch / JAX
 project_slug: ultrasphere-harmonics
 run_uv_sync: false
 setup_github: false
 setup_pre_commit: false
-
+user_name: 34j
+version: 1.3.0

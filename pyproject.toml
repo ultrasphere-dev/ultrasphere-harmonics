@@ -1,13 +1,13 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = [ "setuptools" ]
+requires = [ "setuptools>=77.0.3" ]
 
 [project]
 name = "ultrasphere-harmonics"
 version = "1.3.0"
 description = "Hyperspherical harmonics in NumPy / PyTorch / JAX"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 authors = [
   { name = "34j", email = "34j.95a2p@simplelogin.com" },
 ]
@@ -17,17 +17,25 @@ classifiers = [
   "Intended Audience :: Developers",
   "Natural Language :: English",
   "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Software Development :: Libraries",
 ]
-
 dependencies = [
-  "array-api-negative-index>=1.0.0",
-  "gumerov-expansion-coefficients>=1.2.0",
+  "array-api-negative-index>=1",
+  "gumerov-expansion-coefficients>=1.2",
   "jacobi-poly>=1.0.5",
-  "shift-nth-row-n-steps>=1.0.0",
+  "shift-nth-row-n-steps>=1",
   "ultrasphere>=2.0.4",
+]
+optional-dependencies.cli = [
+  "aquarel>=0.0.7",
+  "cyclopts>=3.24",
+  "open3d-cpu>=0.19",
+  "rich>=10",
+  "typer>=0.15,<1",
 ]
 urls."Bug Tracker" = "https://github.com/ultrasphere-dev/ultrasphere-harmonics/issues"
 urls.Changelog = "https://github.com/ultrasphere-dev/ultrasphere-harmonics/blob/main/CHANGELOG.md"
@@ -35,56 +43,46 @@ urls.documentation = "https://ultrasphere-harmonics.readthedocs.io"
 urls.repository = "https://github.com/ultrasphere-dev/ultrasphere-harmonics"
 scripts.ultrasphere-harmonics = "ultrasphere_harmonics.cli:app"
 
-[project.optional-dependencies]
-cli = [
-  "aquarel>=0.0.7",
-  "cyclopts>=3.24.0",
-  "open3d-cpu>=0.19.0",
-  "rich>=10",
-  "typer>=0.15,<1",
-]
-
 [dependency-groups]
 dev = [
-  "pytest>=9,<10",
-  "pytest-cov>=7,<8",
-  "sybil[pytest]>=9.2.0",
-  "torch>=2.9.0",
+  "coverage",
+  "packaging-34j[test]",
+  "pytest",
+  "pytest-cov",
+  "torch>=2.9",
+  "ty",
 ]
 docs = [
-  "furo>=2023.5.20; python_version>='3.11'",
-  "myst-parser>=0.16; python_version>='3.11'",
-  "sphinx>=4; python_version>='3.11'",
-  "sphinx-autobuild>=2025,<2026; python_version>='3.11'",
-  "sphinx-math-dollar>=1.2.1",
+  "packaging-34j[docs]",
 ]
 
 [tool.ruff]
+extend = ".venv/ruff.toml"
 line-length = 88
+extend-exclude = [ "docs/conf.py" ]
 lint.select = [
   "B",   # flake8-bugbear
-  "D",   # flake8-docstrings
   "C4",  # flake8-comprehensions
-  "S",   # flake8-bandit
-  "F",   # pyflake
+  "D",   # flake8-docstrings
   "E",   # pycodestyle
-  "W",   # pycodestyle
-  "UP",  # pyupgrade
+  "F",   # pyflake
   "I",   # isort
   "RUF", # ruff specific
+  "S",   # flake8-bandit
+  "UP",  # pyupgrade
+  "W",   # pycodestyle
 ]
 lint.ignore = [
-  "D203", # 1 blank line required before class docstring
-  "D212", # Multi-line docstring summary should start at the first line
   "D100", # Missing docstring in public module
   "D104", # Missing docstring in public package
   "D107", # Missing docstring in `__init__`
+  "D203", # 1 blank line required before class docstring
+  "D212", # Multi-line docstring summary should start at the first line
   "D401", # First line of docstring should be in imperative mood
   "E741"
 ]
 lint.per-file-ignores."conftest.py" = [ "D100" ]
 lint.per-file-ignores."docs/conf.py" = [ "D100" ]
-lint.per-file-ignores."setup.py" = [ "D100" ]
 lint.per-file-ignores."tests/**/*" = [
   "D100",
   "D101",
@@ -95,8 +93,30 @@ lint.per-file-ignores."tests/**/*" = [
 ]
 lint.isort.known-first-party = [ "ultrasphere_harmonics", "tests" ]
 
-[tool.pytest.ini_options]
-addopts = """\
+[tool.pyproject-fmt]
+max_supported_python = "3.14"
+
+[tool.mypy]
+mypy_path = "src/"
+exclude = [
+  "docs/.*",
+]
+disallow_any_generics = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+warn_unused_ignores = true
+warn_unreachable = true
+overrides = [ { module = "tests.*", allow_untyped_defs = true }, { module = "docs.*", ignore_errors = true } ]
+no_implicit_optional = true
+show_error_codes = true
+
+[tool.ty]
+terminal.error-on-warning = true
+
+[tool.pytest]
+# ini_options.pythonpath = [ "src" ]
+ini_options.addopts = """\
     -v
     -Wdefault
     --cov=ultrasphere_harmonics
@@ -104,74 +124,40 @@ addopts = """\
     --cov-report=xml
     -p no:doctest
     """
-# pythonpath = [ "src" ]
 
-[tool.coverage.run]
-branch = true
-
-[tool.coverage.report]
-exclude_lines = [
-  "pragma: no cover",
+[tool.coverage]
+run.branch = true
+report.exclude_lines = [
   "@overload",
-  "if TYPE_CHECKING",
-  "raise NotImplementedError",
   'if __name__ == "__main__":',
+  "if TYPE_CHECKING",
+  "pragma: no cover",
+  "raise NotImplementedError",
 ]
-
-[tool.mypy]
-check_untyped_defs = true
-disallow_any_generics = true
-disallow_incomplete_defs = true
-disallow_untyped_defs = true
-mypy_path = "src/"
-no_implicit_optional = true
-show_error_codes = true
-warn_unreachable = true
-warn_unused_ignores = true
-exclude = [
-  'docs/.*',
-  'setup.py',
-]
-
-[[tool.mypy.overrides]]
-module = "tests.*"
-allow_untyped_defs = true
-
-[[tool.mypy.overrides]]
-module = "docs.*"
-ignore_errors = true
 
 [tool.semantic_release]
-version_toml = [ "pyproject.toml:project.version" ]
 version_variables = [
   "src/ultrasphere_harmonics/__init__.py:__version__",
   "docs/conf.py:release",
 ]
+version_toml = [ "pyproject.toml:project.version" ]
 build_command = """
 pip install uv
 uv lock
 git add uv.lock
 uv build
 """
-
-[tool.semantic_release.changelog]
-exclude_commit_patterns = [
-  '''chore(?:\([^)]*?\))?: .+''',
-  '''ci(?:\([^)]*?\))?: .+''',
-  '''refactor(?:\([^)]*?\))?: .+''',
-  '''style(?:\([^)]*?\))?: .+''',
-  '''test(?:\([^)]*?\))?: .+''',
-  '''build\((?!deps\): .+)''',
-  '''Merged? .*''',
-  '''Initial [Cc]ommit.*''', # codespell:ignore
+branches.main.match = "main"
+branches.noop.match = "(?!main$)"
+branches.noop.prerelease = true
+changelog.environment.keep_trailing_newline = true
+changelog.exclude_commit_patterns = [
+  "chore(?:\\([^)]*?\\))?: .+",
+  "ci(?:\\([^)]*?\\))?: .+",
+  "refactor(?:\\([^)]*?\\))?: .+",
+  "style(?:\\([^)]*?\\))?: .+",
+  "test(?:\\([^)]*?\\))?: .+",
+  "build\\((?!deps\\): .+)",
+  "Merged? .*",
+  "Initial [Cc]ommit.*",         # codespell:ignore
 ]
-
-[tool.semantic_release.changelog.environment]
-keep_trailing_newline = true
-
-[tool.semantic_release.branches.main]
-match = "main"
-
-[tool.semantic_release.branches.noop]
-match = "(?!main$)"
-prerelease = true
