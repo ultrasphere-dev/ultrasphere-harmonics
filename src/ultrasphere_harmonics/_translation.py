@@ -99,15 +99,11 @@ def _harmonics_translation_coef_plane_wave[TCartesian, TSpherical](
         ndim_spherical = c.s_ndim
         ip = xp.sum(
             xp.stack(
-                xp.broadcast_arrays(
-                    *[
-                        cartesian[i][
-                            (None,) * ndim_spherical + (slice(None),) * ndim_user
-                        ]
-                        * x[i][(slice(None),) * ndim_spherical + (None,) * ndim_user]
-                        for i in c.c_nodes
-                    ]
-                ),
+                xp.broadcast_arrays(*[
+                    cartesian[i][(None,) * ndim_spherical + (slice(None),) * ndim_user]
+                    * x[i][(slice(None),) * ndim_spherical + (None,) * ndim_user]
+                    for i in c.c_nodes
+                ]),
                 axis=0,
             ),
             axis=0,

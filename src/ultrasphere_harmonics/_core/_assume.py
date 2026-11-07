@@ -38,10 +38,7 @@ def assume_n_end_and_include_negative_m_from_harmonics[TCartesian, TSpherical](
     >>> from ultrasphere_harmonics import harmonics
     >>> c = create_spherical()
     >>> harm = harmonics(
-    ...     c,
-    ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
-    ...     n_end=3,
-    ...     phase=0
+    ...     c, {"theta": np.asarray(0.5), "phi": np.asarray(1.0)}, n_end=3, phase=0
     ... )
     >>> assume_n_end_and_include_negative_m_from_harmonics(c, harm)
     (3, True)
@@ -68,7 +65,7 @@ def assume_n_end_and_include_negative_m_from_harmonics[TCartesian, TSpherical](
         if c.s_ndim == 0:
             return 0, False
         if isinstance(expansion, Mapping):
-            sizes = tuple([expansion[k].shape[-1] for k in c.s_nodes])
+            sizes = tuple(expansion[k].shape[-1] for k in c.s_nodes)
         elif isinstance(expansion, tuple):
             sizes = expansion[-c.s_ndim :]
         else:

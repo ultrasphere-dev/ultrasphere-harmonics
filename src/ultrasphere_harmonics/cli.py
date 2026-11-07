@@ -126,29 +126,23 @@ def expand_bunny(
                 f"Max Degree: {key - 1:02d}\n"
                 f"Basis Count: {harm_n_ndim_le(key - 1, c_ndim=c.c_ndim):03d}"
             )
-        data.append(
-            {
-                "x": c.to_cartesian(spherical | {"r": r}),
-                "label": label,
-                "key": key,
-            }
-        )
+        data.append({
+            "x": c.to_cartesian(spherical | {"r": r}),
+            "label": label,
+            "key": key,
+        })
 
     if frontend == "plotly":
         # [t, x, y, z]
-        df = pd.concat(
-            [
-                pd.DataFrame(
-                    {
-                        "x": d["x"][0],
-                        "y": d["x"][1],
-                        "z": d["x"][2],
-                        "label": d["label"],
-                    }
-                )
-                for d in data
-            ]
-        )
+        df = pd.concat([
+            pd.DataFrame({
+                "x": d["x"][0],
+                "y": d["x"][1],
+                "z": d["x"][2],
+                "label": d["label"],
+            })
+            for d in data
+        ])
         fig = px.scatter_3d(
             df,
             x="x",
@@ -274,13 +268,11 @@ def expand_bunny_4d(
             )
         if threshold is not None:
             w = (w > threshold).astype(w.dtype)
-        data.append(
-            {
-                "w": w,
-                "key": key,
-                "label": label,
-            }
-        )
+        data.append({
+            "w": w,
+            "key": key,
+            "label": label,
+        })
 
     plt.style.use("dark_background")
     fig, ax = plt.subplots(

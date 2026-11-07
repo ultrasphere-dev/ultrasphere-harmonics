@@ -168,7 +168,7 @@ def expand[TCartesian, TSpherical](
     ...     c,
     ...     lambda spherical: {
     ...         "theta": np.sin(spherical["theta"]),
-    ...         "phi": np.sin(spherical["phi"])
+    ...         "phi": np.sin(spherical["phi"]),
     ...     },
     ...     n_end=2,
     ...     n=3,
