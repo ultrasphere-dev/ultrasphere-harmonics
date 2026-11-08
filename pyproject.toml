@@ -4,7 +4,7 @@ requires = [ "setuptools>=77.0.3" ]
 
 [project]
 name = "ultrasphere-harmonics"
-version = "1.3.0"
+version = "1.4.0"
 description = "Hyperspherical harmonics in NumPy / PyTorch / JAX"
 readme = "README.md"
 license = "MIT"
