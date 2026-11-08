@@ -76,17 +76,13 @@ def test_orthogonal_expand[TSpherical, TCartesian](
             pytest.skip("torch.nonzero is not array API compatible")
         for key, value in actual.items():
             # assert quantum numbers are the same for non-zero values
-            expansion_nonzero = xp.moveaxis(
-                xp.stack(xp.nonzero(xp.abs(value) > 1e-3)), 0, 1
-            )
+            expansion_nonzero = xp.moveaxis(xp.stack(xp.nonzero(xp.abs(value) > 1e-3)), 0, 1)
             assert expansion_nonzero.shape[1] == ndim_harmonics(c, key) * 2
             l, r = (
                 expansion_nonzero[:, : ndim_harmonics(c, key)],
                 expansion_nonzero[:, ndim_harmonics(c, key) :],
             )
-            idx = xp.squeeze(
-                xp.asarray(xp.nonzero((l[:-1, :] == r[:-1, :]).all(axis=-1))), 0
-            )
+            idx = xp.squeeze(xp.asarray(xp.nonzero((l[:-1, :] == r[:-1, :]).all(axis=-1))), 0)
             assert xp.all(l[idx, :] == r[idx, :])
     else:
         expected = xp.eye(
@@ -98,7 +94,7 @@ def test_orthogonal_expand[TSpherical, TCartesian](
 
 
 @pytest.mark.parametrize(
-    "name, c, n_end",
+    ("name", "c", "n_end"),
     [
         ("spherical", create_spherical(), 4),
         ("standard-2", create_standard(2), 4),
@@ -145,8 +141,8 @@ def test_approximate[TSpherical, TCartesian](
         device=device,
         dtype=dtype,
     )
-    for n_end_c in np.linspace(1, n_end, 5):
-        n_end_c = int(n_end_c)
+    for n_end_c_float in np.linspace(1, n_end, 5):
+        n_end_c = int(n_end_c_float)
         expansion_cut = expand_cut(c, expansion, n_end_c)
         approx = expand_evaluate(
             c,

@@ -15,9 +15,7 @@ from ._core._flatten import flatten_harmonics, index_array_harmonics
 @overload
 def harmonics_regular_singular_component[TCartesian, TSpherical](
     c: SphericalCoordinates[TSpherical, TCartesian],
-    spherical: (
-        Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]
-    ),
+    spherical: (Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]),
     *,
     n_end: int,
     k: Array,
@@ -32,9 +30,7 @@ def harmonics_regular_singular_component[TCartesian, TSpherical](
 @overload
 def harmonics_regular_singular_component[TCartesian, TSpherical](
     c: SphericalCoordinates[TSpherical, TCartesian],
-    spherical: (
-        Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]
-    ),
+    spherical: (Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]),
     *,
     n_end: int,
     k: Array,
@@ -48,9 +44,7 @@ def harmonics_regular_singular_component[TCartesian, TSpherical](
 
 def harmonics_regular_singular_component[TCartesian, TSpherical](  # type: ignore[misc]
     c: SphericalCoordinates[TSpherical, TCartesian],
-    spherical: (
-        Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]
-    ),
+    spherical: (Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]),
     /,
     *,
     n_end: int,
@@ -175,9 +169,7 @@ def harmonics_regular_singular_component[TCartesian, TSpherical](  # type: ignor
 @overload
 def harmonics_regular_singular[TCartesian, TSpherical](
     c: SphericalCoordinates[TSpherical, TCartesian],
-    spherical: (
-        Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]
-    ),
+    spherical: (Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]),
     /,
     *,
     n_end: int,
@@ -194,9 +186,7 @@ def harmonics_regular_singular[TCartesian, TSpherical](
 @overload
 def harmonics_regular_singular[TCartesian, TSpherical](
     c: SphericalCoordinates[TSpherical, TCartesian],
-    spherical: (
-        Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]
-    ),
+    spherical: (Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]),
     /,
     *,
     n_end: int,
@@ -212,9 +202,7 @@ def harmonics_regular_singular[TCartesian, TSpherical](
 
 def harmonics_regular_singular[TCartesian, TSpherical](
     c: SphericalCoordinates[TSpherical, TCartesian],
-    spherical: (
-        Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]
-    ),
+    spherical: (Mapping[TSpherical | Literal["r"], Array] | Mapping[Literal["r"], Array]),
     /,
     *,
     n_end: int,

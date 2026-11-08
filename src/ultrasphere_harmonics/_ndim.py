@@ -95,11 +95,11 @@ def homogeneous_ndim_le(n_end: int | Array, *, c_ndim: int) -> int | Array:
     return xpx.apply_where(
         n_end < 1,
         (n_end, c_ndim),
-        lambda n_end, c_ndim: 0,
+        lambda *_: 0,
         lambda n_end, c_ndim: xpx.apply_where(
             n_end == 1,
             (n_end, c_ndim),
-            lambda n_end, c_ndim: homogeneous_ndim_eq(0, c_ndim=c_ndim),
+            lambda _, c_ndim: homogeneous_ndim_eq(0, c_ndim=c_ndim),
             lambda n_end, c_ndim: homogeneous_ndim_eq(n_end - 1, c_ndim=c_ndim + 1),
         ),
     )
@@ -158,9 +158,7 @@ def harm_n_ndim_eq(n: int | Array, *, c_ndim: int) -> int | Array:
         c_ndim > 2,
         (n, c_ndim),
         lambda n, c_ndim: xp.astype(
-            xp.round(
-                (2 * n + c_ndim - 2) / (c_ndim - 2) * binom(n + c_ndim - 3, c_ndim - 3)
-            ),
+            xp.round((2 * n + c_ndim - 2) / (c_ndim - 2) * binom(n + c_ndim - 3, c_ndim - 3)),
             int,
         ),
         lambda n, c_ndim: xpx.apply_where(
@@ -218,11 +216,11 @@ def harm_n_ndim_le(n_end: int | Array, *, c_ndim: int) -> int | Array:
     return xpx.apply_where(
         n_end < 1,
         (n_end, c_ndim),
-        lambda n_end, c_ndim: 0,
+        lambda *_: 0,
         lambda n_end, c_ndim: xpx.apply_where(
             n_end == 1,
             (n_end, c_ndim),
-            lambda n_end, c_ndim: harm_n_ndim_eq(0, c_ndim=c_ndim),
+            lambda _, c_ndim: harm_n_ndim_eq(0, c_ndim=c_ndim),
             lambda n_end, c_ndim: harm_n_ndim_eq(n_end - 1, c_ndim=c_ndim + 1),
         ),
     )

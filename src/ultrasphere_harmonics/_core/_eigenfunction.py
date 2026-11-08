@@ -111,11 +111,7 @@ def type_a(
     res = xp.exp(
         xp.asarray(
             1j,
-            dtype=(
-                xp.complex64
-                if theta.dtype in [xp.complex64, xp.float32]
-                else xp.complex128
-            ),
+            dtype=(xp.complex64 if theta.dtype in {xp.complex64, xp.float32} else xp.complex128),
             device=theta.device,
         )
         * m
@@ -127,9 +123,8 @@ def type_a(
             res *= minus_1_power((xp.abs(m) + m) // 2)
         else:
             res *= minus_1_power(m)
-    else:
-        if Phase.NEGATIVE_LEGENDRE in phase:
-            res *= minus_1_power((xp.abs(m) - m) // 2)
+    elif Phase.NEGATIVE_LEGENDRE in phase:
+        res *= minus_1_power((xp.abs(m) - m) // 2)
     return res
 
 
@@ -196,9 +191,7 @@ def type_b(
     ]
     alpha = l_beta + s_beta[..., None] / 2
     res = (
-        jacobi_normalization_constant(
-            alpha=alpha[..., None], beta=alpha[..., None], n=n
-        )
+        jacobi_normalization_constant(alpha=alpha[..., None], beta=alpha[..., None], n=n)
         * (xp.sin(theta[..., None, None]) ** l_beta[..., None])
         * jacobi_all(n_end=n_end, alpha=alpha, beta=alpha, x=xp.cos(theta[..., None]))
     )
@@ -372,9 +365,7 @@ def type_c(
     beta = l_beta + s_beta[..., None, None] / 2  # 2d
     res = (
         2 ** ((alpha + beta) / 2 + 1)[..., None]
-        * jacobi_normalization_constant(
-            alpha=alpha[..., None], beta=beta[..., None], n=n
-        )
+        * jacobi_normalization_constant(alpha=alpha[..., None], beta=beta[..., None], n=n)
         * (xp.sin(theta[..., None, None, None]) ** l_beta[..., None])
         * (xp.cos(theta[..., None, None, None]) ** l_alpha[..., None])
         * jacobi_all(
@@ -393,9 +384,7 @@ def type_c(
         # [l_alpha, l_beta, n] -> [l_alpha, l_beta, l = 2n + l_alpha + l_beta]
         # 1. [l_alpha, l_beta, n] -> [l_alpha, l_beta, 2n]
         # add zeros to the left for each row, i.e. [1, 2, 3] -> [1, 0, 2, 0, 3, 0]
-        res_expaneded = xp.zeros(
-            (*res.shape[:-1], n_end), dtype=res.dtype, device=res.device
-        )
+        res_expaneded = xp.zeros((*res.shape[:-1], n_end), dtype=res.dtype, device=res.device)
         res_expaneded[..., ::2] = res
         # 2. [l_alpha, l_beta, 2n] -> [l_alpha, l_beta, 2n + l_alpha]
         res_expaneded = shift_nth_row_n_steps(

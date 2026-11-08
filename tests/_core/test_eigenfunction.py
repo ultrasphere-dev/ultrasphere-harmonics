@@ -162,9 +162,7 @@ def _type_c_scalar(
 
 
 def test_type_b(xp: ArrayNamespaceFull, dtype: Any, device: Any) -> None:
-    for theta in xp.random.random_uniform(
-        low=0, high=xp.pi, shape=(3), device=device, dtype=dtype
-    ):
+    for theta in xp.random.random_uniform(low=0, high=xp.pi, shape=(3), device=device, dtype=dtype):
         # we refer to 3d spherical harmonics table where s_beta = 0
         # https://en.wikipedia.org/wiki/Table_of_spherical_harmonics
         s_beta = 0

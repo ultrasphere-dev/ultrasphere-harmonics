@@ -208,9 +208,7 @@ def expand[TCartesian, TSpherical](
 
     """
     if n < n_end:
-        raise ValueError(
-            f"n={n} < n_end={n_end}, which would lead to incorrect results."
-        )
+        raise ValueError(f"n={n} < n_end={n_end}, which would lead to incorrect results.")
 
     def inner(
         xs: Mapping[TSpherical, Array],
@@ -240,9 +238,7 @@ def expand[TCartesian, TSpherical](
         if isinstance(val, Mapping):
             if not does_f_support_separation_of_variables:
                 raise ValueError(
-                    "val is Mapping but "
-                    "does_f_support_separation_of_variables "
-                    "is False."
+                    "val is Mapping but does_f_support_separation_of_variables is False."
                 )
             result = {}
             for node in c.s_nodes:
@@ -254,16 +250,12 @@ def expand[TCartesian, TSpherical](
                 ndim_val = value.ndim - 1
                 ndim_harm = ndim_harmonics_(c, node)
                 value = value[(...,) + (None,) * (ndim_harm)]
-                harm = Y[node][
-                    (slice(None),) + (None,) * ndim_val + (slice(None),) * ndim_harm
-                ]
+                harm = Y[node][(slice(None),) + (None,) * ndim_val + (slice(None),) * ndim_harm]
                 result[node] = value * xp.conj(harm)
         else:
             if does_f_support_separation_of_variables:
                 raise ValueError(
-                    "val is not Mapping but "
-                    "does_f_support_separation_of_variables "
-                    "is True."
+                    "val is not Mapping but does_f_support_separation_of_variables is True."
                 )
             # val: theta1,...,thetaN,u1,...,uM
             # harmonics: theta1,...,thetaN,harm
@@ -384,19 +376,12 @@ def expand_evaluate[TCartesian, TSpherical](
             result[node] = result
         return result
     if isinstance(expansion, Mapping):
-        raise AssertionError()
+        raise AssertionError
     # expansion: f1,...,fL,harm
     # harmonics: u1,...,uM,harm
     # result: u1,...,uM,f1,...,fL
     ndim_expansion = expansion.ndim - 1
     ndim_extra_harmonics = Y.ndim - 1
-    expansion = expansion[
-        (None,) * (ndim_extra_harmonics) + (slice(None),) * (ndim_expansion + 1)
-    ]
-    Y = Y[
-        (slice(None),) * ndim_extra_harmonics
-        + (None,) * ndim_expansion
-        + (slice(None),)
-    ]
-    result = xp.sum(Y * expansion, axis=-1)
-    return result
+    expansion = expansion[(None,) * (ndim_extra_harmonics) + (slice(None),) * (ndim_expansion + 1)]
+    Y = Y[(slice(None),) * ndim_extra_harmonics + (None,) * ndim_expansion + (slice(None),)]
+    return xp.sum(Y * expansion, axis=-1)

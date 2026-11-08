@@ -52,9 +52,7 @@ def expand_cut[TCartesian, TSpherical](
     >>> from ultrasphere import create_spherical
     >>> from ultrasphere_harmonics import harmonics
     >>> c = create_spherical()
-    >>> harm = harmonics(
-    ...     c, {"theta": np.asarray(0.5), "phi": np.asarray(1.0)}, n_end=3, phase=0
-    ... )
+    >>> harm = harmonics(c, {"theta": np.asarray(0.5), "phi": np.asarray(1.0)}, n_end=3, phase=0)
     >>> harm.shape
     (9,)
 
@@ -65,7 +63,6 @@ def expand_cut[TCartesian, TSpherical](
     """
     if isinstance(expansion, Mapping):
         return {
-            k: v[..., : int(harm_n_ndim_le(n_end, c_ndim=c.c_ndim))]
-            for k, v in expansion.items()
+            k: v[..., : int(harm_n_ndim_le(n_end, c_ndim=c.c_ndim))] for k, v in expansion.items()
         }
     return expansion[..., : int(harm_n_ndim_le(n_end, c_ndim=c.c_ndim))]

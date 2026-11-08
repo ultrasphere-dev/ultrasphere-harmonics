@@ -116,15 +116,13 @@ def expand_bunny(
             r = f(spherical)
             label = "Ground Truth\nBasis Count: ∞"
         else:
-            key = int(key)
+            cut_key = int(key)
             r = xp.real(
-                expand_evaluate(
-                    c, expand_cut(c, expansion, key), spherical, phase=phase
-                )
+                expand_evaluate(c, expand_cut(c, expansion, cut_key), spherical, phase=phase)
             )
             label = (
-                f"Max Degree: {key - 1:02d}\n"
-                f"Basis Count: {harm_n_ndim_le(key - 1, c_ndim=c.c_ndim):03d}"
+                f"Max Degree: {cut_key - 1:02d}\n"
+                f"Basis Count: {harm_n_ndim_le(cut_key - 1, c_ndim=c.c_ndim):03d}"
             )
         data.append({
             "x": c.to_cartesian(spherical | {"r": r}),
@@ -164,16 +162,12 @@ def expand_bunny(
         return
 
     plt.style.use("dark_background")
-    fig, ax = plt.subplots(
-        subplot_kw={"projection": "3d"}, figsize=(4, 4), layout="constrained"
-    )
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(4, 4), layout="constrained")
 
     def animate(data_: dict[str, Any]) -> None:
         ax.clear()
         ax.view_init(elev=45, azim=45, roll=120)
-        ax.scatter3D(
-            data_["x"][0], data_["x"][1], data_["x"][2], c=data_["x"][2], cmap="viridis"
-        )
+        ax.scatter3D(data_["x"][0], data_["x"][1], data_["x"][2], c=data_["x"][2], cmap="viridis")
         ax.xaxis.pane.fill = False
         ax.yaxis.pane.fill = False
         ax.zaxis.pane.fill = False
@@ -275,9 +269,7 @@ def expand_bunny_4d(
         })
 
     plt.style.use("dark_background")
-    fig, ax = plt.subplots(
-        subplot_kw={"projection": "3d"}, figsize=(4, 4), layout="constrained"
-    )
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(4, 4), layout="constrained")
 
     def animate(data: dict[str, Any]) -> None:
         ax.clear()
@@ -305,7 +297,6 @@ def expand_bunny_4d(
         ax.set_ylabel("y")
         ax.set_zlabel("z")
         ax.set_title(data["label"])
-        return
 
     anim = FuncAnimation(fig, animate, frames=data, repeat=False, interval=1000 // 3)
     anim.save("expand_bunny_4d.gif", writer="pillow")
@@ -346,16 +337,12 @@ def scattering(
     cartesian = cartesian[:, xp.linalg.vector_norm(cartesian, axis=0) > 1.0]
     spherical = c.from_cartesian(cartesian)
     uin_v = uin(spherical)
-    n = index_array_harmonics(
-        c, c.root, n_end=n_end, xp=xp, flatten=True, device=uin_v.device
-    )
+    n = index_array_harmonics(c, c.root, n_end=n_end, xp=xp, flatten=True, device=uin_v.device)
     uscat_v = -xp.sum(
         1
         / shn1(n, xp.asarray(c.c_ndim), xp.asarray(k))
         * expansion_coef
-        * harmonics_regular_singular(
-            c, spherical, n_end=n_end, type="singular", k=k, phase=phase
-        ),
+        * harmonics_regular_singular(c, spherical, n_end=n_end, type="singular", k=k, phase=phase),
         axis=-1,
     )
     utot_v = uin_v + uscat_v

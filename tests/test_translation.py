@@ -78,7 +78,6 @@ def test_harmonics_translation_coef_gumerov_table(
         )
         expected = unflatten_harmonics(c, expected)
         actual = unflatten_harmonics(c, actual)
-        print(xp.round(expected[5, 2], decimals=6), xp.round(actual[5, 2], decimals=6))
 
 
 @pytest.mark.parametrize(
@@ -88,10 +87,10 @@ def test_harmonics_translation_coef_gumerov_table(
         (create_spherical()),
     ],
 )
-@pytest.mark.parametrize("n_end, n_end_add", [(4, 6)])
+@pytest.mark.parametrize(("n_end", "n_end_add"), [(4, 6)])
 @pytest.mark.parametrize("phase", Phase.all())
 @pytest.mark.parametrize(
-    "from_,to_",
+    ("from_", "to_"),
     [("regular", "regular"), ("singular", "singular"), ("regular", "singular")],
 )
 @pytest.mark.parametrize(
@@ -110,7 +109,7 @@ def test_harmonics_translation_coef[TSpherical, TCartesian](
     device: Any,
     dtype: Any,
 ) -> None:
-    if method == "gumerov" and c.branching_types_expression_str not in ["a", "ba"]:
+    if method == "gumerov" and c.branching_types_expression_str not in {"a", "ba"}:
         pytest.skip("gumerov method only supports ba branching type")
     if method == "plane_wave" and from_ != to_:
         pytest.skip("plane_wave method only supports from_=to_")
@@ -121,16 +120,12 @@ def test_harmonics_translation_coef[TSpherical, TCartesian](
     k = xp.asarray(1.0, device=device, dtype=dtype)
     if (from_, to_) == ("singular", "singular"):
         # |t| < |x| (if too close, the result would be inaccurate)
-        t = t * 0.1
-        assert (
-            xp.linalg.vector_norm(t, axis=0) < xp.linalg.vector_norm(x, axis=0)
-        ).all()
+        t *= 0.1
+        assert (xp.linalg.vector_norm(t, axis=0) < xp.linalg.vector_norm(x, axis=0)).all()
     elif (from_, to_) == ("regular", "singular"):
         # |t| > |x| (if too close, the result would be inaccurate)
-        t = t * 10
-        assert (
-            xp.linalg.vector_norm(t, axis=0) > xp.linalg.vector_norm(x, axis=0)
-        ).all()
+        t *= 10
+        assert (xp.linalg.vector_norm(t, axis=0) > xp.linalg.vector_norm(x, axis=0)).all()
     elif (from_, to_) == ("regular", "regular"):
         # accurate everywhere
         pass
@@ -209,9 +204,7 @@ def test_dataset_coef(device: Any, dtype: Any, xp: ArrayNamespaceFull) -> None:
                 k=1.0,
             )
             np.savetxt(
-                f"tests/.cache/translation_coef_{is_same_type}_{phase}.csv".replace(
-                    "|", "_"
-                ),
+                f"tests/.cache/translation_coef_{is_same_type}_{phase}.csv".replace("|", "_"),
                 coef,
                 delimiter=",",
             )

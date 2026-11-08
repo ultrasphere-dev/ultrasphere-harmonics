@@ -59,9 +59,7 @@ def test_harmonics_orthogonal[TSpherical, TCartesian](
 
 
 @pytest.mark.parametrize("n_end", [1, 2, 12])  # scipy does not support n_end == 0
-def test_match_scipy(
-    n_end: int, xp: ArrayNamespaceFull, device: Any, dtype: Any
-) -> None:
+def test_match_scipy(n_end: int, xp: ArrayNamespaceFull, device: Any, dtype: Any) -> None:
     if device != "cpu":
         pytest.skip("sph_harm_y_all only supports CPU")
     if dtype != xp.float64:
