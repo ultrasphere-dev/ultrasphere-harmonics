@@ -192,11 +192,8 @@ def harmonics(
     >>> from array_api_compat import numpy as np
     >>> from ultrasphere import create_spherical
     >>> c = create_spherical()
-    >>> harm = harmonics( # flattened output
-    ...     c,
-    ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
-    ...     n_end=2,
-    ...     phase=0
+    >>> harm = harmonics(  # flattened output
+    ...     c, {"theta": np.asarray(0.5), "phi": np.asarray(1.0)}, n_end=2, phase=0
     ... )
     >>> np.round(harm, 2)
     array([0.28+0.j  , 0.43+0.j  , 0.09+0.14j, 0.09-0.14j])
@@ -223,7 +220,7 @@ def harmonics(
     ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
     ...     n_end=2,
     ...     phase=0,
-    ...     concat=False
+    ...     concat=False,
     ... )
     >>> {k: np.round(harm[k], 2) for k in c.s_nodes}
     {'theta': array([[0.71, 0.  , 0.  ],
@@ -238,7 +235,7 @@ def harmonics(
     ...     c,
     ...     {"theta": np.asarray(0.5), "phi": np.asarray(1.0)},
     ...     n_end=2,
-    ...     phase=3 # negative legendre + Condon-Shortley phase
+    ...     phase=3,  # negative legendre + Condon-Shortley phase
     ... )
     >>> np.round(harm, 2)
     array([ 0.28+0.j  ,  0.43+0.j  , -0.09-0.14j,  0.09-0.14j])

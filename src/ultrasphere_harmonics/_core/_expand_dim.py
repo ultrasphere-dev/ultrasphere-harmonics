@@ -63,10 +63,7 @@ def _expand_dim_harmoncis[TSpherical, TCartesian](
         idx_sin_child = c.s_nodes.index(get_child(c.G, node, "sin"))
         moveaxis = {0: idx_cos_child, 1: idx_sin_child, 2: idx_node}
     value_additional_ndim = harmonics.ndim - len(moveaxis)
-    moveaxis = {
-        k + value_additional_ndim: v + value_additional_ndim
-        for k, v in moveaxis.items()
-    }
+    moveaxis = {k + value_additional_ndim: v + value_additional_ndim for k, v in moveaxis.items()}
     adding_ndim = c.s_ndim - len(moveaxis)
     harmonics = harmonics[(...,) + (None,) * adding_ndim]
     return xp.moveaxis(harmonics, list(moveaxis.keys()), list(moveaxis.values()))
@@ -118,11 +115,11 @@ def expand_dims_harmonics[TSpherical, TCartesian](
     ...     concat=False,
     ...     expand_dims=False,
     ... )
-    >>> {k: harm[k].shape for k in c.s_nodes} # not broadcastable
+    >>> {k: harm[k].shape for k in c.s_nodes}  # not broadcastable
     {'theta': (3, 2), 'phi': (3,)}
 
     >>> harm = expand_dims_harmonics(c, harm)
-    >>> {k: harm[k].shape for k in c.s_nodes} # broadcastable
+    >>> {k: harm[k].shape for k in c.s_nodes}  # broadcastable
     {'theta': (2, 3), 'phi': (1, 3)}
 
     """

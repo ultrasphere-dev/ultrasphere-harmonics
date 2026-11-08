@@ -56,13 +56,9 @@ def _index_array_harmonics[TSpherical, TCartesian](
     """
     branching_type = c.branching_types[node]
     if branching_type == BranchingType.A and include_negative_m:
-        result = to_symmetric(
-            xp.arange(0, n_end, dtype=dtype, device=device), asymmetric=True
-        )
-    elif (
-        branching_type == BranchingType.B
-        or branching_type == BranchingType.BP
-        or (branching_type == BranchingType.A and not include_negative_m)
+        result = to_symmetric(xp.arange(0, n_end, dtype=dtype, device=device), asymmetric=True)
+    elif branching_type in {BranchingType.B, BranchingType.BP} or (
+        branching_type == BranchingType.A and not include_negative_m
     ):
         result = xp.arange(0, n_end, dtype=dtype, device=device)
     elif branching_type == BranchingType.C:
@@ -153,17 +149,17 @@ def _index_array_harmonics_all[TSpherical, TCartesian](
         len(index_array_harmonics(c, node(c.s_ndim)))].
         If as_array is False, the dictionary of indices.
 
-    Notes
-    -----
-        To check the indices where all quantum numbers match,
-        `(numbers1 == numbers2).all(axis=0)`
-        can be used.
-
     Raises
     ------
     ValueError
         If expand_dims is False and as_array is True.
         If mask is True and as_array is False.
+
+    Notes
+    -----
+        To check the indices where all quantum numbers match,
+        `(numbers1 == numbers2).all(axis=0)`
+        can be used.
 
     """
     if not expand_dims and as_array:
@@ -221,9 +217,6 @@ def flatten_mask_harmonics[TSpherical, TCartesian](
         The maximum degree of the harmonic.
     include_negative_m : bool, optional
         Whether to include negative m values, by default True
-    nodes : Iterable[TSpherical] | None, optional
-        The nodes to consider, by default None
-        If None, all nodes are considered.
     xp : ArrayNamespaceFull
         The array namespace.
     device : Any, optional
@@ -257,13 +250,9 @@ def flatten_mask_harmonics[TSpherical, TCartesian](
     mask = xp.ones((1,) * c.s_ndim, dtype=bool, device=device)
     for node, branching_type in c.branching_types.items():
         if branching_type == BranchingType.B:
-            mask = mask & (
-                xp.abs(index_arrays[get_child(c.G, node, "sin")]) <= index_arrays[node]
-            )
+            mask = mask & (xp.abs(index_arrays[get_child(c.G, node, "sin")]) <= index_arrays[node])
         if branching_type == BranchingType.BP:
-            mask = mask & (
-                xp.abs(index_arrays[get_child(c.G, node, "cos")]) <= index_arrays[node]
-            )
+            mask = mask & (xp.abs(index_arrays[get_child(c.G, node, "cos")]) <= index_arrays[node])
         if branching_type == BranchingType.C:
             value = (
                 index_arrays[node]
@@ -272,11 +261,8 @@ def flatten_mask_harmonics[TSpherical, TCartesian](
             )
             mask = mask & (value % 2 == 0) & (value >= 0)
 
-    shape = xpx.broadcast_shapes(
-        *[index_array.shape for index_array in index_arrays.values()]
-    )
-    mask = xp.broadcast_to(mask, shape)
-    return mask
+    shape = xpx.broadcast_shapes(*[index_array.shape for index_array in index_arrays.values()])
+    return xp.broadcast_to(mask, shape)
 
 
 def flatten_harmonics[TSpherical, TCartesian](
@@ -398,9 +384,7 @@ def unflatten_harmonics[TSpherical, TCartesian](
 
     """
     xp = array_namespace(harmonics)
-    n_end, _ = assume_n_end_and_include_negative_m_from_harmonics(
-        c, harmonics, flatten=True
-    )
+    n_end, _ = assume_n_end_and_include_negative_m_from_harmonics(c, harmonics, flatten=True)
     mask = flatten_mask_harmonics(
         c,
         n_end=n_end,
@@ -495,9 +479,7 @@ def index_array_harmonics[TSpherical, TCartesian](
         device=device,
     )
     if flatten:
-        return flatten_harmonics(
-            c, index_array, n_end=n_end, include_negative_m=include_negative_m
-        )
+        return flatten_harmonics(c, index_array, n_end=n_end, include_negative_m=include_negative_m)
     return index_array
 
 
@@ -583,17 +565,17 @@ def index_array_harmonics_all[TSpherical, TCartesian](
         len(index_array_harmonics(c, node(c.s_ndim)))]`.
         If as_array is False, the dictionary of indices.
 
-    Notes
-    -----
-        To check the indices where all quantum numbers match,
-        `(numbers1 == numbers2).all(axis=0)`
-        can be used.
-
     Raises
     ------
     ValueError
         If expand_dims is False and as_array is True.
         If mask is True and as_array is False.
+
+    Notes
+    -----
+        To check the indices where all quantum numbers match,
+        `(numbers1 == numbers2).all(axis=0)`
+        can be used.
 
     Example
     -------
@@ -640,7 +622,6 @@ def index_array_harmonics_all[TSpherical, TCartesian](
         if as_array:
             return flatten_harmonics(c, index_arrays)
         return {
-            node: flatten_harmonics(c, index_array)
-            for node, index_array in index_arrays.items()
+            node: flatten_harmonics(c, index_array) for node, index_array in index_arrays.items()
         }
     return index_arrays

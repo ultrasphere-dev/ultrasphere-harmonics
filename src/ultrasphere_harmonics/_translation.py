@@ -99,26 +99,21 @@ def _harmonics_translation_coef_plane_wave[TCartesian, TSpherical](
         ndim_spherical = c.s_ndim
         ip = xp.sum(
             xp.stack(
-                xp.broadcast_arrays(
-                    *[
-                        cartesian[i][
-                            (None,) * ndim_spherical + (slice(None),) * ndim_user
-                        ]
-                        * x[i][(slice(None),) * ndim_spherical + (None,) * ndim_user]
-                        for i in c.c_nodes
-                    ]
-                ),
+                xp.broadcast_arrays(*[
+                    cartesian[i][(None,) * ndim_spherical + (slice(None),) * ndim_user]
+                    * x[i][(slice(None),) * ndim_spherical + (None,) * ndim_user]
+                    for i in c.c_nodes
+                ]),
                 axis=0,
             ),
             axis=0,
         )
         # [spherical1,...,sphericalN,user1,...,userM]
         e = xp.exp(1j * k[(None,) * ndim_spherical + (slice(None),) * ndim_user] * ip)
-        result = (
+        return (
             Y[(slice(None),) * ndim_spherical + (None,) * ndim_user + (slice(None),)]
             * e[(slice(None),) * (ndim_spherical + ndim_user) + (None,)]
         )
-        return result
 
     # returns [user1,...,userM,harmn,harmn']
     return (-1j) ** (n - ns) * expand(
@@ -217,10 +212,7 @@ def harmonics_twins_expansion[TCartesian, TSpherical](
             expand_dims=True,
             concat=False,
         )
-        Y2 = {
-            k: v[(...,) + (None,) * c.s_ndim + (slice(None),) * c.s_ndim]
-            for k, v in Y2.items()
-        }
+        Y2 = {k: v[(...,) + (None,) * c.s_ndim + (slice(None),) * c.s_ndim] for k, v in Y2.items()}
         if conj_2:
             Y2 = {k: xp.conj(v) for k, v in Y2.items()}
         return {k: Y1[k] * Y2[k] for k in c.s_nodes}
@@ -246,12 +238,11 @@ def harmonics_twins_expansion[TCartesian, TSpherical](
         result,
         axis_end=-2,  # , n_end=n_end_2, include_negative_m=True
     )
-    result = flatten_harmonics(
+    return flatten_harmonics(
         c,
         result,
         axis_end=-3,  # , n_end=n_end_1, include_negative_m=True
     )
-    return result
 
 
 def _harmonics_translation_coef_triplet[TCartesian, TSpherical](
@@ -474,7 +465,7 @@ def harmonics_translation_coef[TCartesian, TSpherical](
     phase = Phase(phase)
     device = spherical["r"].device
     if method is None:
-        if c.branching_types_expression_str in ["a", "ba"]:
+        if c.branching_types_expression_str in {"a", "ba"}:
             method = "gumerov"
         elif is_type_same:
             method = "plane_wave"
@@ -493,20 +484,18 @@ def harmonics_translation_coef[TCartesian, TSpherical](
                 type="regular" if is_type_same else "singular",
                 flatten=True,
             )
-            n = index_array_harmonics(
-                c, c.root, n_end=n_end, xp=xp, flatten=True, device=device
-            )[:, None]
+            n = index_array_harmonics(c, c.root, n_end=n_end, xp=xp, flatten=True, device=device)[
+                :, None
+            ]
             n_add = index_array_harmonics(
                 c, c.root, n_end=n_end_add, xp=xp, flatten=True, device=device
             )[None, :]
             result = 2 * SR[..., n - n_add]
             if Phase.NEGATIVE_LEGENDRE in phase:
                 # (- n) at the last means (- n - n_add - (n - n_add)) // 2
-                result *= minus_1_power(
-                    (xp.abs(n) + xp.abs(n_add) + xp.abs(n - n_add)) // 2 - n
-                )
+                result *= minus_1_power((xp.abs(n) + xp.abs(n_add) + xp.abs(n - n_add)) // 2 - n)
             return result
-        elif c.branching_types_expression_str == "ba":
+        if c.branching_types_expression_str == "ba":
             result = translational_coefficients(
                 k * spherical["r"],
                 spherical[c.root],
@@ -536,21 +525,14 @@ def harmonics_translation_coef[TCartesian, TSpherical](
             if phase == Phase(0):
                 result *= minus_1_power(m + m_add)
             elif phase == Phase.NEGATIVE_LEGENDRE:
-                result *= minus_1_power(
-                    (xp.abs(m) + m) // 2 + (xp.abs(m_add) + m_add) // 2
-                )
+                result *= minus_1_power((xp.abs(m) + m) // 2 + (xp.abs(m_add) + m_add) // 2)
             elif phase == (Phase.NEGATIVE_LEGENDRE | Phase.CONDON_SHORTLEY):  # type: ignore[unreachable]
-                result *= minus_1_power(
-                    (xp.abs(m) - m) // 2 + (xp.abs(m_add) - m_add) // 2
-                )
+                result *= minus_1_power((xp.abs(m) - m) // 2 + (xp.abs(m_add) - m_add) // 2)
             return result
-        else:
-            raise NotImplementedError()
-    elif method == "plane_wave":
+        raise NotImplementedError
+    if method == "plane_wave":
         if not is_type_same:
-            raise NotImplementedError(
-                "plane_wave method only supports is_type_same=True"
-            )
+            raise NotImplementedError("plane_wave method only supports is_type_same=True")
         return _harmonics_translation_coef_plane_wave(
             c,
             cartesian=c.to_cartesian(spherical, as_array=True),
@@ -559,7 +541,7 @@ def harmonics_translation_coef[TCartesian, TSpherical](
             phase=phase,
             k=k,
         )
-    elif method == "triplet":
+    if method == "triplet":
         return _harmonics_translation_coef_triplet(
             c,
             spherical,
@@ -569,5 +551,4 @@ def harmonics_translation_coef[TCartesian, TSpherical](
             k=k,
             is_type_same=is_type_same,
         )
-    else:
-        raise ValueError(f"Invalid method {method}.")
+    raise ValueError(f"Invalid method {method}.")

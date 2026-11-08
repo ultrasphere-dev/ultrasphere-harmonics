@@ -58,10 +58,8 @@ def test_addition_theorem_same_x[TSpherical, TCartesian](
         expand_dims=True,
         flatten=False,
     )
-    axis = set(range(0, c.s_ndim)) - {c.s_nodes.index(c.root)}
-    actual = xp.sum(
-        xp.real(x_Y * x_Y.conj()), axis=tuple(a + x_spherical["r"].ndim for a in axis)
-    )
+    axis = set(range(c.s_ndim)) - {c.s_nodes.index(c.root)}
+    actual = xp.sum(xp.real(x_Y * x_Y.conj()), axis=tuple(a + x_spherical["r"].ndim for a in axis))
     assert xp.all(xpx.isclose(actual, expected))
 
 
@@ -158,8 +156,6 @@ def test_addition_theorem[TSpherical, TCartesian](
         flatten=False,
     )
     # [..., n]
-    axis = set(range(0, c.s_ndim)) - {c.s_nodes.index(c.root)}
-    actual = xp.sum(
-        xp.real(x_Y * y_Y.conj()), axis=tuple(a + x_spherical["r"].ndim for a in axis)
-    )
+    axis = set(range(c.s_ndim)) - {c.s_nodes.index(c.root)}
+    actual = xp.sum(xp.real(x_Y * y_Y.conj()), axis=tuple(a + x_spherical["r"].ndim for a in axis))
     assert xp.all(xpx.isclose(actual, expected, rtol=1e-4, atol=1e-4))
