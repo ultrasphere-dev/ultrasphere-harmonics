@@ -33,7 +33,7 @@ dependencies = [
 optional-dependencies.cli = [
   "aquarel>=0.0.7",
   "cyclopts>=3.24",
-  "open3d-cpu>=0.19; sys_platform=='linux' and platform_machine=='x86_64'",
+  "open3d-cpu>=0.20.0; sys_platform=='linux' and platform_machine=='x86_64'",
   "rich>=10",
   "typer>=0.15,<1",
 ]
