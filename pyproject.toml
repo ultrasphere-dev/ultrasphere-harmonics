@@ -26,7 +26,7 @@ classifiers = [
 dependencies = [
   "array-api-negative-index>=1",
   "gumerov-expansion-coefficients>=1.2",
-  "jacobi-poly>=1.0.5",
+  "jacobi-poly>=1.0.7",
   "shift-nth-row-n-steps>=1",
   "ultrasphere>=2.0.4",
 ]
