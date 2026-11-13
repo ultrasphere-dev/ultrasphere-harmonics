@@ -34,7 +34,7 @@ optional-dependencies.cli = [
   "aquarel>=0.0.7",
   "cyclopts>=3.24",
   "open3d-cpu>=0.19; sys_platform=='linux' and platform_machine=='x86_64'",
-  "rich>=10",
+  "rich>=10.16.2",
   "typer>=0.15,<1",
 ]
 urls."Bug Tracker" = "https://github.com/ultrasphere-dev/ultrasphere-harmonics/issues"
